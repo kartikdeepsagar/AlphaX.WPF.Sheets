@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="AlphaX.WPF.Sheets.Components.FilterTool"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AlphaX.WPF.Sheets.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="25" BorderBrush="Black" BorderThickness="0.5">
+    
+        <Grid Background="LightGray">
+
+        </Grid>
+    
+</UserControl>

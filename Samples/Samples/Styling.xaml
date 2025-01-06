@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="AlphaXSpreadSamplesExplorer.Samples.Styling"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer.Samples" 
+             xmlns:sheets="http://schemas.gcspreadsheet.com/2022/wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <sheets:AlphaXSpread x:Name="spread1" Margin="5" Grid.Row="0" Grid.Column="0"></sheets:AlphaXSpread>
+        <sheets:AlphaXSpread x:Name="spread2" Margin="5" Grid.Row="0" Grid.Column="1"></sheets:AlphaXSpread>
+        <sheets:AlphaXSpread x:Name="spread3" Margin="5" Grid.Row="1" Grid.Column="0"></sheets:AlphaXSpread>
+        <sheets:AlphaXSpread x:Name="spread4" Margin="5" Grid.Row="1" Grid.Column="1"></sheets:AlphaXSpread>
+    </Grid>
+</UserControl>

@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8ABD1007-49B7-4864-9DFC-E420640AE8F6}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>AlphaX.WPF.Sheets</RootNamespace>
+    <AssemblyName>AlphaX.WPF.Sheets</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\AlphaX.WPF.Sheets.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EventArgs\CalcErrorEventArgs.cs" />
+    <Compile Include="CellTypes\BaseCellType.cs" />
+    <Compile Include="CellTypes\ButtonCellType.cs" />
+    <Compile Include="CellTypes\CheckBoxCellType.cs" />
+    <Compile Include="CellTypes\DateTimeCellType.cs" />
+    <Compile Include="CellTypes\IAlphaXCommand.cs" />
+    <Compile Include="CellTypes\NumberCellType.cs" />
+    <Compile Include="CellTypes\TextCellType.cs" />
+    <Compile Include="Commands\CancelEditCommand.cs" />
+    <Compile Include="Commands\CommitEditCommand.cs" />
+    <Compile Include="Commands\AlphaXSpreadCommand.cs" />
+    <Compile Include="Components\FilterTool.xaml.cs">
+      <DependentUpon>FilterTool.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\AlphaXSheetTabControl.cs" />
+    <Compile Include="DataTypeConverter.cs" />
+    <Compile Include="Data\DataUtils.cs" />
+    <Compile Include="Enums\DateTimePattern.cs" />
+    <Compile Include="Enums\HeadersVisibility.cs" />
+    <Compile Include="Enums\SelectionMode.cs" />
+    <Compile Include="EventArgs\SheetViewEventArgs.cs" />
+    <Compile Include="Extensions\RenderingExtensions.cs" />
+    <Compile Include="Extensions\SheetExtensions.cs" />
+    <Compile Include="Components\AlphaXFormulaTextBox.xaml.cs">
+      <DependentUpon>AlphaXFormulaTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IGcSheetView.cs" />
+    <Compile Include="EventArgs\CellsSelectionEventArgs.cs" />
+    <Compile Include="SheetUtils.cs" />
+    <Compile Include="Enums\GridLineVisibility.cs" />
+    <Compile Include="Enums\MouseWheelScrollDirection.cs" />
+    <Compile Include="Enums\SheetScrollMode.cs" />
+    <Compile Include="Enums\VisualElement.cs" />
+    <Compile Include="Extensions\InternalExtensions.cs" />
+    <Compile Include="AlphaXSheetView.cs" />
+    <Compile Include="AlphaXSpread.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Rendering\Renderers\ColumnHeadersRenderer.cs" />
+    <Compile Include="Rendering\Renderers\TextRenderingExtensions.cs" />
+    <Compile Include="Rendering\Renderers\TopLeftRenderer.cs" />
+    <Compile Include="Rendering\RenderingResources.cs" />
+    <Compile Include="Rendering\RenderRegions\CellsRegion.cs" />
+    <Compile Include="Rendering\Renderers\CellsRenderer.cs" />
+    <Compile Include="Rendering\Renderers\GridLinesRenderer.cs" />
+    <Compile Include="Rendering\IRenderEngine.cs" />
+    <Compile Include="Rendering\RenderRegions\ColumnHeadersRegion.cs" />
+    <Compile Include="Rendering\RenderRegions\AlphaXSheetViewRegion.cs" />
+    <Compile Include="Rendering\RenderEngine.cs" />
+    <Compile Include="Rendering\RenderEngineCache.cs" />
+    <Compile Include="Rendering\Renderers\Renderer.cs" />
+    <Compile Include="Rendering\RenderInfo.cs" />
+    <Compile Include="Rendering\AlphaXSheetViewPane.cs" />
+    <Compile Include="Rendering\RenderRegions\RowHeadersRegion.cs" />
+    <Compile Include="Rendering\Renderers\RowHeadersRenderer.cs" />
+    <Compile Include="Rendering\RenderRegions\TopLeftRegion.cs" />
+    <Compile Include="SpreadHitTestResult.cs" />
+    <Compile Include="SheetViewCollection.cs" />
+    <Compile Include="Styling\StyleKeys.cs" />
+    <Compile Include="UI\Editors\AlphaXEditorBase.cs" />
+    <Compile Include="UI\Editors\AlphaXNumericEditor.cs" />
+    <Compile Include="UI\Editors\AlphaXTextBox.cs" />
+    <Compile Include="UI\Editors\IEditorInfo.cs" />
+    <Compile Include="Components\SuggestionListBox.cs" />
+    <Compile Include="UI\Interaction\CellsInteractionLayer.cs" />
+    <Compile Include="UI\Interaction\ColumnHeadersInteractionLayer.cs" />
+    <Compile Include="UI\Interaction\InteractionLayer.cs" />
+    <Compile Include="UI\Interaction\RowHeadersInteractionLayer.cs" />
+    <Compile Include="UI\Interaction\Selection.cs" />
+    <Compile Include="UI\Interaction\TopLeftInteractionLayer.cs" />
+    <Compile Include="UI\IViewPort.cs" />
+    <Compile Include="UI\Managers\ColumnResizeManager.cs" />
+    <Compile Include="UI\Managers\EditingManager.cs" />
+    <Compile Include="UI\Managers\IEditingManager.cs" />
+    <Compile Include="UI\Managers\ISelectionManager.cs" />
+    <Compile Include="UI\Managers\ResizeManagerBase.cs" />
+    <Compile Include="UI\Managers\RowResizeManager.cs" />
+    <Compile Include="UI\Managers\SelectionManager.cs" />
+    <Compile Include="UI\Managers\UIManager.cs" />
+    <Compile Include="UI\Managers\UIUpdateProvider.cs" />
+    <Compile Include="UI\ViewPort.cs" />
+    <Compile Include="Styling\Style.cs" />
+    <Compile Include="UndoRedo\Actions\CellChangedAction.cs" />
+    <Compile Include="UndoRedo\Actions\ClipboardPasteAction.cs" />
+    <Compile Include="UndoRedo\State.cs" />
+    <Compile Include="UndoRedo\Actions\SheetAction.cs" />
+    <Compile Include="UndoRedo\UndoRedoManager.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Components\FilterTool.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\AlphaXFormulaTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScrollBarStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\SheetTabControlStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\SuggestionListBoxStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ColumnHeaderCursor.cur" />
+    <EmbeddedResource Include="Resources\SheetCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DragFillCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\RowHeaderCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ColumnResizeCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\RowResizeCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AlphaX.CalcEngine\AlphaX.CalcEngine.csproj">
+      <Project>{b0e26b8d-99b1-438f-8cc3-1c23d955160f}</Project>
+      <Name>AlphaX.CalcEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AlphaX.Sheets\AlphaX.Sheets.csproj">
+      <Project>{0a2c6919-f757-4e56-8290-eb763ea56726}</Project>
+      <Name>AlphaX.Sheets</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

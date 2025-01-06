@@ -1,0 +1,31 @@
+﻿<Window x:Class="AlphaXSpreadSamplesExplorer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer" xmlns:sheets="http://schemas.gcspreadsheet.com/2022/wpf"
+        mc:Ignorable="d" WindowState="Maximized"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <local:SamplesSideBar x:Name="_samplesSideBar" Margin="5, 5, 0, 5"
+                              Grid.Column="0"
+                              SampleSelected="OnSampleSelected"/>
+
+        <GridSplitter Grid.Column="0" Width="3"
+                      Margin="0, 5, 0, 5"
+                      Background="DarkGray"
+                      HorizontalAlignment="Right"
+                      ShowsPreview="True" 
+                      ResizeDirection="Columns"></GridSplitter>
+        
+        <Border x:Name="_samplesViewerBdr" Grid.Column="1" BorderThickness="0.5" 
+                BorderBrush="Black" Margin="2, 5, 5, 5" Padding="5">
+            
+        </Border>
+    </Grid>
+</Window>
