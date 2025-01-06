@@ -2,6 +2,8 @@
 
 AlphaX.Sheets is a modular, Excel-like component built for WPF, designed to be reusable, flexible, and extendable. The project consists of distinct libraries, ensuring separation of concerns and ease of maintenance. It is currently a Minimum Viable Product (MVP) with essential features like sorting, data binding, styling, and support for multiple cell types.
 
+![image](https://github.com/user-attachments/assets/76a49dc7-6f2c-4293-93d0-546d8f1610a4)
+
 This project started as a personal exploration to learn how to build reusable components and has grown into a robust framework. It is now open source, inviting contributors to improve and expand it over time.
 
 ## Project Structure
