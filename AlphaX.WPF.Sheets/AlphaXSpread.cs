@@ -368,7 +368,7 @@ namespace AlphaX.WPF.Sheets
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
-            base.OnMouseWheel(e);
+            base.OnPreviewMouseWheel(e);
 
             var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
 

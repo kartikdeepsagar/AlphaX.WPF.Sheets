@@ -320,9 +320,9 @@ namespace AlphaX.Sheets
             }
         }
 
-        public async void Sort(bool ascending)
+        public void Sort(bool ascending)
         {
-            await Task.Factory.StartNew(() =>
+            var task = Task.Factory.StartNew(() =>
             {
                 for (int col = Column; col < Column + ColumnCount; col++)
                 {
@@ -349,6 +349,8 @@ namespace AlphaX.Sheets
                     }
                 }
             });
+
+            task.Wait();
 
             if (Parent is WorkSheet workSheet)
             {
