@@ -1,5 +1,6 @@
-﻿using GrapeCity.CalcEngine;
-using GrapeCity.Sheets.Model;
+using AlphaX.CalcEngine;
+using AlphaX.Sheets;
+using AlphaX.Sheets.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace GrapeCity.WPF.Sheets.Data
+namespace AlphaX.WPF.Sheets.Data
 {
     internal class WorkSheetDataStore : IDisposable
     {
@@ -70,7 +71,7 @@ namespace GrapeCity.WPF.Sheets.Data
             }
             else if (dataSource is DataTable tableSource)
             {
-                _collection = new ListCollectionView(tableSource.AsDataView());
+                _collection = new ListCollectionView(tableSource.DefaultView);
             }
             else if (dataSource is IEnumerable enumerableSource)
             {

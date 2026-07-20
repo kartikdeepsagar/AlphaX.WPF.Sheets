@@ -1,305 +1,305 @@
-﻿using AlphaX.CalcEngine.Formulas;
+using AlphaX.CalcEngine.Evaluator;
 using AlphaX.CalcEngine.Parsers;
+using AlphaX.CalcEngine.Parsers.TokenParsers;
+using AlphaX.CalcEngine.Utils;
+using AlphaX.FormulaEngine;
+using AlphaX.Parserz;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AlphaX.CalcEngine
 {
+    /// <summary>
+    /// Delegate for handling the event when a cell is recalculated.
+    /// </summary>
+    /// <param name="row">The row index of the recalculated cell.</param>
+    /// <param name="column">The column index of the recalculated cell.</param>
     public delegate void CellRecalculatedEventHandler(int row, int column);
+    
+    /// <summary>
+    /// The primary implementation of <see cref="ICalcEngine"/>, responsible for parsing, 
+    /// evaluating formulas, and managing spreadsheet state.
+    /// </summary>
     public class AlphaXCalcEngine : ICalcEngine
     {
-        private CalcParser _parser;
-        private CalcEvaluator _evaluator;
-        private IDataProvider _provider;
+        private readonly AlphaXFormulaEngine _formulaEngine;
+        private readonly CalcEngineContext _engineContext;
+        private readonly IDataProvider _provider;
+        private readonly IDependencyManager _dependencyManager;
+
+        /// <inheritdoc />
         public event CellRecalculatedEventHandler CellRecalculated;
 
-        public AlphaXCalcEngine(IDataProvider dataProvider)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlphaXCalcEngine"/> class.
+        /// </summary>
+        /// <param name="dataProvider">The data provider for accessing cell values and metadata.</param>
+        public AlphaXCalcEngine(IDataProvider dataProvider) 
+            : this(dataProvider, new DependencyManager(dataProvider))
         {
-            _parser = new CalcParser();
-            _evaluator = new CalcEvaluator(dataProvider);
-            _provider = dataProvider;
-            _provider.ValueChanged += _CellValueChanged;
         }
 
-        private void _CellValueChanged(ValueChangedEventArgs args)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlphaXCalcEngine"/> class with a custom dependency manager.
+        /// </summary>
+        /// <param name="dataProvider">The data provider for accessing cell values and metadata.</param>
+        /// <param name="dependencyManager">The dependency manager to use.</param>
+        internal AlphaXCalcEngine(IDataProvider dataProvider, IDependencyManager dependencyManager)
         {
-            _UpdateDependents(args.SheetName, args.Row, args.Column);
+            _provider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
+            _dependencyManager = dependencyManager ?? throw new ArgumentNullException(nameof(dependencyManager));
+            _engineContext = new CalcEngineContext(dataProvider);
+            _formulaEngine = new AlphaXFormulaEngine(_engineContext);
+
+            var settings = new EngineSettings
+            {
+                CustomTokenParsers = new List<IParser>
+                {
+                    new CellRangeTokenParser(),
+                    new CellRefTokenParser()
+                }
+            };
+            
+            _formulaEngine.ApplySettings(settings);
+            _provider.ValueChanged += OnCellValueChanged;
         }
 
-        // eval single formula string
-        public CalcValue EvaluateExpression(string str, string sheetName = "")
+        private void OnCellValueChanged(ValueChangedEventArgs args)
         {
-            var ast = _parser.Run(str);
-            return _evaluator.EvaluateExpressionTree(ast, sheetName);
+            UpdateDependents(args.SheetName, args.Row, args.Column);
         }
 
-        // get list of all registered formulas
-        public IEnumerable<Formula> GetRegisteredFormulas()
+        #region ICalcEngine Implementation
+
+        /// <inheritdoc />
+        public CalcValue EvaluateExpression(string expression, string sheetName = "")
         {
-            return _evaluator.GetRegisteredFormulas();
+            if (expression == null) throw new ArgumentNullException(nameof(expression));
+
+            _engineContext.SetCurrentSheet(sheetName);
+            var result = _formulaEngine.Evaluate(GetPureFormula(expression));
+            return FormulaEngineConverter.ConvertToCalcValue(result.Value);
         }
 
-        // register a custom formula
-        public void RegisterCustomFormula(Formula formula)
+        /// <inheritdoc />
+        public IEnumerable<FormulaInfo> GetRegisteredFormulas()
         {
-            _evaluator.RegisterFormula(formula);
+            return _formulaEngine.FormulaStore.GetAll();
         }
 
-        // get computed value of a formula
+        /// <inheritdoc />
+        public void RegisterCustomFormula(FormulaBase formula)
+        {
+            if (formula == null) throw new ArgumentNullException(nameof(formula));
+
+            _formulaEngine.FormulaStore.Add(formula);
+        }
+
+        /// <inheritdoc />
         public object GetValue(string sheetName, int row, int column)
         {
-            var metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
-            if(metaInfo == null || string.IsNullOrEmpty(metaInfo.Formula))
+            if (!(_provider.GetMetaData(sheetName, row, column) is CalcCellMetaInfo metaInfo) || string.IsNullOrEmpty(metaInfo.Formula))
             {
                 return null;
             }
 
-            // value not calculated yet, calculate value
-            if(metaInfo.CalculatedValue == null)
+            // Value not calculated yet, calculate value
+            if (metaInfo.CalculatedValue == null)
             {
-                metaInfo.CalculatedValue = _evaluator.EvaluateExpressionTree(metaInfo.CalcChain, sheetName);
+                _engineContext.SetCurrentSheet(sheetName);
+                var result = _formulaEngine.Evaluate(GetPureFormula(metaInfo.Formula));
+                metaInfo.CalculatedValue = FormulaEngineConverter.ConvertToCalcValue(result.Value);
             }
 
             return metaInfo.CalculatedValue;
         }
         
-        // get formula set in cell
+        /// <inheritdoc />
         public string GetFormula(string sheetName, int row, int column)
         {
-            var metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
-            return metaInfo?.Formula;
+            if (_provider.GetMetaData(sheetName, row, column) is CalcCellMetaInfo metaInfo)
+            {
+                return metaInfo.Formula;
+            }
+            return null;
         }
 
-        // set formula in sheet
+        /// <inheritdoc />
         public void SetFormula(string sheetName, int row, int column, string formula)
         {
             var curFormula = GetFormula(sheetName, row, column);
-            // same as existing formula, no need to update
-            if(curFormula == formula)
+            
+            // Same as existing formula, no need to update
+            if (curFormula == formula)
             {
                 return;
             }
-            _SetFormula(sheetName, row, column, formula);
+            
+            SetFormulaImpl(sheetName, row, column, formula);
         }
 
-        // recalculate value of a cell
+        /// <summary>
+        /// Recalculates the value of a specific cell and its dependents.
+        /// </summary>
+        /// <param name="sheetName">The name of the sheet.</param>
+        /// <param name="row">The row index of the cell.</param>
+        /// <param name="column">The column index of the cell.</param>
         public void RecalculateCell(string sheetName, int row, int column)
         {
-            _RecalculateCell(sheetName, row, column);
+            RecalculateCellImpl(sheetName, row, column);
         }
 
-        // Get ranges
+        /// <inheritdoc />
         public List<object> GetRangesInFormulaString(string formula)
         {
-            var ranges = new List<object>();
+            if (formula == null) throw new ArgumentNullException(nameof(formula));
 
-            var parseResult = ParserProvider.RangeFinderParser.Run(formula);
-            var foundRanges = (parseResult.Result as ArrayResult).Value;
+            var variables = _formulaEngine.ExtractVariables(GetPureFormula(formula));
+            var ranges = new List<object>();
             
-            for(var i = 0; i < foundRanges.Length; i++)
+            foreach (var v in variables)
             {
-                ranges.Add((foundRanges[i] as CalcParserResult).ComputedValue);
+                if (v.Contains(":"))
+                {
+                    ranges.Add(new CellRangeRef(v));
+                }
+                else
+                {
+                    ranges.Add(new CellRef(v));
+                }
             }
 
             return ranges;
         }
 
-        #region private
+        #endregion
 
-        // set formula in sheet
-        private void _SetFormula(string sheetName, int row, int column, string formula)
+        #region Private Helper Methods
+
+        private void SetFormulaImpl(string sheetName, int row, int column, string formula)
         {
-
             if (string.IsNullOrEmpty(formula))
             {
-                _ClearFormula(sheetName, row, column);
+                ClearFormula(sheetName, row, column);
                 return;
             }
 
-            var dependents = _GetDependentsSet(sheetName, row, column);
-
-            var metaInfo = new CalcCellMetaInfo()
+            // Ensure meta info exists and get any existing dependents
+            CalcCellMetaInfo metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
+            if (metaInfo == null)
             {
-                Formula = formula,
-                Dependents = dependents
-            };
-            CalcParserResult ast;
+                metaInfo = new CalcCellMetaInfo { Dependents = new HashSet<CellRef>() };
+            }
+
+            metaInfo.Formula = formula;
+
+            List<string> extractedVars;
             try
             {
-                ast = _parser.Run(formula);
-                metaInfo.CalcChain = ast;
+                extractedVars = _formulaEngine.ExtractVariables(GetPureFormula(formula)).ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new CalcEngineException("Invalid formula");
             }
-            
 
             var dependencies = new List<object>();
-            _evaluator.FillDependencies(ast, dependencies);
+            foreach (var v in extractedVars)
+            {
+                if (v.Contains(":"))
+                {
+                    dependencies.Add(new CellRangeRef(v));
+                }
+                else
+                {
+                    dependencies.Add(new CellRef(v));
+                }
+            }
             metaInfo.Dependencies = dependencies;
 
             var curCell = new CellRef(row, column, sheetName);
 
-            if(dependencies.Count > 0)
+            if (dependencies.Count > 0)
             {
-                foreach(var dependency in dependencies)
+                foreach (var dependency in dependencies)
                 {
-                    if(dependency is CellRef)
+                    if (dependency is CellRef cellRef)
                     {
-                        _SetCellDependency(curCell, dependency as CellRef);
-                    }else
+                        _dependencyManager.SetCellDependency(curCell, cellRef);
+                    }
+                    else if (dependency is CellRangeRef rangeRef)
                     {
-                        _SetRangeDependency(curCell, dependency as CellRangeRef);
+                        _dependencyManager.SetRangeDependency(curCell, rangeRef);
                     }
                 }
             }
 
             _provider.SetMetaData(sheetName, row, column, metaInfo);
-            _RecalculateCell(sheetName, row, column);
+            RecalculateCellImpl(sheetName, row, column);
         }
 
-        // remove formula from a cell(if present)
-        private void _ClearFormula(string sheetName, int row, int column)
+        private void ClearFormula(string sheetName, int row, int column)
         {
-            var metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
-            if(metaInfo != null)
+            if (_provider.GetMetaData(sheetName, row, column) is CalcCellMetaInfo metaInfo)
             {
                 metaInfo.Formula = null;
-                metaInfo.Dependencies.Clear();
-                metaInfo.CalcChain = null;
+                metaInfo.Dependencies?.Clear();
                 metaInfo.CalculatedValue = null;
             }
 
-            _UpdateDependents(sheetName, row, column);
+            UpdateDependents(sheetName, row, column);
         }
 
-        // add a cell as dependent on other cell
-        private void _SetCellDependency(CellRef dependentCell, CellRef targetCell)
+        private void RecalculateCellImpl(string sheetName, int row, int column)
         {
-            if (string.IsNullOrEmpty(targetCell.SheetName))
-            {
-                targetCell = new CellRef(targetCell.Row, targetCell.Column, dependentCell.SheetName);
-            }
-
-            var dependentSet = _GetDependentsSet(targetCell.SheetName, targetCell.Row, targetCell.Column, true);
-
-            dependentSet.Add(dependentCell);
-
+            UpdateCellValue(sheetName, row, column);
+            UpdateDependents(sheetName, row, column);
         }
 
-        // add a cell as dependent on a cell range
-        private void _SetRangeDependency(CellRef dependentCell, CellRangeRef targetRange)
+        private void UpdateDependents(string sheetName, int row, int column)
         {
-            for(int r = targetRange.TopRow; r <= targetRange.BottomRow; r++)
+            // Update dependent cells, first clear value, then recalc
+            var dependents = _dependencyManager.GetDependentCells(sheetName, row, column);
+            
+            foreach (var dependent in dependents)
             {
-                for(int c = targetRange.LeftColumn; c <= targetRange.RightColumn; c++)
-                {
-                    _SetCellDependency(dependentCell, new CellRef(r, c, targetRange.SheetName));
-                }
-            }
-        }
-
-        // get dependents set of a cell, optionally create empty dependents set not present
-        private HashSet<CellRef> _GetDependentsSet(string sheetName, int row, int column, bool createEmptySetIfNull = false)
-        {
-            var metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
-
-            if(metaInfo == null && createEmptySetIfNull)
-            {
-                metaInfo = new CalcCellMetaInfo()
-                {
-                    Dependents = new HashSet<CellRef>()
-                };
-                _provider.SetMetaData(sheetName, row, column, metaInfo);
-
-                return ((HashSet<CellRef>)metaInfo.Dependents);
-            }else if(metaInfo != null && metaInfo.Dependents == null && createEmptySetIfNull)
-            {
-                metaInfo.Dependents = new HashSet<CellRef>();
-                return ((HashSet<CellRef>)metaInfo.Dependents);
-            }
-            else if(metaInfo != null)
-            {
-                return metaInfo.Dependents as HashSet<CellRef>;
-            }
-
-            return null;
-        }
-
-        // get list of all the cells dependent on a cell traversing the complete calc chain
-        private IList<CellRef> _GetDependentCells(string sheetName, int row, int column)
-        {
-            var dependents = new List<CellRef>();
-            var dependentsSetQueue = new Queue<HashSet<CellRef>>();
-            var dependentSet = _GetDependentsSet(sheetName, row, column);
-            if(dependentSet != null)
-            {
-                dependentsSetQueue.Enqueue(dependentSet);
-            }
-
-            while(dependentsSetQueue.Count > 0)
-            {
-                var en = dependentsSetQueue.Dequeue().GetEnumerator();
-                while(en.MoveNext())
-                {
-                    dependents.Add(en.Current);
-                    dependentSet = _GetDependentsSet(en.Current.SheetName, en.Current.Row, en.Current.Column);
-                    if (dependentSet != null)
-                    {
-                        dependentsSetQueue.Enqueue(dependentSet);
-                    }
-                }
-            }
-
-            return dependents;
-        }
-
-        // recalculate value of a cell
-        private void _RecalculateCell(string sheetName, int row, int column)
-        {
-            _updateCellValue(sheetName, row, column);
-
-            // update dependent cells
-            _UpdateDependents(sheetName, row, column);
-        }
-
-        // private update dependents
-        private void _UpdateDependents(string sheetName, int row, int column)
-        {
-            // update dependent cells, first clear value, then recalc
-            var dependents = _GetDependentCells(sheetName, row, column);
-            for (var i = 0; i < dependents.Count; i++)
-            {
-                var metaInfo = _provider.GetMetaData(dependents[i].SheetName, dependents[i].Row, dependents[i].Column) as CalcCellMetaInfo;
-                if (metaInfo != null)
+                if (_provider.GetMetaData(dependent.SheetName, dependent.Row, dependent.Column) is CalcCellMetaInfo metaInfo)
                 {
                     metaInfo.CalculatedValue = null;
                 }
             }
 
-            // disable calc on demand
+            // Calculate values
             foreach (var dependent in dependents)
             {
-
-                _updateCellValue(dependent.SheetName, dependent.Row, dependent.Column);
+                UpdateCellValue(dependent.SheetName, dependent.Row, dependent.Column);
             }
 
             CellRecalculated?.Invoke(row, column);
         }
 
-        // private void update cell value
-        private void _updateCellValue(string sheetName, int row, int column)
+        private void UpdateCellValue(string sheetName, int row, int column)
         {
-            var metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
-            if (metaInfo == null || string.IsNullOrEmpty(metaInfo.Formula))
+            if (!(_provider.GetMetaData(sheetName, row, column) is CalcCellMetaInfo metaInfo) || string.IsNullOrEmpty(metaInfo.Formula))
             {
                 return;
             }
 
-            // has formula, update value
-            var val = _evaluator.EvaluateExpressionTree(metaInfo.CalcChain, sheetName);
-            metaInfo.CalculatedValue = val == null ? new CalcValue() { Kind = CalcValueKind.Number, Value = 0 } : val;
+            // Has formula, update value
+            _engineContext.SetCurrentSheet(sheetName);
+            var result = _formulaEngine.Evaluate(GetPureFormula(metaInfo.Formula));
+            var val = FormulaEngineConverter.ConvertToCalcValue(result.Value);
+            
+            metaInfo.CalculatedValue = val ?? new CalcValue { Kind = CalcValueKind.Number, Value = 0 };
+        }
+
+        private string GetPureFormula(string formula)
+        {
+            if (string.IsNullOrEmpty(formula))
+                return formula;
+                
+            return formula.StartsWith("=") ? formula.Substring(1) : formula;
         }
 
         #endregion
