@@ -79,7 +79,7 @@ namespace AlphaX.CalcEngine
 
             _engineContext.SetCurrentSheet(sheetName);
             var result = _formulaEngine.Evaluate(GetPureFormula(expression));
-            return FormulaEngineConverter.ConvertToCalcValue(result.Value);
+            return FormulaEngineConverter.ConvertToCalcValue(result);
         }
 
         /// <inheritdoc />
@@ -109,7 +109,7 @@ namespace AlphaX.CalcEngine
             {
                 _engineContext.SetCurrentSheet(sheetName);
                 var result = _formulaEngine.Evaluate(GetPureFormula(metaInfo.Formula));
-                metaInfo.CalculatedValue = FormulaEngineConverter.ConvertToCalcValue(result.Value);
+                metaInfo.CalculatedValue = FormulaEngineConverter.ConvertToCalcValue(result);
             }
 
             return metaInfo.CalculatedValue;
@@ -289,9 +289,8 @@ namespace AlphaX.CalcEngine
             // Has formula, update value
             _engineContext.SetCurrentSheet(sheetName);
             var result = _formulaEngine.Evaluate(GetPureFormula(metaInfo.Formula));
-            var val = FormulaEngineConverter.ConvertToCalcValue(result.Value);
-            
-            metaInfo.CalculatedValue = val ?? new CalcValue { Kind = CalcValueKind.Number, Value = 0 };
+            var val = FormulaEngineConverter.ConvertToCalcValue(result);
+            metaInfo.CalculatedValue = val;
         }
 
         private string GetPureFormula(string formula)

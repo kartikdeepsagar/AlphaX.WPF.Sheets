@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace AlphaX.CalcEngine.Evaluator
 {
+    /// <summary>
+    /// Represents the context for evaluating formulas in AlphaX Sheets, providing access to cell and range values through an IDataProvider.
+    /// </summary>
     public class CalcEngineContext : IEngineContext
     {
         private readonly IDataProvider _dataProvider;

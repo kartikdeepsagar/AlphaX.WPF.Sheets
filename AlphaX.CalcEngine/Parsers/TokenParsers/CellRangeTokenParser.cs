@@ -3,10 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace AlphaX.CalcEngine.Parsers.TokenParsers
 {
-    public class CellRangeTokenParser : RegexParser<StringResult>
+    internal class CellRangeTokenParser : RegexParser<StringResult>
     {
+        private static readonly Regex RangeRegex = new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+:[a-zA-Z]+[0-9]+", RegexOptions.Compiled);
+
         public CellRangeTokenParser() 
-            : base(new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+:[a-zA-Z]+[0-9]+", RegexOptions.Compiled), true) 
+            : base(RangeRegex, true) 
         { 
         }
 

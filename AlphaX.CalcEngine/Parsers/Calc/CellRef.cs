@@ -1,42 +1,52 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System;
+using System.Text;
 
 namespace AlphaX.CalcEngine.Parsers
 {
-    internal class CellRef
+    internal class CellRef : IEquatable<CellRef>
     {
-        private string _rangeName;
-        public string Name { get
-            {
-                if (string.IsNullOrEmpty(SheetName))
-                {
-                    return _rangeName;
-                }else
-                {
-                    return SheetName + "!" + _rangeName;
-                }
-                 
-            } }
+        private readonly string _rangeName;
+
+        public string Name => string.IsNullOrEmpty(SheetName) ? _rangeName : SheetName + "!" + _rangeName;
+
         public int Column { get; }
         public int Row { get; }
-        public string  SheetName { get; }
+        public string SheetName { get; }
 
         public CellRef(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
 
-            string cellRef = name, sheetName = "";
-            if (name.Contains("!"))
+            string cellRef = name;
+            string sheetName = string.Empty;
+
+            int exclamationIdx = name.LastIndexOf('!');
+            if (exclamationIdx >= 0)
             {
-                var temp = name.Split('!');
-                cellRef = temp[1];
-                sheetName = temp[0];
+                sheetName = name.Substring(0, exclamationIdx);
+                cellRef = name.Substring(exclamationIdx + 1);
             }
 
-            var res = Regex.Split(cellRef, @"(\d+)").Where(r => r.Length > 0);
-            _rangeName = cellRef;
-            Column = GetColumnNumberFromLetter(res.ElementAt(0)) - 1;
-            Row = int.Parse(res.ElementAt(1)) - 1;
+            int digitIdx = -1;
+            for (int i = 0; i < cellRef.Length; i++)
+            {
+                if (char.IsDigit(cellRef[i]))
+                {
+                    digitIdx = i;
+                    break;
+                }
+            }
+
+            if (digitIdx <= 0 || !int.TryParse(cellRef.Substring(digitIdx), out int rowNumber))
+            {
+                throw new ArgumentException($"Invalid cell reference format: '{name}'", nameof(name));
+            }
+
+            string colLetter = cellRef.Substring(0, digitIdx);
+            _rangeName = colLetter.ToUpperInvariant() + rowNumber.ToString();
+            Column = GetColumnNumberFromLetter(colLetter) - 1;
+            Row = rowNumber - 1;
             SheetName = sheetName;
         }
 
@@ -45,75 +55,68 @@ namespace AlphaX.CalcEngine.Parsers
             Row = row;
             Column = col;
             _rangeName = GetColumnLetterFromNumber(col + 1) + (row + 1).ToString();
-            SheetName = sheetName;
+            SheetName = sheetName ?? string.Empty;
         }
 
-        private int GetColumnNumberFromLetter(string letter)
+        public static int GetColumnNumberFromLetter(string letter)
         {
-            letter = letter.ToUpperInvariant();
-            if (letter.Length == 1)
+            if (string.IsNullOrEmpty(letter))
+                return 0;
+
+            int col = 0;
+            foreach (char c in letter)
             {
-                return (int)letter[0] - 64;
+                if (c >= 'A' && c <= 'Z')
+                    col = col * 26 + (c - 'A' + 1);
+                else if (c >= 'a' && c <= 'z')
+                    col = col * 26 + (c - 'a' + 1);
             }
-            else
-            {
-                return 26 * GetColumnNumberFromLetter(letter.Substring(0, 1)) + GetColumnNumberFromLetter(letter.Substring(1));
-            }
+            return col;
         }
 
-        private string GetColumnLetterFromNumber(int num)
+        public static string GetColumnLetterFromNumber(int num)
         {
-            if (num < 27)
+            if (num <= 0)
+                return string.Empty;
+
+            var result = new StringBuilder();
+            while (num > 0)
             {
-                return ((char)(num+64)).ToString();
+                int remainder = (num - 1) % 26;
+                result.Insert(0, (char)('A' + remainder));
+                num = (num - 1) / 26;
             }
-            else
-            {
-                return GetColumnLetterFromNumber(num / 26) + GetColumnLetterFromNumber(num % 26);
-            }
+            return result.ToString();
         }
 
-        #region equals comparion
+        #region Equals Comparison
 
-        public override bool Equals(object obj) => this.Equals(obj as CellRef);
+        public override bool Equals(object obj) => Equals(obj as CellRef);
 
-        public bool Equals(CellRef cRef)
+        public bool Equals(CellRef other)
         {
-            if (cRef is null)
-            {
-                return false;
-            }
-
-            // Optimization for a common success case.
-            if (Object.ReferenceEquals(this, cRef))
-            {
-                return true;
-            }
-
-            // If run-time types are not exactly the same, return false.
-            if (this.GetType() != cRef.GetType())
-            {
-                return false;
-            }
-
-            return Name == cRef.Name;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Row == other.Row &&
+                   Column == other.Column &&
+                   string.Equals(SheetName, other.SheetName, StringComparison.OrdinalIgnoreCase);
         }
 
-        public override int GetHashCode() => (Name).GetHashCode();
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + Row;
+                hash = hash * 31 + Column;
+                hash = hash * 31 + (SheetName != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(SheetName) : 0);
+                return hash;
+            }
+        }
 
         public static bool operator ==(CellRef lhs, CellRef rhs)
         {
-            if (lhs is null)
-            {
-                if (rhs is null)
-                {
-                    return true;
-                }
-
-                // Only the left side is null.
-                return false;
-            }
-            // Equals handles case of null on right side.
+            if (lhs is null) return rhs is null;
             return lhs.Equals(rhs);
         }
 
