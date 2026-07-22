@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.Components;
 using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Managers;
@@ -407,6 +407,7 @@ namespace AlphaX.WPF.Sheets
         {
             base.OnDpiChanged(oldDpi, newDpi);
             PixelPerDip = newDpi.PixelsPerDip;
+            SheetViews?.ActiveSheetView?.Invalidate(true);
         }
 
         public override void OnApplyTemplate()

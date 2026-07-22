@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
 using System.Windows.Media;
@@ -23,8 +23,8 @@ namespace AlphaX.WPF.Sheets.Rendering
             base.AttachSheet(sheetView);
             _workSheet = sheetView.WorkSheet;
             _drawing.Children.Clear();
-            _drawing.Children.Add(sheetView.Spread.RenderEngine.GridLinesRenderer.Drawing);
             _drawing.Children.Add(sheetView.Spread.RenderEngine.CellsRenderer.Drawing);
+            _drawing.Children.Add(sheetView.Spread.RenderEngine.GridLinesRenderer.Drawing);
 
             _viewPort = sheetView.ViewPort.As<ViewPort>();
         }

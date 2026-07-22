@@ -38,7 +38,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             Drawing.ClipGeometry = Engine.RenderInfo.ViewPortGeometry;
             if (_context != null)
                 _context.Close();
-            _context = Engine.RenderInfo.PartialRender ? Drawing.Append() : Drawing.Open();
+            _context = Drawing.Open();
             OnRender(_context, topRow, leftColumn, bottomRow, rightColumn);
         }
 
