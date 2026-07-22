@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace AlphaX.CalcEngine.Parsers
 {
-    internal class CellRangeRef
+    internal class CellRangeRef : IEquatable<CellRangeRef>
     {
         public CellRef Start { get; }
         public CellRef End { get; }
@@ -19,23 +19,36 @@ namespace AlphaX.CalcEngine.Parsers
 
         public CellRangeRef(string cellRangeRef)
         {
+            if (string.IsNullOrEmpty(cellRangeRef))
+                throw new ArgumentNullException(nameof(cellRangeRef));
+
             var res = cellRangeRef.Split(':');
+            if (res.Length != 2)
+                throw new ArgumentException($"Invalid cell range reference format: '{cellRangeRef}'", nameof(cellRangeRef));
+
             Start = new CellRef(res[0]);
-            End = new CellRef(res[1]);
+            if (!string.IsNullOrEmpty(Start.SheetName) && !res[1].Contains("!"))
+            {
+                End = new CellRef(Start.SheetName + "!" + res[1]);
+            }
+            else
+            {
+                End = new CellRef(res[1]);
+            }
             FillRowColInfo();
         }
 
-        public CellRangeRef(int startRow, int startColumn, int endRow, int endColumn)
+        public CellRangeRef(int startRow, int startColumn, int endRow, int endColumn, string sheetName = "")
         {
-            Start = new CellRef(startRow, startColumn);
-            End = new CellRef(endRow, endColumn);
+            Start = new CellRef(startRow, startColumn, sheetName);
+            End = new CellRef(endRow, endColumn, sheetName);
             FillRowColInfo();
         }
 
         public CellRangeRef(CellRef start, CellRef end)
         {
-            Start = start;
-            End = end;
+            Start = start ?? throw new ArgumentNullException(nameof(start));
+            End = end ?? throw new ArgumentNullException(nameof(end));
             FillRowColInfo();
         }
 
@@ -45,8 +58,40 @@ namespace AlphaX.CalcEngine.Parsers
             BottomRow = Math.Max(Start.Row, End.Row);
             LeftColumn = Math.Min(Start.Column, End.Column);
             RightColumn = Math.Max(Start.Column, End.Column);
-            RowCount = Math.Abs(Start.Row - End.Row) + 1;
-            ColumnCount = Math.Abs(Start.Column - End.Column) + 1;
+            RowCount = BottomRow - TopRow + 1;
+            ColumnCount = RightColumn - LeftColumn + 1;
         }
+
+        #region Equals Comparison
+
+        public override bool Equals(object obj) => Equals(obj as CellRangeRef);
+
+        public bool Equals(CellRangeRef other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(Start, other.Start) && Equals(End, other.End);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + (Start != null ? Start.GetHashCode() : 0);
+                hash = hash * 31 + (End != null ? End.GetHashCode() : 0);
+                return hash;
+            }
+        }
+
+        public static bool operator ==(CellRangeRef lhs, CellRangeRef rhs)
+        {
+            if (lhs is null) return rhs is null;
+            return lhs.Equals(rhs);
+        }
+
+        public static bool operator !=(CellRangeRef lhs, CellRangeRef rhs) => !(lhs == rhs);
+
+        #endregion
     }
 }

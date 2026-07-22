@@ -1,5 +1,6 @@
 ﻿using AlphaX.Sheets;
 using System;
+using System.Windows.Threading;
 
 namespace AlphaX.WPF.Sheets.UI.Managers
 {
@@ -32,10 +33,10 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
         void IUpdateProvider.CellChanged(WorkSheet worksheet, int row, int column, object oldValue, object newValue, AlphaX.Sheets.SheetAction action, ChangeType changeType)
         {
-            if (!_spread.IsLoaded)
-                return;
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => {
 
-            _spread.Dispatcher.BeginInvoke(new Action(() => {
+                if (!_spread.IsLoaded)
+                    return;
 
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
 
@@ -64,11 +65,11 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
         void IUpdateProvider.ColumnsChanged(WorkSheet worksheet, int index, int count, AlphaX.Sheets.SheetAction action, ChangeType changeType)
         {
-            if (!_spread.IsLoaded)
-                return;
-
-            _spread.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
+                if (!_spread.IsLoaded)
+                    return;
+
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
                 sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
                 if (sheetView.ViewPort.ViewRange.ContainsColumn(index))
@@ -81,11 +82,11 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
         void IUpdateProvider.RangeChanged(WorkSheet worksheet, CellRange range, AlphaX.Sheets.SheetAction action, ChangeType changeType)
         {
-            if (!_spread.IsLoaded)
-                return;
-
-            _spread.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
+                if (!_spread.IsLoaded)
+                    return;
+
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
                 if (sheetView.ViewPort.ViewRange.Intersects(range))
                 {
@@ -96,11 +97,11 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
         void IUpdateProvider.RowsChanged(WorkSheet worksheet, int index, int count, AlphaX.Sheets.SheetAction action, ChangeType changeType)
         {
-            if (!_spread.IsLoaded)
-                return;
-
-            _spread.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
+                if (!_spread.IsLoaded)
+                    return;
+
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
                 sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
                 if (sheetView.ViewPort.ViewRange.ContainsRow(index))

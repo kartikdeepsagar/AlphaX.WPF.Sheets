@@ -1,4 +1,4 @@
-﻿using AlphaX.CalcEngine.Formulas;
+using AlphaX.FormulaEngine;
 using AlphaX.WPF.Sheets.Components;
 using System;
 using System.Linq;
@@ -154,12 +154,12 @@ namespace AlphaX.WPF.Sheets.UI.Editors
 
         private void OnFormulaSelected(object sender, SelectionChangedEventArgs e)
         {
-            var selectedFormula = _suggestionListBox.SelectedItem as Formula;
+            var selectedFormula = _suggestionListBox.SelectedItem as FormulaInfo;
             if (selectedFormula == null)
                 return;
             var listBoxItem = _suggestionListBox.ItemContainerGenerator.ContainerFromItem(selectedFormula) as ListBoxItem;
             _descriptionPopup.PlacementTarget = listBoxItem;
-            _descriptionTextBlock.Text = selectedFormula.GetDescription();
+            _descriptionTextBlock.Text = selectedFormula.Description;
             _descriptionPopup.IsOpen = true;
         }
 

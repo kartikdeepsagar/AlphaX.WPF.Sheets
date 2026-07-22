@@ -56,10 +56,10 @@ namespace AlphaX.Sheets
 
         public NamedStyle GetNamedStyle(string styleName)
         {
-            if (!_namedStyles.ContainsKey(styleName))
-                throw new ArgumentException($"Style with name '{styleName}' not found.");
+            if(_namedStyles.TryGetValue(styleName, out NamedStyle style))
+                return style;
 
-            return _namedStyles[styleName];
+            return null;
         }
 
         public void Dispose()

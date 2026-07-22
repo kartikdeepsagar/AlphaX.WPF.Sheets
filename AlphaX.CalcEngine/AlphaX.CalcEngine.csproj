@@ -3,7 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="AlphaX.FormulaEngine" Version="3.4.0" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
@@ -17,7 +17,11 @@ namespace AlphaX.WPF.Sheets.Rendering
             var viewport = SheetView.ViewPort.As<ViewPort>();
             
             AdjustHeaderWidth(workSheet, rows, columns, cells, topRow, leftColumn, bottomRow, rightColumn);
-            
+
+            double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
+            GuidelineSet guidelines = new GuidelineSet();
+            context.PushGuidelineSet(guidelines);
+
             for (int row = topRow; row <= bottomRow; row++)
             {
                 var rowHeight = rows.GetRowHeight(row);
@@ -27,12 +31,13 @@ namespace AlphaX.WPF.Sheets.Rendering
 
                 var sheetRow = rows.GetItem(row, false);
                 var rowLocation = rows.GetLocation(row);
+                var y = rowLocation - viewport.TopRowLocation;
+
+                guidelines.GuidelinesY.Add(y + halfPenWidth);
+                guidelines.GuidelinesY.Add(y + rowHeight + halfPenWidth);
 
                 for (int col = leftColumn; col <= rightColumn; col++)
                 {
-                    if (Engine.RenderInfo.PartialRender)
-                        Engine.EnsureNewCacheDrawing(this, row, col);
-
                     var columnWidth = columns.GetColumnWidth(col);
 
                     if (columnWidth == 0)
@@ -42,33 +47,28 @@ namespace AlphaX.WPF.Sheets.Rendering
                     var sheetColumn = columns.GetItem(col, false);
                     var colLocation = columns.GetLocation(col);
 
-                    var cellRect = new Rect(colLocation, rowLocation - viewport.TopRowLocation, columnWidth, rowHeight);
+                    if (row == topRow)
+                    {
+                        guidelines.GuidelinesX.Add(colLocation + halfPenWidth);
+                        guidelines.GuidelinesX.Add(colLocation + columnWidth + halfPenWidth);
+                    }
+
+                    var cellRect = new Rect(colLocation, y, columnWidth, rowHeight);
                     var style = workSheet.WorkBook.PickStyle(cell, sheetColumn, sheetRow);
 
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey);
 
                     style = style.Clone();
-                    var cellDrawing = Engine.CreateDrawingObject(this, row, col);
-                    double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
-                    GuidelineSet guidelines = new GuidelineSet();
-                    guidelines.GuidelinesX.Add(cellRect.Left + halfPenWidth);
-                    guidelines.GuidelinesX.Add(cellRect.Right + halfPenWidth);
-                    guidelines.GuidelinesY.Add(cellRect.Top + halfPenWidth);
-                    guidelines.GuidelinesY.Add(cellRect.Bottom + halfPenWidth);
 
-                    var ctx = cellDrawing.Open();
-                    ctx.PushClip(new RectangleGeometry(cellRect));
-                    ctx.PushGuidelineSet(guidelines);
-                    DrawRowHeaderCell(ctx, row, cell, style, cellRect, SheetView.Spread.PixelPerDip);
-                    ctx.Pop();
-                    ctx.Pop();
-                    ctx.Close();
-                    context.DrawDrawing(cellDrawing);
+                    DrawRowHeaderCell(context, row, cell, style, cellRect, SheetView.Spread.PixelPerDip);
+
                     style.Dispose();
                     style = null;
                 }
             }
+
+            context.Pop();
         }
 
         private void AdjustHeaderWidth(WorkSheet workSheet, Rows rows, Columns columns, Cells cells, int topRow, int leftColumn, int bottomRow, int rightColumn)

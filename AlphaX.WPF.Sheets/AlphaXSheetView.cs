@@ -129,7 +129,7 @@ namespace AlphaX.WPF.Sheets
         {
             var pane = Spread.SheetViewPane;
 
-            pane.Draw(cells, rowHeaders, columnHeaders, cells, cells, topLeft);
+            pane.Draw(rowHeaders, columnHeaders, cells, cells, topLeft);
 
             if (cells)
             {

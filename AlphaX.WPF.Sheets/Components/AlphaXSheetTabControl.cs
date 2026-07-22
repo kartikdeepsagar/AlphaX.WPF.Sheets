@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -40,7 +40,7 @@ namespace AlphaX.WPF.Sheets.Components
             _sheetViewPaneBorder = GetTemplateChild("_sheetViewPaneBorder").As<Border>();
             _sheetViewPaneBorder.Child = Spread.SheetViewPane;
             _sheetViewPaneBorder.BorderBrush = Spread.BorderBrush;
-            _sheetViewPaneBorder.BorderThickness = new Thickness(0, 0, 0.75, 0.75);
+            _sheetViewPaneBorder.BorderThickness = new Thickness(0);
             _hScrollBar = GetTemplateChild("_hScrollBar").As<ScrollBar>();
             _vScrollBar = GetTemplateChild("_vScrollBar").As<ScrollBar>();
             _sheetsListBox = GetTemplateChild("_sheetsListBox").As<ListBox>();
@@ -68,21 +68,106 @@ namespace AlphaX.WPF.Sheets.Components
         {
             Spread.WorkBook.WorkSheets.AddSheet($"Sheet{Spread.WorkBook.WorkSheets.Count + 1}");
             _sheetsListBox.SelectedIndex = _sheetsListBox.Items.Count - 1;
+            ScrollSelectedItemIntoView();
         }
 
         private void OnSheetSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_sheetsListBox.SelectedItem == null)
+                return;
+
             if (Spread.EditingManager.IsEditing)
                 Spread.EditingManager.EndEdit(true);
 
             var sheetView = _sheetsListBox.SelectedItem.As<AlphaXSheetView>();
             Spread.WorkBook.WorkSheets.ActiveSheet = sheetView.WorkSheet;
             DisplayActiveSheet();
+            ScrollSelectedItemIntoView();
+        }
+
+        private void ScrollSelectedItemIntoView()
+        {
+            if (_sheetsListBox == null || _sheetsListBox.SelectedItem == null)
+                return;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (_sheetsListBox.SelectedItem == null)
+                    return;
+
+                _sheetsListBox.UpdateLayout();
+                var scrollViewer = GetListBoxScrollViewer();
+                if (scrollViewer != null)
+                {
+                    var container = _sheetsListBox.ItemContainerGenerator.ContainerFromItem(_sheetsListBox.SelectedItem) as FrameworkElement;
+                    if (container != null)
+                    {
+                        try
+                        {
+                            var transform = container.TransformToAncestor(scrollViewer);
+                            var rect = transform.TransformBounds(new Rect(new Point(0, 0), container.RenderSize));
+
+                            if (rect.Right > scrollViewer.ViewportWidth)
+                            {
+                                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + (rect.Right - scrollViewer.ViewportWidth) + 20);
+                            }
+                            else if (rect.Left < 0)
+                            {
+                                scrollViewer.ScrollToHorizontalOffset(Math.Max(0, scrollViewer.HorizontalOffset + rect.Left - 20));
+                            }
+                        }
+                        catch
+                        {
+                            scrollViewer.ScrollToRightEnd();
+                        }
+                    }
+                    else
+                    {
+                        scrollViewer.ScrollToRightEnd();
+                    }
+                }
+                else
+                {
+                    _sheetsListBox.ScrollIntoView(_sheetsListBox.SelectedItem);
+                }
+            }), DispatcherPriority.Render);
+        }
+
+        private ScrollViewer GetListBoxScrollViewer()
+        {
+            if (_sheetsListBox == null)
+                return null;
+
+            return FindVisualChild<ScrollViewer>(_sheetsListBox);
+        }
+
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int childrenCount = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                    return childOfChild;
+            }
+            return null;
         }
 
         private void OnNextSheetClick(object sender, RoutedEventArgs e)
         {
-            if (_sheetsListBox.SelectedIndex <= _sheetsListBox.Items.Count - 1)
+            var scrollViewer = GetListBoxScrollViewer();
+            if (scrollViewer != null && scrollViewer.HorizontalOffset < scrollViewer.ScrollableWidth)
+            {
+                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + 60);
+            }
+
+            if (_sheetsListBox.SelectedIndex < _sheetsListBox.Items.Count - 1)
             {
                 _sheetsListBox.SelectedIndex++;
             }
@@ -90,6 +175,12 @@ namespace AlphaX.WPF.Sheets.Components
 
         private void OnPreviousSheetClick(object sender, RoutedEventArgs e)
         {
+            var scrollViewer = GetListBoxScrollViewer();
+            if (scrollViewer != null && scrollViewer.HorizontalOffset > 0)
+            {
+                scrollViewer.ScrollToHorizontalOffset(Math.Max(0, scrollViewer.HorizontalOffset - 60));
+            }
+
             if (_sheetsListBox.SelectedIndex > 0)
             {
                 _sheetsListBox.SelectedIndex--;

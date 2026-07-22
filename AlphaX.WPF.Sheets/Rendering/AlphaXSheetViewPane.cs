@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 
 using AlphaX.WPF.Sheets.UI.Interaction;
 using System;
@@ -79,7 +79,7 @@ namespace AlphaX.WPF.Sheets.Rendering
         /// <param name="cells"></param>
         /// <param name="gridLines"></param>
         /// <param name="topLeft"></param>
-        public void Draw(bool redraw = true, bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool gridLines = true, bool topLeft = true)
+        public void Draw(bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool gridLines = true, bool topLeft = true)
         {
             if (_sheetView == null)
                 return;
@@ -89,13 +89,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             if (!viewRange.IsValid)
                 return;
 
-            if (redraw)
-                _spread.RenderEngine.BeginRenderInternal();
-            else
-                _spread.RenderEngine.BeginRender();
-            
-            if (gridLines)
-                _spread.RenderEngine.DrawGridLines(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
+            _spread.RenderEngine.BeginRender();
 
             if (columnHeaders)
                 _spread.RenderEngine.DrawColumnHeaderCells(viewRange.LeftColumn, viewRange.RightColumn);
@@ -108,6 +102,9 @@ namespace AlphaX.WPF.Sheets.Rendering
 
             if (cells)
                 _spread.RenderEngine.DrawCellRange(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
+
+            if (gridLines)
+                _spread.RenderEngine.DrawGridLines(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
 
             _spread.RenderEngine.EndRender();
         }

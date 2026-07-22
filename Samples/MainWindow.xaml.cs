@@ -11,6 +11,7 @@ namespace AlphaXSpreadSamplesExplorer
     {
         public MainWindow()
         {
+            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             InitializeComponent();
             _samplesSideBar.RegisterSample("Testing", typeof(Testing));
             _samplesSideBar.RegisterSample("Styling", typeof(Styling));
@@ -18,6 +19,12 @@ namespace AlphaXSpreadSamplesExplorer
             _samplesSideBar.RegisterSample("Scroll Modes", typeof(ScrollModes));
             _samplesSideBar.RegisterSample("Sorting", typeof(Sorting));
             _samplesSideBar.RegisterSample("DataBinding", typeof(DataBinding));
+        }
+
+        private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message);
+            e.Handled = true;
         }
 
         private void OnSampleSelected(object sender, SampleSelectedEventArgs e)

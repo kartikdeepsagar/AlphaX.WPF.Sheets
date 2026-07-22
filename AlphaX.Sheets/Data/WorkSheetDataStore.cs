@@ -1,4 +1,5 @@
-﻿using AlphaX.CalcEngine;
+using AlphaX.CalcEngine;
+using AlphaX.FormulaEngine;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -60,7 +61,28 @@ namespace AlphaX.Sheets.Data
                 var result = _workSheet.WorkBook.CalcEngine.GetValue(_workSheet.Name, row, column) as CalcValue;
 
                 if (result.Kind == CalcValueKind.Error)
-                    return (result.Value as CalcError).Error;
+                {
+                    switch (((Error)result.Value).Code)
+                    {
+                        case ErrorCode.Value:
+                            return "#VALUE!";
+
+                        case ErrorCode.DivideByZero:
+                            return "#DIV/0!";
+
+                        case ErrorCode.Name:
+                            return "#NAME?";
+
+                        case ErrorCode.Null:
+                            return "#NULL!";
+
+                        case ErrorCode.Syntax:
+                            return "#SYNTAX!";
+
+                        default:
+                            return "#N/A";
+                    }
+                }
 
                 return result.Value;
             }

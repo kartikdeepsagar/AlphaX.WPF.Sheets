@@ -10,7 +10,6 @@ namespace AlphaX.WPF.Sheets.Rendering
     {
         private AlphaXSheetView _sheetView;
         private WorkSheet _workSheet;
-        private RenderEngineCache _cache;
         private DispatcherProcessingDisabled _dispatcherDisabled;
 
         #region Renderers
@@ -25,23 +24,16 @@ namespace AlphaX.WPF.Sheets.Rendering
 
         public RenderEngine()
         {
-            _cache = new RenderEngineCache();
             RenderInfo = new RenderInfo();
             CellsRenderer = new CellsRenderer();
             GridLinesRenderer = new GridLinesRenderer();
             RowHeadersRenderer = new RowHeadersRenderer();
             ColumnHeadersRenderer = new ColumnHeadersRenderer();
             TopLeftRenderer = new TopLeftRenderer();
-            _cache.RegisterCacheType(CellsRenderer);
-            _cache.RegisterCacheType(RowHeadersRenderer);
-            _cache.RegisterCacheType(ColumnHeadersRenderer);
-            _cache.RegisterCacheType(GridLinesRenderer);
-            _cache.RegisterCacheType(TopLeftRenderer);
         }
 
         public void SetRenderSheet(AlphaXSheetView sheetView)
         {
-            _cache.Clear();
             _sheetView = sheetView;
             _workSheet = sheetView.WorkSheet;
             CellsRenderer.SetRenderSheet(sheetView);
@@ -52,16 +44,8 @@ namespace AlphaX.WPF.Sheets.Rendering
         }
 
         #region Render Begin/End
-        internal void BeginRenderInternal()
-        {
-            RenderInfo.PartialRender = false;
-            InitRender();
-            _cache.Clear();
-        }
-
         public void BeginRender()
         {
-            RenderInfo.PartialRender = true;
             InitRender();
         }
 
@@ -74,37 +58,12 @@ namespace AlphaX.WPF.Sheets.Rendering
 
         public void EndRender()
         {
-            RenderInfo.PartialRender = false;
             CellsRenderer.EndRender();
             GridLinesRenderer.EndRender();
             RowHeadersRenderer.EndRender();
             ColumnHeadersRenderer.EndRender();
             TopLeftRenderer.EndRender();
             _dispatcherDisabled.Dispose();
-        }
-
-        public DrawingGroup CreateDrawingObject(Renderer renderer, int row, int col)
-        {
-            var drawingObject = new DrawingGroup();
-            _cache.AddDrawing(renderer, row, col, drawingObject);
-            return drawingObject;
-        }
-
-        public Drawing GetDrawingObject(Renderer renderer, int row, int column)
-        {
-            _cache.TryGetDrawing(renderer, row, column, out Drawing drawing);
-            return drawing;
-        }
-
-        /// <summary>
-        /// Removes the exisiting drawing item from cache.
-        /// </summary>
-        /// <param name="renderer"></param>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        public void EnsureNewCacheDrawing(Renderer renderer, int row, int col)
-        {
-            _cache.RemoveFromCache(renderer, row, col);
         }
         #endregion
 
@@ -146,7 +105,6 @@ namespace AlphaX.WPF.Sheets.Rendering
         {
             _workSheet = null;
             _sheetView = null;
-            _cache.Clear();
         }
     }
 }

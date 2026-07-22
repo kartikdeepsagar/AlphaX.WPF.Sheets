@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.Components;
 using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Managers;
@@ -181,12 +181,14 @@ namespace AlphaX.WPF.Sheets
             RenderEngine = new RenderEngine();
             SheetViewPane = new AlphaXSheetViewPane(this);
             ScrollMode = SheetScrollMode.Item;
-            SelectionBorderBrush = Brushes.Green;
-            BorderBrush = Brushes.Black;
+            SelectionBorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 124, 65));
+            BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(209, 213, 219));
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
-            BorderThickness = new Thickness(0.75);
-            GridLineBrush = Brushes.Gray;
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
+            BorderThickness = new Thickness(1);
+            GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             var workSheet = WorkBook.WorkSheets.AddSheet("Sheet1");
             WorkBook.WorkSheets.ActiveSheet = workSheet;
@@ -336,6 +338,10 @@ namespace AlphaX.WPF.Sheets
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+
+            if (EditingManager != null && EditingManager.IsEditing)
+                return;
+
             var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
@@ -354,13 +360,11 @@ namespace AlphaX.WPF.Sheets
                         break;
 
                     case Key.Y:
-                        if(!EditingManager.IsEditing)
-                            UndoRedoManager.Redo();
+                        UndoRedoManager.Redo();
                         break;
 
                     case Key.Z:
-                        if (!EditingManager.IsEditing)
-                            UndoRedoManager.Undo();
+                        UndoRedoManager.Undo();
                         break;
                 }
             }
@@ -368,7 +372,7 @@ namespace AlphaX.WPF.Sheets
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
-            base.OnMouseWheel(e);
+            base.OnPreviewMouseWheel(e);
 
             var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
 
@@ -407,6 +411,7 @@ namespace AlphaX.WPF.Sheets
         {
             base.OnDpiChanged(oldDpi, newDpi);
             PixelPerDip = newDpi.PixelsPerDip;
+            SheetViews?.ActiveSheetView?.Invalidate(true);
         }
 
         public override void OnApplyTemplate()
