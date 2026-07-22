@@ -1,4 +1,4 @@
-﻿using AlphaX.WPF.Sheets.Commands;
+using AlphaX.WPF.Sheets.Commands;
 using AlphaX.WPF.Sheets.UI.Editors;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +26,7 @@ namespace AlphaX.WPF.Sheets
         public AlphaXFormulaTextBox()
         {
             InitializeComponent();
+            HorizontalAlignment = HorizontalAlignment.Stretch;
         }
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)

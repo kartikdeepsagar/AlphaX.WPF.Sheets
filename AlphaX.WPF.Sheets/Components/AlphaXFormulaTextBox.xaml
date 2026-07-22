@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AlphaX.WPF.Sheets"
+             HorizontalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
@@ -16,7 +18,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -40,7 +42,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -65,7 +67,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -98,7 +100,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4"
+                                CornerRadius="0"
                                 SnapsToDevicePixels="True">
                             <ScrollViewer x:Name="PART_ContentHost"
                                           Focusable="False"
@@ -129,7 +131,7 @@
         <Border Background="#F9FAFB"
                 BorderBrush="#D1D5DB"
                 BorderThickness="1"
-                CornerRadius="4"
+                CornerRadius="0"
                 Margin="0,0,4,0"
                 Padding="2">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
