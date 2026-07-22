@@ -338,6 +338,10 @@ namespace AlphaX.WPF.Sheets
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+
+            if (EditingManager != null && EditingManager.IsEditing)
+                return;
+
             var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
@@ -356,13 +360,11 @@ namespace AlphaX.WPF.Sheets
                         break;
 
                     case Key.Y:
-                        if(!EditingManager.IsEditing)
-                            UndoRedoManager.Redo();
+                        UndoRedoManager.Redo();
                         break;
 
                     case Key.Z:
-                        if (!EditingManager.IsEditing)
-                            UndoRedoManager.Undo();
+                        UndoRedoManager.Undo();
                         break;
                 }
             }
