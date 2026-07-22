@@ -181,14 +181,14 @@ namespace AlphaX.WPF.Sheets
             RenderEngine = new RenderEngine();
             SheetViewPane = new AlphaXSheetViewPane(this);
             ScrollMode = SheetScrollMode.Item;
-            SelectionBorderBrush = Brushes.Green;
-            BorderBrush = Brushes.Black;
+            SelectionBorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 124, 65));
+            BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(209, 213, 219));
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
             TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
             TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
-            BorderThickness = new Thickness(0.75);
-            GridLineBrush = Brushes.Gray;
+            BorderThickness = new Thickness(1);
+            GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             var workSheet = WorkBook.WorkSheets.AddSheet("Sheet1");
             WorkBook.WorkSheets.ActiveSheet = workSheet;
