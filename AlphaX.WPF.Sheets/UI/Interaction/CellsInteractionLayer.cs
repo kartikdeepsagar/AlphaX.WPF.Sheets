@@ -1,4 +1,4 @@
-﻿using AlphaX.CalcEngine.Parsers;
+using AlphaX.CalcEngine.Parsers;
 using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI.Editors;
 using AlphaX.WPF.Sheets.UI.Managers;
@@ -443,6 +443,10 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
             base.OnRender(dc);
             var workSheet = SheetView.WorkSheet;
             var selectionRangeRect = ToSheetViewRect(SheetView.ViewPort.GetRangeRect(SheetView.Selection));
+            selectionRangeRect.Width += 1;
+            selectionRangeRect.X -= 1;
+            selectionRangeRect.Y -= 0.5;
+            selectionRangeRect.Height += 1;
             var activeCellRect = ToSheetViewRect(SheetView.ViewPort.GetCellRect(SheetView.ActiveRow, SheetView.ActiveColumn));
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness / 2;
