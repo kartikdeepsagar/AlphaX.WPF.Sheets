@@ -185,6 +185,8 @@ namespace AlphaX.WPF.Sheets
             BorderBrush = Brushes.Black;
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
             BorderThickness = new Thickness(0.75);
             GridLineBrush = Brushes.Gray;
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
