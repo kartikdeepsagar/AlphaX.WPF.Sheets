@@ -55,11 +55,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey);
 
-                    style = style.Clone();
-
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip);
-
-                    style = null;
                 }
             }
 

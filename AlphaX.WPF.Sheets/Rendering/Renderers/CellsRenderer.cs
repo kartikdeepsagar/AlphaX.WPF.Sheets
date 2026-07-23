@@ -78,11 +78,9 @@ namespace AlphaX.WPF.Sheets.Rendering
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
 
-                    style = style.Clone();
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
 
                     cellType.DrawCell(context, value, style.As<Style>(), formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText);
-                    style = null;
                 }
             }
 
