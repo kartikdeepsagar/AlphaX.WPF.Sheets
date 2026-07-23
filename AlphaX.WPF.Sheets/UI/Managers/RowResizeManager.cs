@@ -17,6 +17,8 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
         public void BeginResizeRow(int row, int rowLocation)
         {
+            Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+            ResizeLine.Visibility = Visibility.Visible;
             _rowLocation = rowLocation;
             _resizingRow = row;
         }
@@ -41,9 +43,6 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             ResizeLine.X1 = workSheet.RowHeaders.Width;
             ResizeLine.X2 = sheetView.Spread.SheetViewPane.ActualWidth;
 
-            if (ResizeLine.Visibility != Visibility.Visible)
-                ResizeLine.Visibility = Visibility.Visible;
-
             workSheet.Rows[_resizingRow].Height = newHeight;
             sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
             sheetView.Invalidate(true, false, false, false);
@@ -54,8 +53,8 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             _resizingRow = -1;
             _rowLocation = -1;
             ResizeLine.Visibility = Visibility.Collapsed;
-            Spread.SheetViews.ActiveSheetView.Invalidate();
             Spread.SheetTabControl.UpdateScrollbars();
+            Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
         }
     }
 }

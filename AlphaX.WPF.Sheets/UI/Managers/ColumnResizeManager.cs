@@ -20,6 +20,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             _columnLocation = columnLocation;
             _resizingColumn = column;
             ResizeLine.Visibility = Visibility.Visible;
+            Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
         }
 
         public void ResizeColumn(int currentLocation)
@@ -44,7 +45,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
             workSheet.Columns[_resizingColumn].Width = newWidth;
             sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
-            sheetView.Invalidate(false, true, false, false);
+            Spread.SheetViews.ActiveSheetView.Invalidate(false, true, false, false);
         }
 
         public void EndResizeColumn()
@@ -52,8 +53,8 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             _resizingColumn = -1;
             _columnLocation = -1;
              ResizeLine.Visibility = Visibility.Collapsed;
-            Spread.SheetViews.ActiveSheetView.Invalidate();
             Spread.SheetTabControl.UpdateScrollbars();
+            Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
         }
     }
 }
