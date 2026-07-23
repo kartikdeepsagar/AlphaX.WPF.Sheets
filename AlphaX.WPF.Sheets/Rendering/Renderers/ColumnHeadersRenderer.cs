@@ -59,7 +59,6 @@ namespace AlphaX.WPF.Sheets.Rendering
 
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip);
 
-                    style.Dispose();
                     style = null;
                 }
             }

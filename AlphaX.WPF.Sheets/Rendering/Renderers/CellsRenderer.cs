@@ -82,8 +82,6 @@ namespace AlphaX.WPF.Sheets.Rendering
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
 
                     cellType.DrawCell(context, value, style.As<Style>(), formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText);
-
-                    style.Dispose();
                     style = null;
                 }
             }

@@ -150,19 +150,6 @@ namespace AlphaX.Sheets
             VerticalAlignment = AlphaXVerticalAlignment.Auto;
         }
 
-        public void Dispose()
-        {
-            _foreColor = null;
-            _backColor = null;
-            _fontSize = null;
-            _fontFamily = null;
-            _fontWeight = null;
-            _fontStyle = null;
-            _padding = null;
-            _hAligment = null;
-            _vAligment = null;
-        }
-
         public virtual IStyle Clone()
         {
             return new NamedStyle()
