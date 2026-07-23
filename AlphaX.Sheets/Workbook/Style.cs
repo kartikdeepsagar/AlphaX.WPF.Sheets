@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace AlphaX.Sheets
 {
-    public class NamedStyle : IStyle, INotifyPropertyChanged
+    public class Style : IStyle, INotifyPropertyChanged
     {
         private Color? _foreColor;
         private Color? _backColor;
@@ -137,7 +137,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public NamedStyle()
+        public Style()
         {
             ForeColor = Color.Black;
             BackColor = Color.Transparent;
@@ -152,7 +152,7 @@ namespace AlphaX.Sheets
 
         public virtual IStyle Clone()
         {
-            return new NamedStyle()
+            return new Style()
             {
                 BackColor = _backColor.Value,
                 FontFamily = _fontFamily,

@@ -288,7 +288,7 @@ namespace AlphaX.WPF.Sheets
 
         private void AddDefaultStyles(WorkBook workBook)
         {
-            var rowHeaderStyle = new Style
+            var rowHeaderStyle = new AlphaXStyle
             {
                 FontSize = 14,
                 HorizontalAlignment = AlphaXHorizontalAlignment.Center,
@@ -297,7 +297,7 @@ namespace AlphaX.WPF.Sheets
 
             workBook.AddNamedStyle(StyleKeys.DefaultRowHeaderStyleKey, rowHeaderStyle);
 
-            var columnHeaderStyle = new Style
+            var columnHeaderStyle = new AlphaXStyle
             {
                 FontSize = 14,
                 HorizontalAlignment = AlphaXHorizontalAlignment.Center,
@@ -306,14 +306,14 @@ namespace AlphaX.WPF.Sheets
 
             workBook.AddNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey, columnHeaderStyle);
 
-            var sheetStyle = new Style
+            var sheetStyle = new AlphaXStyle
             {
                 BackColor = AlphaX.Sheets.Drawing.Color.White
             };
 
             workBook.AddNamedStyle(StyleKeys.DefaultSheetStyleKey, sheetStyle);
 
-            var topLeftStyle = new Style
+            var topLeftStyle = new AlphaXStyle
             {
                 ForeColor = AlphaX.Sheets.Drawing.Color.LightGray
             };
@@ -324,7 +324,7 @@ namespace AlphaX.WPF.Sheets
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            SheetViews?.ActiveSheetView?.Invalidate(true);
+            SheetViews?.ActiveSheetView?.Invalidate();
         }
         #endregion
 

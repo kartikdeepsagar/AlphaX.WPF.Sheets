@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using System;
 using System.Windows;
 
@@ -188,6 +188,19 @@ namespace AlphaX.WPF.Sheets.UI
             if (_workSheet.RowCount == 0)
                 return;
 
+            if (_rows.InternalCollection.Count == 0)
+            {
+                int defaultRowHeight = _workSheet.DefaultRowHeight;
+                int targetRow = (int)(_sheetView.ScrollPosition.Y / defaultRowHeight);
+                targetRow = Math.Max(0, Math.Min(_workSheet.RowCount - 1, targetRow));
+                double rowLocation = targetRow * defaultRowHeight;
+
+                TopRowLocation = _sheetView.Spread.ScrollMode == SheetScrollMode.Pixel
+                    ? _sheetView.ScrollPosition.Y : rowLocation;
+                ViewRange.TopRow = targetRow;
+                return;
+            }
+
             if (delta >= 0)
             {
                 for (int row = ViewRange.TopRow; row < _workSheet.RowCount; row++)
@@ -226,6 +239,19 @@ namespace AlphaX.WPF.Sheets.UI
         {
             if (_workSheet.ColumnCount == 0)
                 return;
+
+            if (_columns.InternalCollection.Count == 0)
+            {
+                int defaultColumnWidth = _workSheet.DefaultColumnWidth;
+                int targetCol = (int)(_sheetView.ScrollPosition.X / defaultColumnWidth);
+                targetCol = Math.Max(0, Math.Min(_workSheet.ColumnCount - 1, targetCol));
+                double colLocation = targetCol * defaultColumnWidth;
+
+                LeftColumnLocation = _sheetView.Spread.ScrollMode == SheetScrollMode.Pixel
+                    ? _sheetView.ScrollPosition.X : colLocation;
+                ViewRange.LeftColumn = targetCol;
+                return;
+            }
 
             if (delta >= 0)
             {

@@ -52,7 +52,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             _topLeftInteractionLayer.AttachToRegion(TopLeftRegion);
 
             var style = _spread.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
-            CellsRegion.Background = style.As<Style>().Background;
+            CellsRegion.Background = style.GetWpfStyle()?.Background;
         }
 
         public void DrawRange(int topRow, int leftCol, int bottomRow, int rightCol)

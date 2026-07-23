@@ -41,6 +41,14 @@ namespace AlphaX.Sheets
             if (_locationMap.ContainsKey(column) && !recalculate)
                 return _locationMap[column];
 
+            if (InternalCollection.Count == 0)
+            {
+                double defWidth = GetDefaultColumnWidth();
+                double loc = column * defWidth;
+                _locationMap[column] = loc;
+                return loc;
+            }
+
             double xLocation = 0;
             double deltaWidth = 0;
             int count = 0;

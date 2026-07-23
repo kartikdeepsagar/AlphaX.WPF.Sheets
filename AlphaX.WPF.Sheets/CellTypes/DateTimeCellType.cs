@@ -11,7 +11,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
     {
         public string Format { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, AlphaXStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
             if (value == null)
                 return;
@@ -25,7 +25,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
                 base.DrawCell(context, formatter.Format(value), style, formatter, cellRect, pixelPerDip, allowMultiLineText);
         }
 
-        public override AlphaXEditorBase GetEditor(Style style)
+        public override AlphaXEditorBase GetEditor(AlphaXStyle style)
         {
             throw new NotImplementedException();
         }

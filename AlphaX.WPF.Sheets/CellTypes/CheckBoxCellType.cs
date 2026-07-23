@@ -28,7 +28,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
             IsThreeState = false;
         }
 
-        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, AlphaXStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
             var checkBoxRect = cellRect.ToCellCheckBoxRect(CheckBoxSize);
             var halfPenWidth = _pen.Thickness / 2;
@@ -68,7 +68,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
             }
         }
 
-        public override AlphaXEditorBase GetEditor(Style style)
+        public override AlphaXEditorBase GetEditor(AlphaXStyle style)
         {
             throw new NotImplementedException();
         }

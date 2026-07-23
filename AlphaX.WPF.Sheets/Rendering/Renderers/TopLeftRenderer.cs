@@ -13,7 +13,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             var topLeft = workSheet.TopLeft;
             var style = workSheet.WorkBook.GetNamedStyle(string.IsNullOrEmpty(topLeft.StyleName) ? 
                 StyleKeys.DefaultTopLeftStyleKey : topLeft.StyleName);
-            var wpfStyle = style.As<Style>();
+            var wpfStyle = style.GetWpfStyle();
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             var rect = new Rect(-SheetView.Spread.GridLinePen.Thickness, -SheetView.Spread.GridLinePen.Thickness, width, height);

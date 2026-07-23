@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.Sheets.Formatters;
 using AlphaX.WPF.Sheets.UI.Interaction;
 using System.Windows;
@@ -33,6 +33,11 @@ namespace AlphaX.WPF.Sheets
         /// <returns></returns>
         internal static IStyle PickStyle(this WorkBook workBook, IRange cell, IColumn column, IRow row)
         {
+            if (cell != null && cell.Style != null)
+            {
+                return cell.Style;
+            }
+
             if (cell != null && !string.IsNullOrEmpty(cell.StyleName))
             {
                 return workBook.GetNamedStyle(cell.StyleName);

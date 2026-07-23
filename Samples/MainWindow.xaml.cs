@@ -1,4 +1,4 @@
-﻿using AlphaXSpreadSamplesExplorer.Samples;
+using AlphaXSpreadSamplesExplorer.Samples;
 using System;
 using System.Windows;
 
@@ -18,6 +18,7 @@ namespace AlphaXSpreadSamplesExplorer
             _samplesSideBar.RegisterSample("Cell Types", typeof(CellTypes));
             _samplesSideBar.RegisterSample("Scroll Modes", typeof(ScrollModes));
             _samplesSideBar.RegisterSample("Sorting", typeof(Sorting));
+            _samplesSideBar.RegisterSample("Formulas", typeof(Formulas));
             _samplesSideBar.RegisterSample("DataBinding", typeof(DataBinding));
         }
 

@@ -9,7 +9,6 @@ namespace AlphaX.Sheets.Data
     public class WorkSheetDataStore : IDataStore, IDisposable
     {
         private WorkSheet _workSheet;
-        private Dictionary<Cell, object> _unboundValues;
         private AlphaXDataCollection _collection;
 
         public object ActualDataSource { get; private set; }
@@ -29,7 +28,6 @@ namespace AlphaX.Sheets.Data
 
         private void InitializeUnboundDataStore()
         {
-            _unboundValues = new Dictionary<Cell, object>();
             IsValid = true;
         }
 
@@ -51,10 +49,11 @@ namespace AlphaX.Sheets.Data
         public object GetValue(int row, int column)
         {
             var cell = ((Cells)_workSheet.Cells).GetCell(row, column, false);
+            var colData = ((Cells)_workSheet.Cells).GetColumnData(column, false);
 
-            if (cell != null && _unboundValues.ContainsKey(cell))
+            if (colData != null && colData.GetValue(row) != null)
             {
-                return _unboundValues[cell];
+                return colData.GetValue(row);
             }
             else if (cell != null && cell.Formula != null)
             {
@@ -140,7 +139,7 @@ namespace AlphaX.Sheets.Data
             }
             else
             {
-                SetUnboundCellValue(cell, value);
+                SetUnboundCellValue(row, column, value);
             }
 
             ((WorkBook)_workSheet.WorkBook).DataProvider.RaiseValueChanged(new ValueChangedEventArgs()
@@ -156,21 +155,13 @@ namespace AlphaX.Sheets.Data
         /// <summary>
         /// Sets the unbound cell value
         /// </summary>
-        /// <param name="cell"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <param name="value"></param>
-        private void SetUnboundCellValue(Cell cell, object value)
+        private void SetUnboundCellValue(int row, int column, object value)
         {
-            if (_unboundValues.ContainsKey(cell))
-            {
-                if (value == null)
-                    _unboundValues.Remove(cell);
-                else
-                    _unboundValues[cell] = value;
-            }
-            else if (value != null)
-            {
-                _unboundValues.Add(cell, value);
-            }
+            var colData = ((Cells)_workSheet.Cells).GetColumnData(column, true);
+            colData.SetValue(row, value);
         }
 
         /// <summary>
@@ -213,9 +204,7 @@ namespace AlphaX.Sheets.Data
 
         public void Dispose()
         {
-            _unboundValues.Clear();
             _workSheet = null;
-            _unboundValues = null;
             _collection = null;
             ActualDataSource = null;
         }

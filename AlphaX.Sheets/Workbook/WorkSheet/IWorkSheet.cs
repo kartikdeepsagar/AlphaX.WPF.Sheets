@@ -112,6 +112,14 @@ namespace AlphaX.Sheets
         /// <returns></returns>
         object[,] GetData(int row, int column, int rowCount, int columnCount);
         /// <summary>
+        /// Directly loads a 2D data array into columnar storage starting at the specified position.
+        /// Bypasses Cell instance creation for maximum load performance.
+        /// </summary>
+        /// <param name="data">The 2D object array to load.</param>
+        /// <param name="startRow">The starting row index (default 0).</param>
+        /// <param name="startCol">The starting column index (default 0).</param>
+        void Load(object[,] data, int startRow = 0, int startCol = 0);
+        /// <summary>
         /// Reevaluates all formulas for this sheet.
         /// </summary>
         void CalculateAll();

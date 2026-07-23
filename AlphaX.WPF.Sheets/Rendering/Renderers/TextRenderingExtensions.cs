@@ -18,7 +18,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             this DrawingContext context,
             string text,
             Rect bounds,
-            Style style,
+            AlphaXStyle style,
             double pixelsPerDip,
             bool characterEllipses = false,
             bool allowMultiLineText = true)

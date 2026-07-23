@@ -7,7 +7,7 @@ namespace AlphaX.Sheets
 {
     public class WorkSheets : IWorkSheets
     {
-        private Dictionary<string, IWorkSheet> _sheets;
+        private HashSet<IWorkSheet> _sheets;
         private IWorkSheet _activeSheet;
         private WorkBook _workBook;
 
@@ -47,7 +47,7 @@ namespace AlphaX.Sheets
             get
             {
                 int index = 0;
-                foreach(var sheet in _sheets.Values)
+                foreach(var sheet in _sheets)
                 {
                     if (sheet == _activeSheet)
                         return index;
@@ -69,14 +69,14 @@ namespace AlphaX.Sheets
         internal WorkSheets(WorkBook workBook)
         {
             _workBook = workBook;
-            _sheets = new Dictionary<string, IWorkSheet>();
+            _sheets = new HashSet<IWorkSheet>();
         }
 
         public IWorkSheet AddSheet(string name)
         {
             VerifySheetName(name);
             var workSheet = new WorkSheet(_workBook, name);
-            _sheets.Add(name.ToLowerInvariant(), workSheet);
+            _sheets.Add(workSheet);
             SheetAdded?.Invoke(this, new SheetEventArgs(workSheet));
             return workSheet;
         }
@@ -86,29 +86,34 @@ namespace AlphaX.Sheets
         /// </summary>
         /// <param name="name"></param>
         /// <exception cref="ArgumentException"></exception>
-        private void VerifySheetName(string name)
+        internal void VerifySheetName(string name)
         {
-            if (_sheets.ContainsKey(name.ToLowerInvariant()))
-                throw new ArgumentException($"Sheet with name '{name}' already present.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Sheet name cannot be null or empty.");
+            }
+
+            if (_sheets.Any(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                throw new ArgumentException($"Sheet with name '{name}' already exists.");
         }
 
         public IWorkSheet GetSheet(string sheetName)
         {
             sheetName = sheetName.ToLowerInvariant();
 
-            if (!_sheets.ContainsKey(sheetName))
-                throw new ArgumentException($"Sheet with name '{sheetName}' not present.");
+            if (!_sheets.Any(s => s.Name.Equals(sheetName, StringComparison.OrdinalIgnoreCase)))
+                throw new ArgumentException($"Sheet with name '{sheetName}' does not exist.");
 
-            var sheet = _sheets[sheetName];
+            var sheet = _sheets.First(s => s.Name.Equals(sheetName, StringComparison.OrdinalIgnoreCase));
             return sheet;
         }
 
         public IWorkSheet GetSheet(int index)
         {
-            if (_sheets.Count <= index)
+            if (_sheets.Count <= index || index < 0)
                 throw new IndexOutOfRangeException("Sheet index is out of range.");
 
-            var sheet = _sheets.Values.ElementAt(index);
+            var sheet = _sheets.ElementAt(index);
             return sheet;
         }
 
@@ -121,7 +126,7 @@ namespace AlphaX.Sheets
         public void RemoveSheet(string name)
         {
             var sheet = GetSheet(name);
-            _sheets.Remove(sheet.Name.ToLowerInvariant());
+            _sheets.Remove(sheet);
             if (_activeSheet == sheet)
                 _activeSheet = null;
             sheet.Dispose();
@@ -131,7 +136,7 @@ namespace AlphaX.Sheets
         public void RemoveSheet(int index)
         {
             var sheet = GetSheet(index);
-            _sheets.Remove(sheet.Name.ToLowerInvariant());
+            _sheets.Remove(sheet);
             if (_activeSheet == sheet)
                 _activeSheet = null;
             sheet.Dispose();
@@ -142,7 +147,7 @@ namespace AlphaX.Sheets
         {
             foreach(var sheet in _sheets.ToList())
             {
-                RemoveSheet(sheet.Key);
+                RemoveSheet(sheet.Name);
             }
             _activeSheet = null;
         }
@@ -162,7 +167,7 @@ namespace AlphaX.Sheets
 
         public IEnumerator<IWorkSheet> GetEnumerator()
         {
-            return _sheets.Values.GetEnumerator();
+            return _sheets.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

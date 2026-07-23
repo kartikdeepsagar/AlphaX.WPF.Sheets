@@ -185,6 +185,8 @@ namespace AlphaX.CalcEngine
                 return;
             }
 
+            formula = formula.TrimStart('=');
+
             // Ensure meta info exists and get any existing dependents
             CalcCellMetaInfo metaInfo = _provider.GetMetaData(sheetName, row, column) as CalcCellMetaInfo;
             if (metaInfo == null)

@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace AlphaX.WPF.Sheets
 {
-    public class Style : NamedStyle
+    public class AlphaXStyle : AlphaX.Sheets.Style
     {
         private Typeface _typeFace;
         private GlyphTypeface _glyphTypeface;
@@ -141,7 +141,7 @@ namespace AlphaX.WPF.Sheets
 
         public override IStyle Clone()
         {
-            return new Style()
+            return new AlphaXStyle()
             {
                 BackColor = base.BackColor,
                 FontFamily = base.FontFamily,

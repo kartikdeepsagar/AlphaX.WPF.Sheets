@@ -1,5 +1,6 @@
 using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -41,40 +42,46 @@ namespace AlphaX.WPF.Sheets.Rendering
 
             double x = 0, y = 0;
 
-            // Check for hidden row resize handle hit first
-            for (int row = 0; row < _workSheet.RowCount; row++)
+            // Check for hidden row resize handle hit first (only if custom row settings exist)
+            if (rows.InternalCollection.Count > 0)
             {
-                if (rows.GetRowHeight(row) == 0)
+                int startRowSearch = Math.Max(0, _viewPort.ViewRange.TopRow - 1);
+                int endRowSearch = Math.Min(_workSheet.RowCount, _viewPort.ViewRange.BottomRow + 2);
+
+                for (int row = startRowSearch; row < endRowSearch; row++)
                 {
-                    int startHiddenRow = row;
-                    int lastHiddenRow = row;
-                    while (lastHiddenRow + 1 < _workSheet.RowCount && rows.GetRowHeight(lastHiddenRow + 1) == 0)
+                    if (rows.GetRowHeight(row) == 0)
                     {
-                        lastHiddenRow++;
-                    }
+                        int startHiddenRow = row;
+                        int lastHiddenRow = row;
+                        while (lastHiddenRow + 1 < _workSheet.RowCount && rows.GetRowHeight(lastHiddenRow + 1) == 0)
+                        {
+                            lastHiddenRow++;
+                        }
 
-                    var rowLocation = rows.GetLocation(startHiddenRow);
-                    bool isHit;
-                    if (rowLocation == 0)
-                    {
-                        isHit = point.Y >= 0 && point.Y <= _resizeDelta + 2;
-                    }
-                    else
-                    {
-                        isHit = point.Y >= rowLocation - 2 && point.Y <= rowLocation + _resizeDelta;
-                    }
+                        var rowLocation = rows.GetLocation(startHiddenRow);
+                        bool isHit;
+                        if (rowLocation == 0)
+                        {
+                            isHit = point.Y >= 0 && point.Y <= _resizeDelta + 2;
+                        }
+                        else
+                        {
+                            isHit = point.Y >= rowLocation - 2 && point.Y <= rowLocation + _resizeDelta;
+                        }
 
-                    if (isHit)
-                    {
-                        hitTestInfo.Element = VisualElement.RowHeaderResizeBar;
-                        hitTestInfo.Row = lastHiddenRow;
-                        y = rowLocation;
-                        hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
-                            y - _viewPort.TopRowLocation);
-                        return hitTestInfo;
-                    }
+                        if (isHit)
+                        {
+                            hitTestInfo.Element = VisualElement.RowHeaderResizeBar;
+                            hitTestInfo.Row = lastHiddenRow;
+                            y = rowLocation;
+                            hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                                y - _viewPort.TopRowLocation);
+                            return hitTestInfo;
+                        }
 
-                    row = lastHiddenRow;
+                        row = lastHiddenRow;
+                    }
                 }
             }
 
