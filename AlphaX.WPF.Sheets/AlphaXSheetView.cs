@@ -178,8 +178,8 @@ namespace AlphaX.WPF.Sheets
                 {
                     var style = ((WorkBook)WorkSheet.WorkBook).PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key, false));
                     if (style == null)
-                        style = WorkSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<AlphaXStyle>();
-                    var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.As<AlphaXStyle>().GlyphTypeface);
+                        style = WorkSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
+                    var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.GetWpfStyle()?.GlyphTypeface);
                     width = Math.Max(width, textWidth + 11);
                 }
             }

@@ -324,7 +324,7 @@ namespace AlphaX.WPF.Sheets
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            SheetViews?.ActiveSheetView?.Invalidate(true);
+            SheetViews?.ActiveSheetView?.Invalidate();
         }
         #endregion
 

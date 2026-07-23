@@ -1,4 +1,4 @@
-﻿namespace AlphaX.Sheets.Data
+namespace AlphaX.Sheets.Data
 {
     public class PropertyDataMap : DataMap
     {
@@ -20,7 +20,7 @@
         }
     }
 
-    public abstract class DataMap
+    public abstract class DataMap : IDataMap
     {
     }
 }

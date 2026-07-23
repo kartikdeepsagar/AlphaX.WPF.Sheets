@@ -86,9 +86,9 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                     return;
 
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
-                if (sheetView.ViewPort.ViewRange.Intersects(range))
+                if (range == null || !range.IsValid || sheetView.ViewPort.ViewRange.Intersects(range))
                 {
-                    sheetView.InvalidateCellRange(range);
+                    sheetView.Invalidate(true, false, true, false);
                 }
             }));
         }

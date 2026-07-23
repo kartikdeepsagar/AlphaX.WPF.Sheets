@@ -1,4 +1,5 @@
 using AlphaX.CalcEngine;
+using AlphaX.Sheets.Core;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,7 @@ namespace AlphaX.Sheets
         public string Name { get; set; }
         public IWorkSheets WorkSheets { get; private set; }
         public ICalcEngine CalcEngine { get; private set; }
+        public StylePalette StylePalette { get; private set; }
         public IUpdateProvider UpdateProvider
         {
             get
@@ -36,6 +38,7 @@ namespace AlphaX.Sheets
             _namedStyles = new Dictionary<string, Style>();
             _dataProvider = new WorkBookDataProvider(this);
             CalcEngine = new AlphaXCalcEngine(_dataProvider);
+            StylePalette = new StylePalette();
         }
 
         public WorkBook(string name, IUpdateProvider updateProvider) : this(name)
@@ -66,6 +69,8 @@ namespace AlphaX.Sheets
         {
             WorkSheets.Dispose();
             _namedStyles.Clear();
+            StylePalette?.Clear();
+            StylePalette = null;
             WorkSheets = null;
             CalcEngine = null;
             _namedStyles = null;

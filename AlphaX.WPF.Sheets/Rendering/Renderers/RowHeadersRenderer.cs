@@ -87,7 +87,7 @@ namespace AlphaX.WPF.Sheets.Rendering
         private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, Columns columns, WorkSheet workSheet)
         {
             var pen = SheetView.Spread.GridLinePen;
-            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<AlphaXStyle>();
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
 
             double line1Y, line2Y;
             if (y <= 0)
@@ -134,9 +134,9 @@ namespace AlphaX.WPF.Sheets.Rendering
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col, false);
                     var sheetRow = rows.GetItem(row, false);
-                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).As<AlphaXStyle>();
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).GetWpfStyle();
                     if (style == null)
-                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<AlphaXStyle>();
+                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
                     var textWidth = TextRenderingExtensions
                         .ComputeTextWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, style.GlyphTypeface);
                     textWidth += 10;
@@ -155,7 +155,7 @@ namespace AlphaX.WPF.Sheets.Rendering
 
         private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
         {
-            var style = baseStyle.As<AlphaXStyle>();
+            var style = baseStyle.GetWpfStyle();
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
 
             if (cell != null && cell.Value != null)

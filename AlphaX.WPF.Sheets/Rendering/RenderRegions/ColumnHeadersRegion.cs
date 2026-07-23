@@ -1,5 +1,6 @@
 using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -55,40 +56,46 @@ namespace AlphaX.WPF.Sheets.Rendering
                 }
             }
 
-            // Check for hidden column resize handle hit first
-            for (int col = 0; col < _workSheet.ColumnCount; col++)
+            // Check for hidden column resize handle hit first (only if custom column settings exist)
+            if (columns.InternalCollection.Count > 0)
             {
-                if (columns.GetColumnWidth(col) == 0)
+                int startColSearch = Math.Max(0, _viewPort.ViewRange.LeftColumn - 1);
+                int endColSearch = Math.Min(_workSheet.ColumnCount, _viewPort.ViewRange.RightColumn + 2);
+
+                for (int col = startColSearch; col < endColSearch; col++)
                 {
-                    int startHiddenCol = col;
-                    int lastHiddenCol = col;
-                    while (lastHiddenCol + 1 < _workSheet.ColumnCount && columns.GetColumnWidth(lastHiddenCol + 1) == 0)
+                    if (columns.GetColumnWidth(col) == 0)
                     {
-                        lastHiddenCol++;
-                    }
+                        int startHiddenCol = col;
+                        int lastHiddenCol = col;
+                        while (lastHiddenCol + 1 < _workSheet.ColumnCount && columns.GetColumnWidth(lastHiddenCol + 1) == 0)
+                        {
+                            lastHiddenCol++;
+                        }
 
-                    var colLocation = columns.GetLocation(startHiddenCol);
-                    bool isHit;
-                    if (colLocation == 0)
-                    {
-                        isHit = point.X >= 0 && point.X <= _resizeDelta + 2;
-                    }
-                    else
-                    {
-                        isHit = point.X >= colLocation - 2 && point.X <= colLocation + _resizeDelta;
-                    }
+                        var colLocation = columns.GetLocation(startHiddenCol);
+                        bool isHit;
+                        if (colLocation == 0)
+                        {
+                            isHit = point.X >= 0 && point.X <= _resizeDelta + 2;
+                        }
+                        else
+                        {
+                            isHit = point.X >= colLocation - 2 && point.X <= colLocation + _resizeDelta;
+                        }
 
-                    if (isHit)
-                    {
-                        hitTestInfo.Element = VisualElement.ColumnHeaderResizeBar;
-                        hitTestInfo.Column = lastHiddenCol;
-                        x = colLocation;
-                        hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
-                            y - _viewPort.TopRowLocation);
-                        return hitTestInfo;
-                    }
+                        if (isHit)
+                        {
+                            hitTestInfo.Element = VisualElement.ColumnHeaderResizeBar;
+                            hitTestInfo.Column = lastHiddenCol;
+                            x = colLocation;
+                            hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                                y - _viewPort.TopRowLocation);
+                            return hitTestInfo;
+                        }
 
-                    col = lastHiddenCol;
+                        col = lastHiddenCol;
+                    }
                 }
             }
 

@@ -108,6 +108,11 @@ namespace AlphaX.Sheets
             return data;
         }
 
+        public void Load(object[,] data, int startRow = 0, int startCol = 0)
+        {
+            ((Cells)Cells).LoadData(data, startRow, startCol);
+        }
+
         public void CalculateAll()
         {
 

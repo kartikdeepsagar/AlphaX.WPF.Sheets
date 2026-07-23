@@ -32,6 +32,15 @@ namespace AlphaX.Sheets
             if (_locationMap.ContainsKey(row) && !recalculate)
                 return _locationMap[row];
 
+            bool hasFiltered = Parent is IWorkSheet ws && ws.FilterProvider?.FilteredRows != null && ws.FilterProvider.FilteredRows.Count > 0;
+            if (InternalCollection.Count == 0 && !hasFiltered)
+            {
+                double defHeight = GetDefaultRowHeight();
+                double loc = row * defHeight;
+                _locationMap[row] = loc;
+                return loc;
+            }
+
             double yLocation = 0;
             double deltaHeight = 0;
             int count = 0;

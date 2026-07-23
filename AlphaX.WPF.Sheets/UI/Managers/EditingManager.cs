@@ -50,7 +50,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             if (style == null)
                 style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
 
-            var editor = cellType.GetEditor(style.As<AlphaXStyle>());
+            var editor = cellType.GetEditor(style.GetWpfStyle());
             editor.SheetView = sheetView;
             ActiveEditor = editor;
 

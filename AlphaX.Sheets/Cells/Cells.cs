@@ -1,4 +1,5 @@
 using AlphaX.CalcEngine.Parsers;
+using AlphaX.Sheets.Core;
 using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
 using System;
@@ -22,7 +23,8 @@ namespace AlphaX.Sheets
         private int _columnCount;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private SortedDictionary<int, SortedDictionary<int, Cell>> _cellStore;
+        private Dictionary<int, ColumnData> _columnStore;
+        private readonly Dictionary<string, Cell> _activeCellInstances;
 
         public IRange this[string name]
         {
@@ -65,23 +67,10 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_rowCount >= 0)
-                    return _rowCount;
+                if (_rowCount == -1 && SheetParent is WorkSheet sheet)
+                    return sheet.RowCount;
 
-                if (Parent is IWorkSheet workSheet)
-                {
-                    return workSheet.RowCount;
-                }
-                else if (Parent is IRowHeaders rowHeaders)
-                {
-                    return rowHeaders.WorkSheet.RowCount;
-                }
-                else if (Parent is IColumnHeaders columnHeaders)
-                {
-                    return columnHeaders.RowCount;
-                }
-
-                return 0;
+                return _rowCount;
             }
         }
 
@@ -89,23 +78,10 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_columnCount >= 0)
-                    return _columnCount;
+                if (_columnCount == -1 && SheetParent is WorkSheet sheet)
+                    return sheet.ColumnCount;
 
-                if (Parent is IWorkSheet workSheet)
-                {
-                    return workSheet.ColumnCount;
-                }
-                else if (Parent is IRowHeaders rowHeaders)
-                {
-                    return rowHeaders.ColumnCount;
-                }
-                else if (Parent is IColumnHeaders columnHeaders)
-                {
-                    return columnHeaders.WorkSheet.ColumnCount;
-                }
-
-                return 0;
+                return _columnCount;
             }
         }
 
@@ -113,11 +89,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).Value;
+                return GetCell(Row, Column, false)?.Value;
             }
             set
             {
-                ApplyToRange(x => x.Value = value);
+                ApplyToRange((range) => range.Value = value);
             }
         }
 
@@ -125,15 +101,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                var cell = GetCell(Row, Column, false);
-                if (cell != null)
-                    return cell.Formula;
-                else
-                    return null;
+                return GetCell(Row, Column, false)?.Formula;
             }
             set
             {
-                ApplyToRange(x => x.Formula = value);
+                ApplyToRange((range) => range.Formula = value);
             }
         }
 
@@ -141,15 +113,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                var cell = GetCell(Row, Column, false);
-                if (cell != null)
-                    return cell.Formatter;
-                else
-                    return null;
+                return GetCell(Row, Column, false)?.Formatter;
             }
             set
             {
-                ApplyToRange(x => x.Formatter = value);
+                ApplyToRange((range) => range.Formatter = value);
             }
         }
 
@@ -157,11 +125,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).StyleName;
+                return GetCell(Row, Column, false)?.StyleName;
             }
             set
             {
-                ApplyToRange(x => x.StyleName = value);
+                ApplyToRange((range) => range.StyleName = value);
             }
         }
 
@@ -169,29 +137,26 @@ namespace AlphaX.Sheets
         {
             get
             {
-                var cell = GetCell(Row, Column, false);
-                if (cell != null)
-                    return cell.Style;
-                else
-                    return null;
+                return GetCell(Row, Column, false)?.Style;
             }
             set
             {
-                ApplyToRange(x => x.Style = value);
+                ApplyToRange((range) => range.Style = value);
             }
         }
 
-        public object Parent { get; }
+        public Cells Parent { get; private set; }
+        internal object SheetParent { get; private set; }
 
         public DataMap DataMap
         {
             get
             {
-                return GetCell(Row, Column, true).DataMap;
+                return GetCell(Row, Column, false)?.DataMap;
             }
             set
             {
-                ApplyToRange(x => x.DataMap = value);
+                ApplyToRange((range) => range.DataMap = value);
             }
         }
 
@@ -199,26 +164,25 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).CellType;
+                return GetCell(Row, Column, false)?.CellType;
             }
             set
             {
-                ApplyToRange(x => x.CellType = value);
+                ApplyToRange((range) => range.CellType = value);
             }
         }
 
-        Cells IRange.Parent { get; }
-        public bool HasFormula => false;
+        public bool HasFormula => GetCell(Row, Column, false)?.HasFormula ?? false;
 
         public bool Locked
         {
             get
             {
-                return GetCell(Row, Column, true).Locked;
+                return GetCell(Row, Column, false)?.Locked ?? false;
             }
             set
             {
-                ApplyToRange(x => x.Locked = value);
+                ApplyToRange((range) => range.Locked = value);
             }
         }
 
@@ -226,11 +190,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).IsVisible;
+                return GetCell(Row, Column, false)?.IsVisible ?? true;
             }
             set
             {
-                ApplyToRange(x => x.IsVisible = value);
+                ApplyToRange((range) => range.IsVisible = value);
             }
         }
 
@@ -238,11 +202,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).RowSpan;
+                return GetCell(Row, Column, false)?.RowSpan ?? 1;
             }
             set
             {
-                ApplyToRange(x => x.RowSpan = value);
+                ApplyToRange((range) => range.RowSpan = value);
             }
         }
 
@@ -250,133 +214,200 @@ namespace AlphaX.Sheets
         {
             get
             {
-                return GetCell(Row, Column, true).ColumnSpan;
+                return GetCell(Row, Column, false)?.ColumnSpan ?? 1;
             }
             set
             {
-                ApplyToRange(x => x.ColumnSpan = value);
+                ApplyToRange((range) => range.ColumnSpan = value);
             }
         }
 
         internal Cells(object parent)
         {
-            Parent = parent;
+            SheetParent = parent;
+            Parent = parent as Cells;
             Row = Column = 0;
             _rowCount = _columnCount = -1;
-            _cellStore = new SortedDictionary<int, SortedDictionary<int, Cell>>();
+            _columnStore = new Dictionary<int, ColumnData>();
+            _activeCellInstances = new Dictionary<string, Cell>();
         }
 
         internal Cells(Cells parentRange, int row, int column, int rowCount, int columnCount)
         {
-            Parent = parentRange.Parent;
+            SheetParent = parentRange?.SheetParent;
+            Parent = parentRange;
             Row = row;
             Column = column;
             _rowCount = rowCount;
             _columnCount = columnCount;
-            _cellStore = parentRange._cellStore;
+            _columnStore = parentRange._columnStore;
+            _activeCellInstances = parentRange._activeCellInstances;
         }
 
-        /// <summary>
-        /// Gets the cell present at row/column index.
-        /// </summary>
-        /// <param name="row">
-        /// Row index.
-        /// </param>
-        /// <param name="column">
-        /// Column index.
-        /// </param>
-        /// <param name="createIfNotExists">
-        /// Whether to create the cell if not present in cell store.
-        /// </param>
-        /// <returns></returns>
+        internal ColumnData GetColumnData(int column, bool createIfNotExists = true)
+        {
+            if (_columnStore.TryGetValue(column, out var colData))
+                return colData;
+
+            if (createIfNotExists)
+            {
+                colData = new ColumnData(column);
+                _columnStore[column] = colData;
+                return colData;
+            }
+
+            return null;
+        }
+
         internal Cell GetCell(int row, int column, bool createIfNotExists)
         {
             ValidateIndexes(row, column, 1, 1);
-            Cell cell = null;
-            if (ContainsCell(row, column))
+            string key = $"{row}:{column}";
+
+            if (_activeCellInstances.TryGetValue(key, out var existingCell))
             {
-                cell = _cellStore[row][column];
-                cell.Row = row;
-                cell.Column = column;
+                existingCell.Row = row;
+                existingCell.Column = column;
+                return existingCell;
+            }
+
+            var colData = GetColumnData(column, false);
+            if (colData != null && colData.HasRowData(row))
+            {
+                var cell = CreateCell(row, column);
+                return cell;
             }
             else if (createIfNotExists)
             {
-                cell = CreateCell(row, column);
-                cell.Row = row;
-                cell.Column = column;
+                var cell = CreateCell(row, column);
+                return cell;
             }
 
-            return cell;
+            return null;
         }
 
-        /// <summary>
-        /// Gets the column cells present in cell store.
-        /// </summary>
-        /// <param name="column"></param>
         internal IEnumerable<KeyValuePair<int, object>> GetCellValues(int column)
         {
-            foreach(var rowCells in _cellStore)
+            var colData = GetColumnData(column, false);
+            if (colData != null)
             {
-                if(rowCells.Value.ContainsKey(column) && rowCells.Value[column].Value != null)
+                for (int row = Row; row < Row + RowCount; row++)
                 {
-                    yield return new KeyValuePair<int, object>(rowCells.Key, rowCells.Value[column].Value);
+                    var val = colData.GetValue(row);
+                    if (val != null)
+                        yield return new KeyValuePair<int, object>(row, val);
                 }
             }
         }
 
         internal void ClearColumnCells(int column)
         {
-            foreach (var rowCells in _cellStore)
-            {
-                if (rowCells.Value.ContainsKey(column))
-                {
-                    rowCells.Value[column] = null;
-                    rowCells.Value.Remove(column);
-                }
-            }
+            var colData = GetColumnData(column, false);
+            colData?.Clear();
         }
 
-        internal void Sort(bool ascending)
+        public void Sort(bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false)
         {
-            var task = Task.Factory.StartNew(() =>
+            int startRow = Row;
+            int totalRows = RowCount;
+            int startCol = Column;
+            int totalCols = ColumnCount;
+
+            if (totalRows <= 1)
+                return;
+
+            int sortStartRow = hasHeader ? startRow + 1 : startRow;
+            int sortRowCount = hasHeader ? totalRows - 1 : totalRows;
+
+            if (sortRowCount <= 1)
+                return;
+
+            int targetStartCol = sortColumnOnly ? keyColumn : startCol;
+            int targetEndCol = sortColumnOnly ? keyColumn : (startCol + totalCols - 1);
+
+            List<RowSnapshot> snapshots = new List<RowSnapshot>(sortRowCount);
+
+            for (int r = sortStartRow; r < sortStartRow + sortRowCount; r++)
             {
-                for (int col = Column; col < Column + ColumnCount; col++)
+                object keyVal = null;
+                if (SheetParent is WorkSheet ws)
+                    keyVal = ws.DataStore.GetValue(r, keyColumn);
+
+                if (keyVal == null)
+                    keyVal = GetCell(r, keyColumn, false)?.Value;
+
+                var snapshot = new RowSnapshot(r, keyVal);
+
+                for (int c = targetStartCol; c <= targetEndCol; c++)
                 {
-                    var cells = new Dictionary<int, Cell>();
-
-                    for (int row = Row; row < Row + RowCount; row++)
+                    var colData = GetColumnData(c, false);
+                    if (colData != null)
                     {
-                        cells.Add(row, GetCell(row, col, false));
-                    }
-
-                    var sortedCells = cells.ToList();
-                    sortedCells.Sort(_sortComparer);
-
-                    if (!ascending)
-                        sortedCells.Reverse();
-
-                    var enumerator = cells.GetEnumerator();
-
-                    foreach (var cell in sortedCells)
-                    {
-                        enumerator.MoveNext();
-                        var current = enumerator.Current;
-                        MoveCell(cell.Value, current.Key, col);
+                        var cellData = colData.GetCellData(r);
+                        snapshot.Data[c] = cellData;
                     }
                 }
-            });
 
-            task.Wait();
+                snapshots.Add(snapshot);
+            }
 
-            if (Parent is WorkSheet workSheet)
+            snapshots.Sort(new NaturalSortComparer(ascending));
+
+            for (int i = 0; i < snapshots.Count; i++)
+            {
+                int targetRow = sortStartRow + i;
+                var snapshot = snapshots[i];
+
+                for (int c = targetStartCol; c <= targetEndCol; c++)
+                {
+                    var colData = GetColumnData(c, true);
+                    if (snapshot.Data.TryGetValue(c, out var cellData))
+                    {
+                        colData.SetCellData(targetRow, cellData);
+
+                        if (SheetParent is WorkSheet ws)
+                        {
+                            if (ws.DataSource != null)
+                                ws.DataStore.SetValue(targetRow, c, cellData.Value);
+                        }
+                    }
+                    else
+                    {
+                        colData.ClearRow(targetRow);
+                        if (SheetParent is WorkSheet ws && ws.DataSource != null)
+                            ws.DataStore.SetValue(targetRow, c, null);
+                    }
+                }
+            }
+
+            if (SheetParent is WorkSheet workSheet)
             {
                 workSheet.OnRangeChanged(new RangeChangedEventArgs()
                 {
                     Action = SheetAction.Sort,
                     ChangeType = ChangeType.None,
                     SortState = ascending ? SortState.Ascending : SortState.Descending,
-                    CellRange = new CellRange(Row, Column, RowCount, ColumnCount)
+                    CellRange = new CellRange(sortStartRow, targetStartCol, sortRowCount, targetEndCol - targetStartCol + 1)
                 });
+            }
+        }
+
+        internal void Sort(bool ascending)
+        {
+            Sort(ascending, Column, false, false);
+        }
+
+        internal struct RowSnapshot
+        {
+            public int OriginalRow { get; }
+            public object KeyValue { get; }
+            public Dictionary<int, CellData> Data { get; }
+
+            public RowSnapshot(int originalRow, object keyValue)
+            {
+                OriginalRow = originalRow;
+                KeyValue = keyValue;
+                Data = new Dictionary<int, CellData>();
             }
         }
 
@@ -398,7 +429,7 @@ namespace AlphaX.Sheets
                 }
             }
 
-            if (Parent is WorkSheet workSheet)
+            if (SheetParent is WorkSheet workSheet)
             {
                 workSheet.OnRangeChanged(new RangeChangedEventArgs()
                 {
@@ -411,32 +442,35 @@ namespace AlphaX.Sheets
 
         internal void ClearCellStore()
         {
-            foreach (var item in _cellStore)
+            foreach (var col in _columnStore.Values)
             {
-                foreach(var value in item.Value)
-                {
-                    value.Value.Value = null;
-                }
-                item.Value.Clear();
+                col.Clear();
             }
-                
-            _cellStore.Clear();
+
+            _columnStore.Clear();
+            _activeCellInstances.Clear();
         }
 
         internal void InsertRows(int index, int count)
         {
-            if (Parent is WorkSheet)
+            if (SheetParent is WorkSheet)
             {
-                var items = _cellStore.ToList();
-
-                for (int itemIndex = items.Count - 1; itemIndex >= 0; itemIndex--)
+                foreach (var colData in _columnStore.Values)
                 {
-                    var item = items[itemIndex];
-
-                    if (item.Key >= index)
+                    var itemsToShift = new List<KeyValuePair<int, CellData>>();
+                    for (int r = index; r < index + 10000; r++)
                     {
-                        _cellStore.Remove(item.Key);
-                        _cellStore.Add(item.Key + count, item.Value);
+                        if (colData.HasRowData(r))
+                        {
+                            itemsToShift.Add(new KeyValuePair<int, CellData>(r, colData.GetCellData(r)));
+                        }
+                    }
+
+                    itemsToShift.Reverse();
+                    foreach (var kvp in itemsToShift)
+                    {
+                        colData.ClearRow(kvp.Key);
+                        colData.SetCellData(kvp.Key + count, kvp.Value);
                     }
                 }
             }
@@ -444,122 +478,55 @@ namespace AlphaX.Sheets
 
         internal void RemoveRows(int index, int count)
         {
-            if (Parent is WorkSheet workSheet)
+            if (SheetParent is WorkSheet workSheet)
             {
-                var items = _cellStore.ToList();
-
-                for (int itemIndex = 0; itemIndex < items.Count; itemIndex++)
+                foreach (var colData in _columnStore.Values)
                 {
-                    var item = items[itemIndex];
-
-                    if (item.Key >= index && item.Key < index + count)
+                    for (int r = index; r < index + count; r++)
                     {
-                        var rowCells = _cellStore[item.Key];
-
-                        foreach (var cell in rowCells)
-                        {
-                            workSheet.DataStore.SetValue(item.Key, cell.Key, null);
-                        }
-
-                        rowCells.Clear();
-                        _cellStore.Remove(item.Key);
-                    }
-                    else if (item.Key >= index + count)
-                    {
-                        _cellStore.Remove(item.Key);
-                        _cellStore.Add(item.Key - count, item.Value);
+                        workSheet.DataStore.SetValue(r, colData.ColumnIndex, null);
+                        colData.ClearRow(r);
                     }
                 }
             }
         }
 
-        private void MoveCell(Cell cell, int toRow, int toColumn)
-        {
-            if (cell?.Row == toRow && cell?.Column == toColumn)
-                return;
-
-            if(_cellStore.ContainsKey(toRow))
-            {
-                if(cell == null)
-                    _cellStore[toRow].Remove(toColumn);
-                else
-                {
-                    if (_cellStore[toRow].ContainsKey(toColumn))
-                        _cellStore[toRow].Remove(toColumn);
-
-                    _cellStore[toRow].Add(toColumn, cell);
-                }
-                return;
-            }
-
-            if (cell != null)
-            {
-                _cellStore.Add(toRow, new SortedDictionary<int, Cell>());
-                _cellStore[toRow].Add(toColumn, cell);
-            }
-        }
-
-        /// <summary>
-        /// Gets the cell range.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
-        /// <returns></returns>
         private Cells GetRange(int row, int column, int rowCount, int columnCount)
         {
             ValidateIndexes(row, column, rowCount, columnCount);
             return new Cells(this, row, column, rowCount, columnCount);
         }
 
-        /// <summary>
-        /// Creates a new cell.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
         private Cell CreateCell(int row, int column)
         {
-            var cell = new Cell(this);
+            string key = $"{row}:{column}";
+            if (_activeCellInstances.TryGetValue(key, out var cell))
+            {
+                cell.Row = row;
+                cell.Column = column;
+                return cell;
+            }
 
-            if (!_cellStore.ContainsKey(row))
-                _cellStore.Add(row, new SortedDictionary<int, Cell>());
+            cell = new Cell(this)
+            {
+                Row = row,
+                Column = column
+            };
 
-            _cellStore[row].Add(column, cell);
+            _activeCellInstances[key] = cell;
             return cell;
         }
 
-        /// <summary>
-        /// Gets whether the cell is present in the cell store or not.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
         private bool ContainsCell(int row, int column)
         {
-            return _cellStore.ContainsKey(row) && _cellStore[row].ContainsKey(column);
+            var colData = GetColumnData(column, false);
+            return colData != null && colData.HasRowData(row);
         }
 
-        /// <summary>
-        /// Validates whether the indexes are out of range or not.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="rowCount"></param>
-        /// <param name="columnCount"></param>
-        /// <exception cref="IndexOutOfRangeException"></exception>
         private void ValidateIndexes(int row, int column, int rowCount, int columnCount)
         {
-            //if (row < Row || row >= Row + RowCount || column <  Column || column >= Column + ColumnCount
-            //    || RowCount < rowCount || ColumnCount < columnCount)
-            //    throw new IndexOutOfRangeException("Provided indexes doesn't belong to this cell range.");
         }
 
-        /// <summary>
-        /// Executes action for each cell present in range.
-        /// </summary>
-        /// <param name="action"></param>
         private void ApplyToRange(Action<IRange> action)
         {
             for (int row = Row; row < Row + RowCount; row++)
@@ -572,10 +539,52 @@ namespace AlphaX.Sheets
             }
         }
 
+        internal void LoadData(object[,] data, int startRow = 0, int startCol = 0)
+        {
+            if (data == null)
+                return;
+
+            int rows = data.GetLength(0);
+            int cols = data.GetLength(1);
+
+            if (rows == 0 || cols == 0)
+                return;
+
+            var ws = SheetParent as WorkSheet;
+
+            for (int c = 0; c < cols; c++)
+            {
+                int colIndex = startCol + c;
+                var colData = GetColumnData(colIndex, true);
+
+                for (int r = 0; r < rows; r++)
+                {
+                    int rowIndex = startRow + r;
+                    object val = data[r, c];
+                    colData.SetValue(rowIndex, val);
+
+                    if (ws != null && ws.DataSource != null)
+                    {
+                        ws.DataStore.SetValue(rowIndex, colIndex, val);
+                    }
+                }
+            }
+
+            if (ws != null)
+            {
+                ws.OnRangeChanged(new RangeChangedEventArgs()
+                {
+                    Action = SheetAction.LoadData,
+                    ChangeType = ChangeType.Value,
+                    CellRange = new CellRange(startRow, startCol, rows, cols)
+                });
+            }
+        }
+
         public void Dispose()
         {
             ClearCellStore();
-            _cellStore = null;
+            _columnStore = null;
         }
     }
 }

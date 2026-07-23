@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Drawing;
+using AlphaX.Sheets.Drawing;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,13 +15,16 @@ namespace AlphaXSpreadSamplesExplorer.Samples
             InitializeComponent();
 
             var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
-            worksheet.RowCount = worksheet.ColumnCount = 100;
+            worksheet.RowCount = 100000;
+            worksheet.ColumnCount = 20;
             var rnd = new Random();
-            for (int row = 0; row < 100; row++)
+            var data = new object[worksheet.RowCount, worksheet.ColumnCount];
+            for (int row = 0; row < worksheet.RowCount; row++)
             {
-                for (int col = 0; col < 100; col++)
-                    worksheet.Cells[row, col].Value = rnd.Next(100, 10000);
+                for (int col = 0; col < worksheet.ColumnCount; col++)
+                    data[row, col] = rnd.Next(100, 10000);
             }
+            worksheet.Load(data);
         }
 
         private void OnSortAscending(object sender, RoutedEventArgs e)

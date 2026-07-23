@@ -6,6 +6,7 @@
         Added,
         Removed,
         Sort,
-        Merge
+        Merge,
+        LoadData
     }
 }

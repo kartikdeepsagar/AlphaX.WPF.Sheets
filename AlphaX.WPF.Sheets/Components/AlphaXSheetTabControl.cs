@@ -240,32 +240,21 @@ namespace AlphaX.WPF.Sheets.Components
             var columns = (Columns)sheet.Columns;
             var rows = (Rows)sheet.Rows;
             _hScrollBar.ViewportSize = Spread.SheetViewPane.CellsRegion.ActualWidth;
-            _hScrollBar.Maximum = _hScrollBar.Minimum = _vScrollBar.Maximum = _vScrollBar.Minimum = 0;
-            var lastColumnLocation = columns.GetLocation(sheet.ColumnCount - 1);
-
-            for (int column = sheet.ColumnCount - 1; column >= 0; column--)
+            var actualWidth = _hScrollBar.ViewportSize;
+            if (sheet.ColumnCount > 0)
             {
-                var location = columns.GetLocation(column);
-
-                if (_hScrollBar.ViewportSize != 0 && lastColumnLocation - location >= _hScrollBar.ViewportSize)
-                {
-                    _hScrollBar.Maximum = columns.GetLocation(column + 3);
-                    break;
-                }
+                var totalWidth = columns.GetLocation(sheet.ColumnCount - 1) + columns.GetColumnWidth(sheet.ColumnCount - 1);
+                var maxScrollX = totalWidth - actualWidth + sheet.DefaultColumnWidth + 30;
+                _hScrollBar.Maximum = Math.Max(0, maxScrollX);
             }
 
             _vScrollBar.ViewportSize = Spread.SheetViewPane.CellsRegion.ActualHeight;
-            var lastRowLocation = rows.GetLocation(sheet.RowCount - 1);
-
-            for (int row = sheet.RowCount - 1; row >= 0; row--)
+            var actualHeight = _vScrollBar.ViewportSize;
+            if (sheet.RowCount > 0)
             {
-                var location = rows.GetLocation(row);
-
-                if (_vScrollBar.ViewportSize != 0 && lastRowLocation - location >= _vScrollBar.ViewportSize)
-                {
-                    _vScrollBar.Maximum = rows.GetLocation(row + 3);
-                    break;
-                }
+                var totalHeight = rows.GetLocation(sheet.RowCount - 1) + rows.GetRowHeight(sheet.RowCount - 1);
+                var maxScrollY = totalHeight - actualHeight + sheet.DefaultRowHeight + 30;
+                _vScrollBar.Maximum = Math.Max(0, maxScrollY);
             }
 
             if (_vScrollBar.Maximum == _vScrollBar.Minimum)
