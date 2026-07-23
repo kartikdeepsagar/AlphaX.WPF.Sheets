@@ -297,24 +297,35 @@ namespace AlphaX.WPF.Sheets
 
         private void AddDefaultStyles(WorkBook workBook)
         {
-            var rowHeaderStyle = new Style();
-            rowHeaderStyle.FontSize = 14;
-            rowHeaderStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;
-            rowHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.Gray;
+            var rowHeaderStyle = new Style
+            {
+                FontSize = 14,
+                HorizontalAlignment = AlphaXHorizontalAlignment.Center,
+                BackColor = AlphaX.Sheets.Drawing.Color.Gray
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultRowHeaderStyleKey, rowHeaderStyle);
 
-            var columnHeaderStyle = new Style();
-            columnHeaderStyle.FontSize = 14;
-            columnHeaderStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;
-            columnHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.Gray;
+            var columnHeaderStyle = new Style
+            {
+                FontSize = 14,
+                HorizontalAlignment = AlphaXHorizontalAlignment.Center,
+                BackColor = AlphaX.Sheets.Drawing.Color.Gray
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey, columnHeaderStyle);
 
-            var sheetStyle = new Style();
-            sheetStyle.BackColor =  AlphaX.Sheets.Drawing.Color.White;
+            var sheetStyle = new Style
+            {
+                BackColor = AlphaX.Sheets.Drawing.Color.White
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultSheetStyleKey, sheetStyle);
 
-            var topLeftStyle = new Style();
-            topLeftStyle.ForeColor = AlphaX.Sheets.Drawing.Color.LightGray;
+            var topLeftStyle = new Style
+            {
+                ForeColor = AlphaX.Sheets.Drawing.Color.LightGray
+            };
             workBook.AddNamedStyle(StyleKeys.DefaultTopLeftStyleKey, topLeftStyle);
 
             rowHeaderStyle.BackColor = topLeftStyle.BackColor = columnHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.FromArgb(255, 240, 240, 240);

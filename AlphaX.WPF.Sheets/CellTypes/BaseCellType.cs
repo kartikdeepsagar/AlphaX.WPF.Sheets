@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.Sheets.Formatters;
 using AlphaX.WPF.Sheets.UI.Editors;
 using System.Windows;
@@ -8,7 +8,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
 {
     public abstract class BaseCellType : ICellType
     {
-        internal virtual void DrawCell(DrawingContext drawingContext, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip)
+        internal virtual void DrawCell(DrawingContext drawingContext, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
             if (style.BackColor != AlphaX.Sheets.Drawing.Color.Transparent)
             {

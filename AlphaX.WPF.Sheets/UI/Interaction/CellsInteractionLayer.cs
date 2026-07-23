@@ -1,5 +1,5 @@
-using AlphaX.CalcEngine.Parsers;
 using AlphaX.Sheets;
+using AlphaX.Sheets.Utils;
 using AlphaX.WPF.Sheets.UI.Editors;
 using AlphaX.WPF.Sheets.UI.Managers;
 using System;
@@ -42,27 +42,6 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
                         // End editing if active.
                         if (SheetView.Spread.EditingManager.IsEditing)
                         {
-                            //if (SheetView.Spread.EditingManager.ActiveEditor is AlphaXTextBox textBox &&
-                            //    !string.IsNullOrEmpty(textBox.Text) && textBox.Text.StartsWith("="))
-                            //{
-                            //    var range = new CellRef(hitTest.Row, hitTest.Column);
-
-                            //    if (textBox.Text == "=")
-                            //        textBox.Text += range.Name;
-                            //    else if (textBox.Text.EndsWith("("))
-                            //        textBox.Text += range.Name;
-                            //    else if (textBox.Text.EndsWith(","))
-                            //        textBox.Text += range.Name;
-                            //    else if (textBox.Text.StartsWith("=") && textBox.Text.Length > 1)
-                            //    {
-                                     
-                            //    }
-
-                            //    textBox.CaretIndex = textBox.Text.Length;
-                            //    textBox.Focus();
-                            //    return;
-                            //}
-
                             if (!SheetView.Spread.EditingManager.EndEdit(true))
                                 return;
                         }
@@ -249,13 +228,45 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
                     }
                     break;
 
+                case Key.System:
                 case Key.Enter:
-                    e.Handled = true;
+                    Key actualKey = e.Key == Key.System ? e.SystemKey : e.Key;
+                    if (actualKey == Key.Enter && ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt || Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)))
+                    {
+                        if (editingManager.IsEditing && editingManager.ActiveEditor is AlphaXTextBox textBox)
+                        {
+                            if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                                return;
 
-                    if (editingManager.IsEditing && !editingManager.EndEdit(true))
+                            e.Handled = true;
+                            int caretIndex = textBox.CaretIndex;
+                            string currentText = textBox.Text ?? string.Empty;
+                            if (textBox.SelectionLength > 0)
+                            {
+                                currentText = currentText.Remove(textBox.SelectionStart, textBox.SelectionLength);
+                                caretIndex = textBox.SelectionStart;
+                            }
+                            textBox.Text = currentText.Insert(caretIndex, Environment.NewLine);
+                            textBox.CaretIndex = caretIndex + Environment.NewLine.Length;
+
+                            var cellRect = SheetView.ViewPort.GetCellRect(textBox.Row, textBox.Column);
+                            int lineCount = TextUtils.GetLineCount(textBox.Text);
+                            double fontLineHeight = textBox.FontSize * 1.3;
+                            double requiredHeight = Math.Max(cellRect.Height - 3, lineCount * fontLineHeight + 6);
+                            textBox.Height = requiredHeight;
+                        }
                         return;
+                    }
 
-                    MoveDownCellSelection();
+                    if (actualKey == Key.Enter)
+                    {
+                        e.Handled = true;
+
+                        if (editingManager.IsEditing && !editingManager.EndEdit(true))
+                            return;
+
+                        MoveDownCellSelection();
+                    }
                     break;
 
                 case Key.Delete:
@@ -275,6 +286,11 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
                         }
                     }
                     SheetView.Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+
+                    for (int row = SheetView.Selection.TopRow; row <= SheetView.Selection.BottomRow; row++)
+                    {
+                        SheetView.WorkSheet.AutoSizeRow(row);
+                    }
                     break;
 
                 default:

@@ -41,7 +41,6 @@ namespace AlphaX.Sheets
             {
                 _backColor = value;
                 OnPropertyChanged(nameof(BackColor));
-
             }
         }
 

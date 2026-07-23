@@ -1,5 +1,6 @@
-﻿using AlphaX.Sheets.Data;
+using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Filtering;
+using AlphaX.Sheets.Utils;
 using System;
 
 namespace AlphaX.Sheets
@@ -27,6 +28,7 @@ namespace AlphaX.Sheets
         public int ColumnCount { get; set; }
         public int DefaultRowHeight { get; set; }
         public int DefaultColumnWidth { get; set; }
+        public bool AllowMultiLineText { get; set; }
         public Rows Rows { get; private set; }
         public Columns Columns { get; private set; }
         public Cells Cells { get; private set; }
@@ -54,6 +56,7 @@ namespace AlphaX.Sheets
             Name = name;
             DefaultRowHeight = 22;
             DefaultColumnWidth = 70;
+            AllowMultiLineText = true;
             WorkBook = book;
             Rows = new Rows(this);
             Columns = new Columns(this);
@@ -180,6 +183,58 @@ namespace AlphaX.Sheets
                 row < RowCount && column < ColumnCount &&
                 row + rowCount - 1 < RowCount && 
                 column + columnCount - 1 < ColumnCount;
+        }
+
+        public void AutoSizeRow(int row)
+        {
+            if (row < 0 || row >= RowCount)
+                return;
+
+            int maxRequiredHeight = DefaultRowHeight;
+
+            if (AllowMultiLineText)
+            {
+                for (int col = 0; col < ColumnCount; col++)
+                {
+                    var value = DataStore.GetValue(row, col);
+                    if (value == null)
+                        continue;
+
+                    string text = value.ToString();
+                    if (string.IsNullOrEmpty(text))
+                        continue;
+
+                    string[] lines = TextUtils.GetLines(text);
+                    if (lines.Length > 1)
+                    {
+                        var cell = Cells.GetCell(row, col, false);
+                        var sheetColumn = Columns.GetItem(col, false);
+                        var sheetRow = Rows.GetItem(row, false);
+
+                        double fontSize = 14;
+                        string styleName = cell?.StyleName ?? sheetColumn?.StyleName ?? sheetRow?.StyleName;
+                        if (!string.IsNullOrEmpty(styleName))
+                        {
+                            var namedStyle = WorkBook?.GetNamedStyle(styleName);
+                            if (namedStyle != null)
+                                fontSize = namedStyle.FontSize;
+                        }
+
+                        double fontLineHeight = Math.Max(fontSize + 2, Math.Round(fontSize * 1.3));
+                        int cellRequiredHeight = (int)Math.Ceiling(DefaultRowHeight + (lines.Length - 1) * fontLineHeight);
+                        if (cellRequiredHeight > maxRequiredHeight)
+                        {
+                            maxRequiredHeight = cellRequiredHeight;
+                        }
+                    }
+                }
+            }
+
+            int currentHeight = Rows.GetRowHeight(row);
+            if (currentHeight != maxRequiredHeight)
+            {
+                Rows[row].Height = maxRequiredHeight;
+            }
         }
     }
 }

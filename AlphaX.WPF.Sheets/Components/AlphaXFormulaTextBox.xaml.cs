@@ -23,14 +23,61 @@ namespace AlphaX.WPF.Sheets
         public ICommand CommitCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
 
+        private bool _isExpanded = true;
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                _isExpanded = value;
+                UpdateExpandState();
+            }
+        }
+
         public AlphaXFormulaTextBox()
         {
             InitializeComponent();
             HorizontalAlignment = HorizontalAlignment.Stretch;
+            UpdateExpandState();
+        }
+
+        private void OnExpandToggleClick(object sender, RoutedEventArgs e)
+        {
+            IsExpanded = !IsExpanded;
+        }
+
+        private void UpdateExpandState()
+        {
+            if (_txtEditor == null)
+                return;
+
+            if (_isExpanded)
+            {
+                _txtEditor.MinHeight = 64;
+                _txtEditor.MaxHeight = 64;
+                _txtEditor.Height = 64;
+                if (_expandIcon != null)
+                    _expandIcon.Data = System.Windows.Media.Geometry.Parse("M 2 7 L 6 3 L 10 7");
+                if (_btnExpand != null)
+                    _btnExpand.ToolTip = "Collapse Formula Bar (Ctrl+Shift+U)";
+            }
+            else
+            {
+                _txtEditor.MinHeight = 26;
+                _txtEditor.MaxHeight = 26;
+                _txtEditor.Height = 26;
+                if (_expandIcon != null)
+                    _expandIcon.Data = System.Windows.Media.Geometry.Parse("M 2 3 L 6 7 L 10 3");
+                if (_btnExpand != null)
+                    _btnExpand.ToolTip = "Expand Formula Bar (Ctrl+Shift+U)";
+            }
         }
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            _txtEditor.ScrollToEnd();
+
             if (Spread == null || !_txtEditor.IsFocused)
                 return;
 
@@ -53,8 +100,34 @@ namespace AlphaX.WPF.Sheets
             if (Spread == null)
                 return;
 
-            if(e.Key == Key.Enter)
+            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+            if (key == Key.U && (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control) && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Shift)))
             {
+                e.Handled = true;
+                IsExpanded = !IsExpanded;
+                return;
+            }
+
+            if (key == Key.Enter && (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Alt) || Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)))
+            {
+                e.Handled = true;
+                int caretIndex = _txtEditor.CaretIndex;
+                string currentText = _txtEditor.Text ?? "";
+                if (_txtEditor.SelectionLength > 0)
+                {
+                    currentText = currentText.Remove(_txtEditor.SelectionStart, _txtEditor.SelectionLength);
+                    caretIndex = _txtEditor.SelectionStart;
+                }
+                _txtEditor.Text = currentText.Insert(caretIndex, System.Environment.NewLine);
+                _txtEditor.CaretIndex = caretIndex + System.Environment.NewLine.Length;
+                _txtEditor.ScrollToEnd();
+                return;
+            }
+
+            if(key == Key.Enter)
+            {
+                e.Handled = true;
                 CommitCommand.Execute(null);
                 var activeSheetView = Spread.SheetViews.ActiveSheetView;
                 Spread.SelectionManager.SelectCell(activeSheetView.ActiveRow + 1, activeSheetView.ActiveColumn);
@@ -80,6 +153,8 @@ namespace AlphaX.WPF.Sheets
             {
                 _txtEditor.Text = cell.Value?.ToString();
             }
+
+            _txtEditor.ScrollToEnd();
         }
 
         private static void OnSpreadAttached(DependencyObject d, DependencyPropertyChangedEventArgs e)

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AlphaX.Sheets
@@ -82,11 +82,7 @@ namespace AlphaX.Sheets
 
         internal void UpdateRowsLocation(int fromRow, double offset)
         {
-            for(int index = fromRow; index < Count; index++)
-            {
-                if(_locationMap.ContainsKey(index))
-                    _locationMap[index] += offset;
-            }
+            _locationMap?.Clear();
         }
 
         protected override Row CreateItem(int index)

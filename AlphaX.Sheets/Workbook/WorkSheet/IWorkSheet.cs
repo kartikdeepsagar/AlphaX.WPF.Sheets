@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Filtering;
+using AlphaX.Sheets.Filtering;
 using System;
 
 namespace AlphaX.Sheets
@@ -54,6 +54,10 @@ namespace AlphaX.Sheets
         /// Gets or sets the default column width for this sheet.
         /// </summary>
         int DefaultColumnWidth { get; set; }
+        /// <summary>
+        /// Gets or sets whether multiline text in cells is enabled.
+        /// </summary>
+        bool AllowMultiLineText { get; set; }
         /// <summary>
         /// Gets row collection of this sheet.
         /// </summary>
@@ -116,5 +120,10 @@ namespace AlphaX.Sheets
         /// </summary>
         void Clear(WorkSheetClearMode mode);
         bool ContainsRange(int row, int column, int rowCount, int columnCount);
+        /// <summary>
+        /// Auto sizes the row height based on cell text content.
+        /// </summary>
+        /// <param name="row">The row index.</param>
+        void AutoSizeRow(int row);
     }
 }

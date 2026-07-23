@@ -1,5 +1,6 @@
-﻿using AlphaX.CalcEngine;
+using AlphaX.CalcEngine;
 using AlphaX.Sheets;
+using AlphaX.Sheets.Utils;
 using AlphaX.WPF.Sheets.CellTypes;
 using AlphaX.WPF.Sheets.UI.Editors;
 using AlphaX.WPF.Sheets.UI.Interaction;
@@ -67,12 +68,26 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             if (!UseCellValue)
                 editor.Text = "";
 
+            if (editor is AlphaXTextBox gcTextBox)
+            {
+                gcTextBox.AcceptsReturn = workSheet.AllowMultiLineText;
+            }
+
             editor.Row = row;
             editor.Column = column;
             editor.KeyDown += OnEditorKeyDown;
             editor.CaretIndex = editor.Text.Length;
-            editor.MinWidth = cellRect.Width - 2;
-            editor.Height = cellRect.Height - 2;
+            editor.MinWidth = cellRect.Width - 3;
+            int initialLineCount = TextUtils.GetLineCount(editor.Text);
+            if (workSheet.AllowMultiLineText && initialLineCount > 1)
+            {
+                double initialLineHeight = editor.FontSize * 1.3;
+                editor.Height = System.Math.Max(cellRect.Height - 3, initialLineCount * initialLineHeight + 6);
+            }
+            else
+            {
+                editor.Height = cellRect.Height - 3;
+            }
             cellsInteractionLayer.Children.Add(ActiveEditor);
             Canvas.SetLeft(ActiveEditor, cellRect.X + 1);
             Canvas.SetTop(ActiveEditor, cellRect.Y + 1);
@@ -150,6 +165,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                 try
                 {
                     workSheet.Cells[gcTextBox.Row, gcTextBox.Column].Formula = gcTextBox.Text.Substring(1);
+                    workSheet.AutoSizeRow(gcTextBox.Row);
                 }
                 catch (CalcEngineException ex)
                 {
@@ -175,6 +191,8 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
                 var value = DataTypeConverter.ConvertType(gcTextBox.Text);
                 workSheet.Cells[gcTextBox.Row, gcTextBox.Column].Value = value;
+
+                workSheet.AutoSizeRow(gcTextBox.Row);
 
                 cellChangedAction.NewState.Value = value;
                 cellChangedAction.NewState.Row = gcTextBox.Row;
