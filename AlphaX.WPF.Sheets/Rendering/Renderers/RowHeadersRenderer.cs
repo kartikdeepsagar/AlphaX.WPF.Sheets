@@ -1,3 +1,4 @@
+using System;
 using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
@@ -63,7 +64,62 @@ namespace AlphaX.WPF.Sheets.Rendering
                 }
             }
 
+            // Render double horizontal lines for hidden rows
+            int minRow = Math.Max(0, topRow);
+            int maxRow = Math.Min(workSheet.RowCount - 1, bottomRow + 1);
+
+            for (int row = minRow; row <= maxRow; row++)
+            {
+                if (rows.GetRowHeight(row) == 0)
+                {
+                    if (row == 0 || rows.GetRowHeight(row - 1) > 0)
+                    {
+                        var rowLocation = rows.GetLocation(row);
+                        var y = rowLocation - viewport.TopRowLocation;
+                        DrawHiddenRowIndicator(context, y, leftColumn, rightColumn, columns, workSheet);
+                    }
+                }
+            }
+
             context.Pop();
+        }
+
+        private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, Columns columns, WorkSheet workSheet)
+        {
+            var pen = SheetView.Spread.GridLinePen;
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<Style>();
+
+            double line1Y, line2Y;
+            if (y <= 0)
+            {
+                line1Y = y + 1.5;
+                line2Y = y + 4.5;
+            }
+            else
+            {
+                line1Y = y - 1.5;
+                line2Y = y + 1.5;
+            }
+
+            var rectTop = Math.Min(line1Y, line2Y) - 0.5;
+            var rectHeight = Math.Abs(line2Y - line1Y) + 1.0;
+
+            for (int col = leftColumn; col <= rightColumn; col++)
+            {
+                var columnWidth = columns.GetColumnWidth(col);
+                if (columnWidth == 0)
+                    continue;
+                var colLocation = columns.GetLocation(col);
+                var gapRect = new Rect(colLocation, rectTop, columnWidth, rectHeight);
+
+                if (defaultStyle != null && defaultStyle.Background != null)
+                {
+                    context.DrawRectangle(defaultStyle.Background, null, gapRect);
+                }
+
+                context.DrawLine(pen, new Point(colLocation, line1Y), new Point(colLocation + columnWidth, line1Y));
+                context.DrawLine(pen, new Point(colLocation, line2Y), new Point(colLocation + columnWidth, line2Y));
+            }
         }
 
         private void AdjustHeaderWidth(WorkSheet workSheet, Rows rows, Columns columns, Cells cells, int topRow, int leftColumn, int bottomRow, int rightColumn)

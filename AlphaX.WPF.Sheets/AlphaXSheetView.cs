@@ -184,6 +184,11 @@ namespace AlphaX.WPF.Sheets
                 }
             }
 
+            if (width == 0)
+            {
+                width = WorkSheet.DefaultColumnWidth;
+            }
+
             if(width != WorkSheet.Columns.GetColumnWidth(column))
             {
                 WorkSheet.Columns[column].Width = width;

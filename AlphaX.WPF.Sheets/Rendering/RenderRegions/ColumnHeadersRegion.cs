@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
 using System.Windows.Media;
@@ -55,18 +55,75 @@ namespace AlphaX.WPF.Sheets.Rendering
                 }
             }
 
+            // Check for hidden column resize handle hit first
+            for (int col = 0; col < _workSheet.ColumnCount; col++)
+            {
+                if (columns.GetColumnWidth(col) == 0)
+                {
+                    int startHiddenCol = col;
+                    int lastHiddenCol = col;
+                    while (lastHiddenCol + 1 < _workSheet.ColumnCount && columns.GetColumnWidth(lastHiddenCol + 1) == 0)
+                    {
+                        lastHiddenCol++;
+                    }
+
+                    var colLocation = columns.GetLocation(startHiddenCol);
+                    bool isHit;
+                    if (colLocation == 0)
+                    {
+                        isHit = point.X >= 0 && point.X <= _resizeDelta + 2;
+                    }
+                    else
+                    {
+                        isHit = point.X >= colLocation - 2 && point.X <= colLocation + _resizeDelta;
+                    }
+
+                    if (isHit)
+                    {
+                        hitTestInfo.Element = VisualElement.ColumnHeaderResizeBar;
+                        hitTestInfo.Column = lastHiddenCol;
+                        x = colLocation;
+                        hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                            y - _viewPort.TopRowLocation);
+                        return hitTestInfo;
+                    }
+
+                    col = lastHiddenCol;
+                }
+            }
+
+            // Check visible column resize boundaries (centered around right edge)
             for (int col = viewRange.LeftColumn; col <= viewRange.RightColumn; col++)
             {
                 var colLocation = columns.GetLocation(col);
                 double columnWidth = _workSheet.Columns.GetColumnWidth(col);
 
+                if (columnWidth == 0)
+                    continue;
+
+                double rightEdge = colLocation + columnWidth;
+                if (point.X >= rightEdge - _resizeDelta && point.X <= rightEdge + _resizeDelta)
+                {
+                    hitTestInfo.Element = VisualElement.ColumnHeaderResizeBar;
+                    hitTestInfo.Column = col;
+                    x = colLocation;
+                    hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                        y - _viewPort.TopRowLocation);
+                    return hitTestInfo;
+                }
+            }
+
+            // Check visible column body hit
+            for (int col = viewRange.LeftColumn; col <= viewRange.RightColumn; col++)
+            {
+                var colLocation = columns.GetLocation(col);
+                double columnWidth = _workSheet.Columns.GetColumnWidth(col);
+
+                if (columnWidth == 0)
+                    continue;
+
                 if (point.X >= colLocation && point.X < colLocation + columnWidth)
                 {
-                    if (point.X > colLocation + columnWidth - _resizeDelta)
-                    {
-                        hitTestInfo.Element = VisualElement.ColumnHeaderResizeBar;
-                    }
-
                     hitTestInfo.Column = col;
                     x = colLocation;
                     break;

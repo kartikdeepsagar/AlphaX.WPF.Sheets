@@ -1,4 +1,4 @@
-﻿using AlphaX.WPF.Sheets.Rendering;
+using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Managers;
 using System;
 using System.Windows;
@@ -18,6 +18,14 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
 
             if (hitTest.Element == VisualElement.RowHeaderResizeBar && SheetView.Spread.AllowRowResize)
             {
+                if (e.ClickCount == 2)
+                {
+                    SheetView.WorkSheet.AutoSizeRow(hitTest.Row);
+                    SheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
+                    SheetView.Invalidate();
+                    return;
+                }
+
                 _resizeManager.BeginResizeRow(hitTest.Row, (int)hitTest.Position.Y);
                 Children.Add(_resizeManager.ResizeLine);
             }
