@@ -195,8 +195,8 @@ namespace AlphaX.WPF.Sheets
             EditingManager = new EditingManager(this);
             SelectionManager = new SelectionManager(this);
             SelectionManager.SelectCell(0, 0);
+            Loaded += OnLoaded;
         }
-
         #endregion
 
         #region Public Methods
@@ -242,7 +242,7 @@ namespace AlphaX.WPF.Sheets
         public void ScrollToRow(IAlphaXSheetView sheetView, int row)
         {
             var workSheet = sheetView.WorkSheet;
-            SheetTabControl.VScrollBar.Value = workSheet.Rows.GetLocation(row);
+            SheetTabControl.VScrollBar.Value = ((Rows)workSheet.Rows).GetLocation(row);
         }
 
         /// <summary>
@@ -253,26 +253,12 @@ namespace AlphaX.WPF.Sheets
         public void ScrollToColumn(IAlphaXSheetView sheetView, int column)
         {
             var workSheet = sheetView.WorkSheet;
-            SheetTabControl.HScrollBar.Value = workSheet.Columns.GetLocation(column);
+            SheetTabControl.HScrollBar.Value = ((Columns)workSheet.Columns).GetLocation(column);
         }
       
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Gets the extent sheet size.
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <returns></returns>
-        private Size GetSheetSize(IWorkSheet sheet)
-        {
-            var columns = sheet.Columns.As<Columns>();
-            var rows = sheet.Rows.As<Rows>();
-            double width = columns.GetLocation(sheet.ColumnCount - 1) + columns.GetColumnWidth(sheet.ColumnCount - 1);
-            double height = rows.GetLocation(sheet.RowCount - 1) + rows.GetRowHeight(sheet.RowCount - 1);
-            return new Size(width, height);
-        }
-
         /// <summary>
         /// Updates the grid line pen.
         /// </summary>
@@ -331,6 +317,10 @@ namespace AlphaX.WPF.Sheets
             rowHeaderStyle.BackColor = topLeftStyle.BackColor = columnHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.FromArgb(255, 240, 240, 240);
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SheetViews?.ActiveSheetView?.Invalidate(true);
+        }
         #endregion
 
         #region Internal Methods
@@ -363,7 +353,7 @@ namespace AlphaX.WPF.Sheets
                         break;
 
                     case Key.A:
-                        SelectionManager.SelectRange(activeSheetView.WorkSheet.Cells.AsCellRange());
+                        SelectionManager.SelectRange(((Cells)activeSheetView.WorkSheet.Cells).AsCellRange());
                         break;
 
                     case Key.V:
@@ -453,6 +443,7 @@ namespace AlphaX.WPF.Sheets
         /// </summary>
         public void Dispose()
         {
+            Loaded -= OnLoaded;
             WorkBook.Dispose();
             SheetTabControl.Dispose();
             SheetViewPane.Dispose();

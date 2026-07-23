@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AlphaX.Sheets.Filtering
@@ -8,7 +8,7 @@ namespace AlphaX.Sheets.Filtering
         private WorkSheet _workSheet;
         private Dictionary<int, object> _filteredRows;
 
-        internal IReadOnlyDictionary<int, object> FilteredRows => _filteredRows;
+        public IReadOnlyDictionary<int, object> FilteredRows => _filteredRows;
 
         public CellRange FilterRange { get; private set; }
         public FilterBase CurrentFilter { get; private set; }

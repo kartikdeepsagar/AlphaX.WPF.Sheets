@@ -2,7 +2,7 @@
 
 namespace AlphaX.Sheets
 {
-    public interface IRows : IEnumerableEx<Row>, IDisposable
+    public interface IRows : IEnumerableEx<IRow>, IDisposable
     {
         /// <summary>
         /// Gets the parent this collection belongs to.
@@ -15,7 +15,7 @@ namespace AlphaX.Sheets
         /// Row index.
         /// </param>
         /// <returns></returns>
-        Row this[int index] { get; }
+        IRow this[int index] { get; }
         /// <summary>
         /// Gets the row height.
         /// </summary>

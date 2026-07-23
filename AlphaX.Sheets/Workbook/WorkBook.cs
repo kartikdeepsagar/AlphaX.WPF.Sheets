@@ -11,7 +11,7 @@ namespace AlphaX.Sheets
         private Dictionary<string, NamedStyle> _namedStyles;
 
         public string Name { get; set; }
-        public WorkSheets WorkSheets { get; private set; }
+        public IWorkSheets WorkSheets { get; private set; }
         public ICalcEngine CalcEngine { get; private set; }
         public IUpdateProvider UpdateProvider
         {

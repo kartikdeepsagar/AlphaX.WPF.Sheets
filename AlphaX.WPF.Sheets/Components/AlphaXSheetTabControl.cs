@@ -1,3 +1,4 @@
+using AlphaX.Sheets;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -236,8 +237,8 @@ namespace AlphaX.WPF.Sheets.Components
         internal void UpdateScrollbars()
         {
             var sheet = Spread.SheetViews.ActiveSheetView.WorkSheet;
-            var columns = sheet.Columns;
-            var rows = sheet.Rows;
+            var columns = (Columns)sheet.Columns;
+            var rows = (Rows)sheet.Rows;
             _hScrollBar.ViewportSize = Spread.SheetViewPane.CellsRegion.ActualWidth;
             _hScrollBar.Maximum = _hScrollBar.Minimum = _vScrollBar.Maximum = _vScrollBar.Minimum = 0;
             var lastColumnLocation = columns.GetLocation(sheet.ColumnCount - 1);

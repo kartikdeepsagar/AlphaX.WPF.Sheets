@@ -5,39 +5,34 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public interface IUpdateProvider
-    {
-        bool SuspendUpdates { get; set; }
-        void RangeChanged(WorkSheet worksheet, CellRange range, SheetAction action, ChangeType changeType);
-        void CellChanged(WorkSheet worksheet, int row, int column, object oldValue, object newValue, SheetAction action, ChangeType changeType);
-        void RowsChanged(WorkSheet worksheet, int index, int count, SheetAction action, ChangeType changeType);
-        void ColumnsChanged(WorkSheet worksheet, int index, int count, SheetAction action, ChangeType changeType);
-    }
-
     public class WorkSheet : IWorkSheet
     {
         public event EventHandler<CellChangedEventArgs> CellChanged;
         public event EventHandler<RangeChangedEventArgs> RangeSorted;
         public event EventHandler<RowChangedEventArgs> RowsChanged;
         public event EventHandler<ColumnChangedEventArgs> ColumnsChanged;
+        private WorkBook _workBook;
+        private Cells _cells;
+        private Rows _rows;
+        private Columns _columns;
+        private RowHeaders _rowHeaders;
+        private ColumnHeaders _columnHeaders;
+        private TopLeft _topLeft;
+        private FilterProvider _filterProvider;
+        private WorkSheetDataStore _dataStore;
 
-        public WorkSheetDataStore DataStore { get; private set; }
         public string Name { get; set; }
-        public WorkBook WorkBook { get; private set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
         public int DefaultRowHeight { get; set; }
         public int DefaultColumnWidth { get; set; }
         public bool AllowMultiLineText { get; set; }
-        public Rows Rows { get; private set; }
-        public Columns Columns { get; private set; }
-        public Cells Cells { get; private set; }
         public object DataSource
         {
             get
             {
-                if (DataStore.IsValid && DataStore.ActualDataSource != null)
-                    return DataStore.ActualDataSource;
+                if (_dataStore.IsValid && _dataStore.ActualDataSource != null)
+                    return _dataStore.ActualDataSource;
 
                 return null;
             }
@@ -46,10 +41,16 @@ namespace AlphaX.Sheets
                 InitializeDataStore(value);
             }
         }
-        public RowHeaders RowHeaders { get; private set; }
-        public ColumnHeaders ColumnHeaders { get; private set; }
-        public FilterProvider FilterProvider { get; private set; }
-        public TopLeft TopLeft { get; private set; }
+
+        public IRows Rows => _rows;
+        public IColumns Columns => _columns;
+        public IRange Cells => _cells;
+        public IRowHeaders RowHeaders => _rowHeaders;
+        public IColumnHeaders ColumnHeaders => _columnHeaders;
+        public IFilterProvider FilterProvider => _filterProvider;
+        public ITopLeft TopLeft => _topLeft;
+        public IDataStore DataStore => _dataStore;
+        public IWorkBook WorkBook => _workBook;
 
         internal WorkSheet(WorkBook book, string name)
         {
@@ -57,21 +58,21 @@ namespace AlphaX.Sheets
             DefaultRowHeight = 22;
             DefaultColumnWidth = 70;
             AllowMultiLineText = true;
-            WorkBook = book;
-            Rows = new Rows(this);
-            Columns = new Columns(this);
-            TopLeft = new TopLeft(this);
-            RowHeaders = new RowHeaders(this);
-            ColumnHeaders = new ColumnHeaders(this);
-            Cells = new Cells(this);
+            _workBook = book;
+            _rows = new Rows(this);
+            _columns = new Columns(this);
+            _topLeft = new TopLeft(this);
+            _rowHeaders = new RowHeaders(this);
+            _columnHeaders = new ColumnHeaders(this);
+            _cells = new Cells(this);
             RowCount = ColumnCount = 500;
-            DataStore = new WorkSheetDataStore(this);
-            FilterProvider = new FilterProvider(this);
+            _dataStore = new WorkSheetDataStore(this);
+            _filterProvider = new FilterProvider(this);
         }
 
         public void SortRange(CellRange range, bool ascending)
         {
-            Cells[range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount].Sort(ascending);
+            ((Cells)_cells[range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount]).Sort(ascending);
         }
 
         public object[,] GetData(CellRange range)
@@ -101,18 +102,18 @@ namespace AlphaX.Sheets
         {
             if(dataSource == null && DataStore != null)
             {
-                DataStore.Dispose();
-                DataStore = null;
+                _dataStore.Dispose();
+                _dataStore = null;
                 return;
             }
 
             if(DataStore != null)
             {
-                DataStore.Dispose();
-                DataStore = null;
+                _dataStore.Dispose();
+                _dataStore = null;
             }
 
-            DataStore = new WorkSheetDataStore(this, dataSource);          
+            _dataStore = new WorkSheetDataStore(this, dataSource);          
         }
 
         internal void OnCellChanged(CellChangedEventArgs args)
@@ -149,22 +150,22 @@ namespace AlphaX.Sheets
 
         public void Dispose()
         {
-            DataStore.Dispose();
-            DataStore = null;
+            _dataStore.Dispose();
+            _dataStore = null;
             DataSource = null;
-            Rows.Dispose();
-            Columns.Dispose();
-            Cells.Dispose();
-            RowHeaders.Dispose();
-            ColumnHeaders.Dispose();
-            Rows = null;
-            Columns = null;
-            Cells = null;
-            RowHeaders = null;
-            ColumnHeaders = null;
-            TopLeft = null;
-            FilterProvider = null;
-            WorkBook = null;
+            _rows.Dispose();
+            _columns.Dispose();
+            _cells.Dispose();
+            _rowHeaders.Dispose();
+            _columnHeaders.Dispose();
+            _rows = null;
+            _columns = null;
+            _cells = null;
+            _rowHeaders = null;
+            _columnHeaders = null;
+            _topLeft = null;
+            _filterProvider = null;
+            _workBook = null;
         }
 
         public void Clear(WorkSheetClearMode mode)
@@ -172,7 +173,7 @@ namespace AlphaX.Sheets
             switch(mode)
             {
                 case WorkSheetClearMode.Data:
-                    Cells.ClearCellStore();
+                    _cells.ClearCellStore();
                     break;
             }
         }
@@ -207,15 +208,15 @@ namespace AlphaX.Sheets
                     string[] lines = TextUtils.GetLines(text);
                     if (lines.Length > 1)
                     {
-                        var cell = Cells.GetCell(row, col, false);
-                        var sheetColumn = Columns.GetItem(col, false);
-                        var sheetRow = Rows.GetItem(row, false);
+                        var cell = _cells.GetCell(row, col, false);
+                        var sheetColumn = _columns.GetItem(col, false);
+                        var sheetRow = _rows.GetItem(row, false);
 
                         double fontSize = 14;
                         string styleName = cell?.StyleName ?? sheetColumn?.StyleName ?? sheetRow?.StyleName;
                         if (!string.IsNullOrEmpty(styleName))
                         {
-                            var namedStyle = WorkBook?.GetNamedStyle(styleName);
+                            var namedStyle = _workBook?.GetNamedStyle(styleName);
                             if (namedStyle != null)
                                 fontSize = namedStyle.FontSize;
                         }

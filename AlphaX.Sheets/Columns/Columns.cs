@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    public class Columns : CollectionBase<Column>, IColumns
+    public class Columns : CollectionBase<IColumn>, IColumns
     {
         private Dictionary<int, double> _locationMap;
         protected override int Count
@@ -15,7 +15,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Column this[string address]
+        public IColumn this[string address]
         {
             get
             {               
@@ -95,7 +95,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        protected override Column CreateItem(int index)
+        protected override IColumn CreateItem(int index)
         {
             var column =  new Column(this);
             column.Index = index;

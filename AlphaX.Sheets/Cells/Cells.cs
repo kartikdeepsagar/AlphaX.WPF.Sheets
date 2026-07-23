@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AlphaX.Sheets
 {
-    public class Cells : ICell
+    public class Cells : IRange
     {
         static Cells()
         {
@@ -24,7 +24,7 @@ namespace AlphaX.Sheets
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private SortedDictionary<int, SortedDictionary<int, Cell>> _cellStore;
 
-        public Cells this[string name]
+        public IRange this[string name]
         {
             get
             {
@@ -41,7 +41,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Cell this[int row, int column]
+        public IRange this[int row, int column]
         {
             get
             {
@@ -49,7 +49,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Cells this[int row, int column, int rowCount, int columnCount]
+        public IRange this[int row, int column, int rowCount, int columnCount]
         {
             get
             {
@@ -191,7 +191,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        Cells ICell.Parent { get; }
+        Cells IRange.Parent { get; }
         public bool HasFormula => false;
 
         public bool Locked
@@ -320,7 +320,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public void Sort(bool ascending)
+        internal void Sort(bool ascending)
         {
             var task = Task.Factory.StartNew(() =>
             {
@@ -544,7 +544,7 @@ namespace AlphaX.Sheets
         /// Executes action for each cell present in range.
         /// </summary>
         /// <param name="action"></param>
-        private void ApplyToRange(Action<ICell> action)
+        private void ApplyToRange(Action<IRange> action)
         {
             for (int row = Row; row < Row + RowCount; row++)
             {

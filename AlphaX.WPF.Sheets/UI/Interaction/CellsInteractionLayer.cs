@@ -276,7 +276,7 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
                     {
                         for (int column = SheetView.Selection.LeftColumn; column <= SheetView.Selection.RightColumn; column++)
                         {
-                            var cell = SheetView.WorkSheet.Cells.GetCell(row, column, false);
+                            var cell = ((Cells)SheetView.WorkSheet.Cells).GetCell(row, column, false);
 
                             if (cell != null && (cell.Value != null || cell.Formula != null))
                             {

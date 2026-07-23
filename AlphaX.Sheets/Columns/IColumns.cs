@@ -2,7 +2,7 @@
 
 namespace AlphaX.Sheets
 {
-    public interface IColumns : IEnumerableEx<Column>, IDisposable
+    public interface IColumns : IEnumerableEx<IColumn>, IDisposable
     {
         /// <summary>
         /// Gets the parent this collection belongs to.
@@ -15,18 +15,25 @@ namespace AlphaX.Sheets
         /// Column index. 
         /// </param>
         /// <returns></returns>
-        Column this[int index] { get; }
+        IColumn this[int index] { get; }
         /// <summary>
         /// Gets the column with specific column name.
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        Column this[string address] { get; }
+        IColumn this[string address] { get; }
         /// <summary>
         /// Gets the column width.
         /// </summary>
         /// <param name="column"></param>
         /// <returns></returns>
         int GetColumnWidth(int column);
+
+        /// <summary>
+        /// Gets the column index of the provided column.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        int GetColumnIndex(IColumn column);
     }
 }

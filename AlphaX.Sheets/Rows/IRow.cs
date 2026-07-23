@@ -8,7 +8,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent row collection.
         /// </summary>
-        Rows Parent { get; }
+        IRows Parent { get; }
         /// <summary>
         /// Gets or sets the height of this row.
         /// </summary>

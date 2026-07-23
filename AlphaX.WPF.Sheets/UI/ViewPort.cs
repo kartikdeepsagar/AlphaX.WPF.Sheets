@@ -103,18 +103,19 @@ namespace AlphaX.WPF.Sheets.UI
                 return new Rect();
 
             Cell cell = null;
+            Cells cells = (Cells)_workSheet.Cells;
 
             if (row > 0)
             {
                 int temp = row - 1;
-                cell = _workSheet.Cells.GetCell(temp, col, false);
+                cell = cells.GetCell(temp, col, false);
                 while (cell != null && cell.RowSpan > 1)
                 {
                     temp--;
-                    cell = _workSheet.Cells.GetCell(temp, col, false);
+                    cell = cells.GetCell(temp, col, false);
                 }
                 row = temp + 1;
-                cell = _workSheet.Cells.GetCell(row, col, false);
+                cell = cells.GetCell(row, col, false);
             }
 
             int rowSpan = 1;

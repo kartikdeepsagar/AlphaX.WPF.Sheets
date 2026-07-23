@@ -9,7 +9,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent column collection.
         /// </summary>
-        Columns Parent { get; }
+        IColumns Parent { get; }
         /// <summary>
         /// Gets or sets the width of this column.
         /// </summary>

@@ -8,8 +8,8 @@
         {
             get
             {
-                var column = Columns.GetItem(ColumnCount - 1, false);
-                var columnLocation = Columns.GetLocation(ColumnCount - 1);
+                var column = _columns.GetItem(ColumnCount - 1, false);
+                var columnLocation = _columns.GetLocation(ColumnCount - 1);
 
                 if (column == null)
                     return columnLocation + DefaultColumnWidth;

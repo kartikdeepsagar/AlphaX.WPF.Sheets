@@ -1,3 +1,4 @@
+using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Filtering;
 using System;
 
@@ -33,7 +34,12 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent workbook.
         /// </summary>
-        WorkBook WorkBook { get; }
+        IWorkBook WorkBook { get; }
+
+        /// <summary>
+        /// Gets the data store for this sheet.
+        /// </summary>
+        IDataStore DataStore { get; }
         /// <summary>
         /// Gets or sets name for this sheet.
         /// </summary>
@@ -61,27 +67,27 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets row collection of this sheet.
         /// </summary>
-        Rows Rows { get; }
+        IRows Rows { get; }
         /// <summary>
         /// Gets column collection of this sheet.
         /// </summary>
-        Columns Columns { get; }
+        IColumns Columns { get; }
         /// <summary>
         /// Gets the cells of this sheet.
         /// </summary>
-        Cells Cells { get; }
+        IRange Cells { get; }
         /// <summary>
         /// Gets the sheet top left region.
         /// </summary>
-        TopLeft TopLeft { get; }
+        ITopLeft TopLeft { get; }
         /// <summary>
         /// Gets the sheet row headers.
         /// </summary>
-        RowHeaders RowHeaders { get; }
+        IRowHeaders RowHeaders { get; }
         /// <summary>
         /// Gets the sheet column headers.
         /// </summary>
-        ColumnHeaders ColumnHeaders { get; }
+        IColumnHeaders ColumnHeaders { get; }
         /// <summary>
         /// Gets or sets the sheet data source.
         /// </summary>
@@ -89,7 +95,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the filter provider.
         /// </summary>
-        FilterProvider FilterProvider { get; }
+        IFilterProvider FilterProvider { get; }
         /// <summary>
         /// Gets the range data.
         /// </summary>

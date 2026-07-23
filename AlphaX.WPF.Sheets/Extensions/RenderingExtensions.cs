@@ -15,7 +15,7 @@ namespace AlphaX.WPF.Sheets
             DefaultCellType = new TextCellType();
         }
 
-        internal static BaseCellType GetCellType(ICell cell, IColumn column)
+        internal static BaseCellType GetCellType(IRange cell, IColumn column)
         {
             return cell != null && cell.CellType != null ? (BaseCellType)cell.CellType :
                                    column != null && column.CellType != null ?
@@ -53,7 +53,7 @@ namespace AlphaX.WPF.Sheets
                 }
 
                 var workSheet = sheetView.WorkSheet;
-                var sheetRow = workSheet.Rows.GetItem(row, false);
+                var sheetRow = ((Rows)workSheet.Rows).GetItem(row, false);
                 return sheetRow != null ? sheetRow.Height : workSheet.DefaultRowHeight;
             }
 
@@ -83,7 +83,7 @@ namespace AlphaX.WPF.Sheets
                 }
 
                 var workSheet = sheetView.WorkSheet;
-                var sheetColumn = workSheet.Columns.GetItem(column, false);
+                var sheetColumn = ((Columns)workSheet.Columns).GetItem(column, false);
                 return sheetColumn != null ? sheetColumn.Width : workSheet.DefaultColumnWidth;
             }
 

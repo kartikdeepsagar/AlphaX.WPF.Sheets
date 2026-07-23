@@ -3,7 +3,7 @@ using AlphaX.Sheets.Formatters;
 
 namespace AlphaX.Sheets
 {
-    public class Cell : ICell
+    public class Cell : IRange
     {
         private object _value;
         private string _styleName;
@@ -118,6 +118,12 @@ namespace AlphaX.Sheets
         public bool IsVisible { get; set; }
         public int RowSpan { get; set; }
         public int ColumnSpan { get; set; }
+        public int RowCount => 1;
+        public int ColumnCount => 1;
+
+        public IRange this[int row, int column, int rowCount, int columnCount] => this;
+        public IRange this[int row, int column] => this;
+        public IRange this[string name] => this;
 
         internal Cell(Cells parent)
         {

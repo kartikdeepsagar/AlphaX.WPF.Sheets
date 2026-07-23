@@ -1,9 +1,12 @@
-﻿namespace AlphaX.Sheets.Filtering
+using System.Collections.Generic;
+
+namespace AlphaX.Sheets.Filtering
 {
     public interface IFilterProvider
     {
         CellRange FilterRange { get; }
         FilterBase CurrentFilter { get; }
+        IReadOnlyDictionary<int, object> FilteredRows { get; }
         /// <summary>
         /// Applies filter on the specified cell range.
         /// </summary>

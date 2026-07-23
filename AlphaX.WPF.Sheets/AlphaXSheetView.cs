@@ -12,6 +12,9 @@ namespace AlphaX.WPF.Sheets
         private HeadersVisibility _headersVisibility;
         private ViewPort _viewPort;
         private WorkSheet _workSheet;
+        private Rows _rows;
+        private Cells _cells;
+        private Columns _columns;
 
         #region Properties
         public GridLineVisibility GridLineVisibility { get; set; }
@@ -42,6 +45,9 @@ namespace AlphaX.WPF.Sheets
         {
             Spread = spread;
             _workSheet = worksheet;
+            _rows = (Rows)_workSheet.Rows;
+            _columns = (Columns)_workSheet.Columns;
+            _cells = (Cells)_workSheet.Cells;
             GridLineVisibility = GridLineVisibility.Both;
             SelectionMode = SelectionMode.CellRange;
             MouseWheelScrollDirection = MouseWheelScrollDirection.Vertical;
@@ -74,7 +80,7 @@ namespace AlphaX.WPF.Sheets
                 Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
 
                 var pasteAction = new ClipboardPasteAction() { SheetView = this };
-                pasteAction.OldState.Value = _workSheet.WorkBook.DataProvider.GetRangeValue(_workSheet.Name, ActiveRow, ActiveColumn, data.GetLength(0), data.GetLength(1));
+                pasteAction.OldState.Value = ((WorkBook)_workSheet.WorkBook).DataProvider.GetRangeValue(_workSheet.Name, ActiveRow, ActiveColumn, data.GetLength(0), data.GetLength(1));
                 pasteAction.OldState.Row = ActiveRow;
                 pasteAction.OldState.Column = ActiveColumn;
                 pasteAction.OldState.Selection = Selection.Clone();
@@ -104,7 +110,7 @@ namespace AlphaX.WPF.Sheets
         {
             var stringBuilder = new StringBuilder();
 
-            var data = _workSheet.WorkBook.DataProvider.GetRangeValue(_workSheet.Name, range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount);
+            var data = ((WorkBook)_workSheet.WorkBook).DataProvider.GetRangeValue(_workSheet.Name, range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount);
 
             for(int row = 0; row < data.GetLength(0); row++)
             {
@@ -219,15 +225,15 @@ namespace AlphaX.WPF.Sheets
 
         public void AutoSizeColumn(int column)
         {
-            var sheetColumn = WorkSheet.Columns.GetItem(column, false);
+            var sheetColumn = ((Columns)WorkSheet.Columns).GetItem(column, false);
             var width = 0;
-            var cellValues = WorkSheet.Cells.GetCellValues(column);
+            var cellValues = ((Cells)WorkSheet.Cells).GetCellValues(column);
 
             foreach(var cellValue in cellValues)
             {
                 if(cellValue.Value != null)
                 {
-                    var style = WorkSheet.WorkBook.PickStyle(WorkSheet.Cells.GetCell(cellValue.Key, column, false), sheetColumn, WorkSheet.Rows.GetItem(cellValue.Key, false));
+                    var style = ((WorkBook)WorkSheet.WorkBook).PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key, false));
                     if (style == null)
                         style = WorkSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<Style>();
                     var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.As<Style>().GlyphTypeface);

@@ -7,18 +7,18 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the worksheet this headers belongs to.
         /// </summary>
-        WorkSheet WorkSheet { get; }    
+        IWorkSheet WorkSheet { get; }    
         /// <summary>
         /// Gets header row collection.
         /// </summary>
-        Rows Rows { get; }
+        IRows Rows { get; }
         /// <summary>
         /// Gets header column collection.
         /// </summary>
-        Columns Columns { get; }
+        IColumns Columns { get; }
         /// <summary>
         /// Gets header cells.
         /// </summary>
-        Cells Cells { get; }
+        IRange Cells { get; }
     }
 }

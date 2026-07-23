@@ -1,3 +1,4 @@
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.Commands;
 using AlphaX.WPF.Sheets.UI.Editors;
 using System.Windows;
@@ -137,7 +138,7 @@ namespace AlphaX.WPF.Sheets
         private void OnCellsSelectionChanged(object sender, CellsSelectionEventArgs e)
         {
             var workSheet = e.SheetView.WorkSheet;
-            var cell = workSheet.Cells.GetCell(e.SheetView.ActiveRow, e.SheetView.ActiveColumn, false);
+            var cell = ((Cells)workSheet.Cells).GetCell(e.SheetView.ActiveRow, e.SheetView.ActiveColumn, false);
 
             if(cell == null)
             {
