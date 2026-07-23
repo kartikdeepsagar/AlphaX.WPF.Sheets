@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,13 +121,18 @@ namespace AlphaX.Sheets
         {
             var sheet = GetSheet(name);
             _sheets.Remove(sheet.Name.ToLowerInvariant());
+            if (_activeSheet == sheet)
+                _activeSheet = null;
+            sheet.Dispose();
             SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
         }
 
         public void RemoveSheet(int index)
         {
             var sheet = GetSheet(index);
-            _sheets.Remove(sheet.Name);
+            _sheets.Remove(sheet.Name.ToLowerInvariant());
+            if (_activeSheet == sheet)
+                _activeSheet = null;
             sheet.Dispose();
             SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
         }

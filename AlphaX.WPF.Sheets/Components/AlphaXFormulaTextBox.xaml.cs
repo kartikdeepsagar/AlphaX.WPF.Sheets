@@ -160,20 +160,30 @@ namespace AlphaX.WPF.Sheets
         private static void OnSpreadAttached(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var fTextBox = d as AlphaXFormulaTextBox;
-            var spread = e.NewValue as AlphaXSpread;
-
-            if (spread == null)
-            {
-                fTextBox.DataContext = null;
-                spread.FormulaTextBox = null;
+            if (fTextBox == null)
                 return;
+
+            if (e.OldValue is AlphaXSpread oldSpread)
+            {
+                oldSpread.CellsSelectionChanged -= fTextBox.OnCellsSelectionChanged;
+                if (oldSpread.FormulaTextBox == fTextBox)
+                    oldSpread.FormulaTextBox = null;
             }
 
-            spread.FormulaTextBox = fTextBox;
-            spread.CellsSelectionChanged += fTextBox.OnCellsSelectionChanged;
-            fTextBox.CommitCommand = new CommitEditCommand(spread);
-            fTextBox.CancelCommand = new CancelEditCommand(spread);
-            fTextBox.DataContext = fTextBox;
+            if (e.NewValue is AlphaXSpread newSpread)
+            {
+                newSpread.FormulaTextBox = fTextBox;
+                newSpread.CellsSelectionChanged += fTextBox.OnCellsSelectionChanged;
+                fTextBox.CommitCommand = new CommitEditCommand(newSpread);
+                fTextBox.CancelCommand = new CancelEditCommand(newSpread);
+                fTextBox.DataContext = fTextBox;
+            }
+            else
+            {
+                fTextBox.CommitCommand = null;
+                fTextBox.CancelCommand = null;
+                fTextBox.DataContext = null;
+            }
         }
     }
 }

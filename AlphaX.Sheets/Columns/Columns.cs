@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -176,13 +176,17 @@ namespace AlphaX.Sheets
         {
             if (Parent is IWorkSheet workSheet)
             {
-                foreach(var item in InternalCollection.ToList())
-                {
-                    if (item.Key < index)
-                        continue;
+                var items = InternalCollection.ToList();
 
-                    InternalCollection.Remove(item.Key);
-                    InternalCollection.Add(item.Key + count, item.Value);
+                for (int itemIndex = items.Count - 1; itemIndex >= 0; itemIndex--)
+                {
+                    var item = items[itemIndex];
+
+                    if (item.Key >= index)
+                    {
+                        InternalCollection.Remove(item.Key);
+                        InternalCollection.Add(item.Key + count, item.Value);
+                    }
                 }
 
                 workSheet.ColumnCount += count;

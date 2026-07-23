@@ -114,8 +114,12 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
             if (!commitChanges)
             {
-                cellsInteractionLayer.Children.Remove(ActiveEditor);
-                ActiveEditor = null;
+                if (ActiveEditor != null)
+                {
+                    ActiveEditor.KeyDown -= OnEditorKeyDown;
+                    cellsInteractionLayer.Children.Remove(ActiveEditor);
+                    ActiveEditor = null;
+                }
                 return true;
             }
 

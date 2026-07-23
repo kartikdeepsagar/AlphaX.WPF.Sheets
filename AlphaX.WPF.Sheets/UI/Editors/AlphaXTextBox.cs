@@ -170,8 +170,11 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _ownerWindow = Window.GetWindow(this);
-            _ownerWindow.Deactivated += OnMainWindowDeactivated;
-            _ownerWindow.LocationChanged += OnWindowLocationChanged;
+            if (_ownerWindow != null)
+            {
+                _ownerWindow.Deactivated += OnMainWindowDeactivated;
+                _ownerWindow.LocationChanged += OnWindowLocationChanged;
+            }
             _suggestionListBox.PreviewMouseLeftButtonDown += OnSuggestionListBoxMouseLeftButtonDown;
             _suggestionListBox.SelectionChanged += OnFormulaSelected;
         }
@@ -179,11 +182,15 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _suggestionPopup.IsOpen = false;
-            _ownerWindow.Deactivated -= OnMainWindowDeactivated;
-            _ownerWindow.LocationChanged -= OnWindowLocationChanged;
+            _descriptionPopup.IsOpen = false;
+            if (_ownerWindow != null)
+            {
+                _ownerWindow.Deactivated -= OnMainWindowDeactivated;
+                _ownerWindow.LocationChanged -= OnWindowLocationChanged;
+                _ownerWindow = null;
+            }
             _suggestionListBox.PreviewMouseLeftButtonDown -= OnSuggestionListBoxMouseLeftButtonDown;
             _suggestionListBox.SelectionChanged -= OnFormulaSelected;
-            Unloaded -= OnUnloaded;
         }
 
         private void OnFormulaSelected(object sender, SelectionChangedEventArgs e)
