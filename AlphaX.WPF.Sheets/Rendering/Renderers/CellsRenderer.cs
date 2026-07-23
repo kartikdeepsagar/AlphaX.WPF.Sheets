@@ -1,3 +1,4 @@
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.CellTypes;
 using AlphaX.WPF.Sheets.UI;
 using System.Threading.Tasks;
@@ -11,10 +12,10 @@ namespace AlphaX.WPF.Sheets.Rendering
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var rows = workSheet.Rows;
-            var columns = workSheet.Columns;
-            var cells = workSheet.Cells;
-            var viewport = SheetView.ViewPort.As<ViewPort>();
+            var rows = (Rows)workSheet.Rows;
+            var columns = (Columns)workSheet.Columns;
+            var cells = (Cells)workSheet.Cells;
+            var viewport = (ViewPort)SheetView.ViewPort;
 
             double penThickness = SheetView.Spread.GridLinePen.Thickness;
             double halfPenWidth = (penThickness * SheetView.Spread.PixelPerDip) / 2;
@@ -73,18 +74,14 @@ namespace AlphaX.WPF.Sheets.Rendering
 
                     var cellRect = new Rect(x, y, columnWidth - penThickness, rowHeight - penThickness);
 
-                    var style = workSheet.WorkBook.PickStyle(cell, sheetColumn, sheetRow);
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);
 
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
 
-                    style = style.Clone();
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
 
-                    cellType.DrawCell(context, value, style.As<Style>(), formatter, cellRect, SheetView.Spread.PixelPerDip);
-
-                    style.Dispose();
-                    style = null;
+                    cellType.DrawCell(context, value, style.As<Style>(), formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText);
                 }
             }
 

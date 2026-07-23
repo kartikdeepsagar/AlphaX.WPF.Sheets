@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AlphaX.Sheets
 {
-    public interface IWorkSheets : IEnumerable<WorkSheet>, IDisposable
+    public interface IWorkSheets : IEnumerable<IWorkSheet>, IDisposable
     {
         /// <summary>
         /// Fired when a sheet is removed.
@@ -24,23 +24,23 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent workbook.
         /// </summary>
-        WorkBook WorkBook { get; }
+        IWorkBook WorkBook { get; }
         /// <summary>
         /// Gets the sheet by name.
         /// </summary>
         /// <param name="sheetName"></param>
         /// <returns></returns>
-        WorkSheet this[string sheetName] { get; }
+        IWorkSheet this[string sheetName] { get; }
         /// <summary>
         /// Gets the sheet by index.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        WorkSheet this[int index] { get; }
+        IWorkSheet this[int index] { get; }
         /// <summary>
         /// Gets or sets the active sheet.
         /// </summary>
-        WorkSheet ActiveSheet { get; set; }
+        IWorkSheet ActiveSheet { get; set; }
         /// <summary>
         /// Gets or sets the active sheet index.
         /// </summary>
@@ -52,7 +52,7 @@ namespace AlphaX.Sheets
         ///  Name of the sheet.
         /// </param>
         /// <returns></returns>
-        WorkSheet AddSheet(string name);
+        IWorkSheet AddSheet(string name);
         /// <summary>
         /// Removes the sheet.
         /// </summary>
@@ -72,12 +72,12 @@ namespace AlphaX.Sheets
         /// </summary>
         /// <param name="sheetName"></param>
         /// <returns></returns>
-        WorkSheet GetSheet(string sheetName);
+        IWorkSheet GetSheet(string sheetName);
         /// <summary>
         /// Gets sheet by index.
         /// </summary>
         /// <param name="sheetName"></param>
         /// <returns></returns>
-        WorkSheet GetSheet(int index);
+        IWorkSheet GetSheet(int index);
     }
 }

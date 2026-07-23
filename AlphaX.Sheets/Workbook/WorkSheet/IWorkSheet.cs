@@ -1,4 +1,5 @@
-﻿using AlphaX.Sheets.Filtering;
+using AlphaX.Sheets.Data;
+using AlphaX.Sheets.Filtering;
 using System;
 
 namespace AlphaX.Sheets
@@ -33,7 +34,12 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent workbook.
         /// </summary>
-        WorkBook WorkBook { get; }
+        IWorkBook WorkBook { get; }
+
+        /// <summary>
+        /// Gets the data store for this sheet.
+        /// </summary>
+        IDataStore DataStore { get; }
         /// <summary>
         /// Gets or sets name for this sheet.
         /// </summary>
@@ -55,29 +61,33 @@ namespace AlphaX.Sheets
         /// </summary>
         int DefaultColumnWidth { get; set; }
         /// <summary>
+        /// Gets or sets whether multiline text in cells is enabled.
+        /// </summary>
+        bool AllowMultiLineText { get; set; }
+        /// <summary>
         /// Gets row collection of this sheet.
         /// </summary>
-        Rows Rows { get; }
+        IRows Rows { get; }
         /// <summary>
         /// Gets column collection of this sheet.
         /// </summary>
-        Columns Columns { get; }
+        IColumns Columns { get; }
         /// <summary>
         /// Gets the cells of this sheet.
         /// </summary>
-        Cells Cells { get; }
+        IRange Cells { get; }
         /// <summary>
         /// Gets the sheet top left region.
         /// </summary>
-        TopLeft TopLeft { get; }
+        ITopLeft TopLeft { get; }
         /// <summary>
         /// Gets the sheet row headers.
         /// </summary>
-        RowHeaders RowHeaders { get; }
+        IRowHeaders RowHeaders { get; }
         /// <summary>
         /// Gets the sheet column headers.
         /// </summary>
-        ColumnHeaders ColumnHeaders { get; }
+        IColumnHeaders ColumnHeaders { get; }
         /// <summary>
         /// Gets or sets the sheet data source.
         /// </summary>
@@ -85,7 +95,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the filter provider.
         /// </summary>
-        FilterProvider FilterProvider { get; }
+        IFilterProvider FilterProvider { get; }
         /// <summary>
         /// Gets the range data.
         /// </summary>
@@ -116,5 +126,10 @@ namespace AlphaX.Sheets
         /// </summary>
         void Clear(WorkSheetClearMode mode);
         bool ContainsRange(int row, int column, int rowCount, int columnCount);
+        /// <summary>
+        /// Auto sizes the row height based on cell text content.
+        /// </summary>
+        /// <param name="row">The row index.</param>
+        void AutoSizeRow(int row);
     }
 }

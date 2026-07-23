@@ -1,5 +1,6 @@
-﻿using AlphaX.CalcEngine;
+using AlphaX.CalcEngine;
 using AlphaX.Sheets;
+using AlphaX.Sheets.Utils;
 using AlphaX.WPF.Sheets.CellTypes;
 using AlphaX.WPF.Sheets.UI.Editors;
 using AlphaX.WPF.Sheets.UI.Interaction;
@@ -28,7 +29,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             var sheetView = Spread.SheetViews.ActiveSheetView;
             var workSheet = sheetView.WorkSheet;
 
-            var sheetColumn = workSheet.Columns.GetItem(column, false);
+            var sheetColumn = ((Columns)workSheet.Columns).GetItem(column, false);
 
             if (sheetColumn != null && sheetColumn.Locked)
                 return;
@@ -37,15 +38,15 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             var cellRect = sheetView.ViewPort.GetCellRect(row, column);
             cellRect.X -= sheetView.ViewPort.As<ViewPort>().LeftColumnLocation;
             cellRect.Y -= sheetView.ViewPort.As<ViewPort>().TopRowLocation;
-            var cell = workSheet.Cells.GetCell(row, column, false);
+            var cell = ((Cells)workSheet.Cells).GetCell(row, column, false);
 
             if (cell != null && cell.Locked)
                 return;
 
-            var sheetRow = workSheet.Rows.GetItem(row, false);
+            var sheetRow = ((Rows)workSheet.Rows).GetItem(row, false);
             var cellType = RenderingExtensions.GetCellType(cell, sheetColumn);
 
-            var style = workSheet.WorkBook.PickStyle(cell, sheetColumn, sheetRow);
+            var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);
             if (style == null)
                 style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
 
@@ -67,12 +68,26 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             if (!UseCellValue)
                 editor.Text = "";
 
+            if (editor is AlphaXTextBox gcTextBox)
+            {
+                gcTextBox.AcceptsReturn = workSheet.AllowMultiLineText;
+            }
+
             editor.Row = row;
             editor.Column = column;
             editor.KeyDown += OnEditorKeyDown;
             editor.CaretIndex = editor.Text.Length;
-            editor.MinWidth = cellRect.Width - 2;
-            editor.Height = cellRect.Height - 2;
+            editor.MinWidth = cellRect.Width - 3;
+            int initialLineCount = TextUtils.GetLineCount(editor.Text);
+            if (workSheet.AllowMultiLineText && initialLineCount > 1)
+            {
+                double initialLineHeight = editor.FontSize * 1.3;
+                editor.Height = System.Math.Max(cellRect.Height - 3, initialLineCount * initialLineHeight + 6);
+            }
+            else
+            {
+                editor.Height = cellRect.Height - 3;
+            }
             cellsInteractionLayer.Children.Add(ActiveEditor);
             Canvas.SetLeft(ActiveEditor, cellRect.X + 1);
             Canvas.SetTop(ActiveEditor, cellRect.Y + 1);
@@ -99,8 +114,12 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
             if (!commitChanges)
             {
-                cellsInteractionLayer.Children.Remove(ActiveEditor);
-                ActiveEditor = null;
+                if (ActiveEditor != null)
+                {
+                    ActiveEditor.KeyDown -= OnEditorKeyDown;
+                    cellsInteractionLayer.Children.Remove(ActiveEditor);
+                    ActiveEditor = null;
+                }
                 return true;
             }
 
@@ -150,6 +169,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                 try
                 {
                     workSheet.Cells[gcTextBox.Row, gcTextBox.Column].Formula = gcTextBox.Text.Substring(1);
+                    workSheet.AutoSizeRow(gcTextBox.Row);
                 }
                 catch (CalcEngineException ex)
                 {
@@ -175,6 +195,8 @@ namespace AlphaX.WPF.Sheets.UI.Managers
 
                 var value = DataTypeConverter.ConvertType(gcTextBox.Text);
                 workSheet.Cells[gcTextBox.Row, gcTextBox.Column].Value = value;
+
+                workSheet.AutoSizeRow(gcTextBox.Row);
 
                 cellChangedAction.NewState.Value = value;
                 cellChangedAction.NewState.Row = gcTextBox.Row;

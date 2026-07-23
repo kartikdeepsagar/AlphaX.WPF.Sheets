@@ -3,7 +3,7 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public interface IStyle : IDisposable, ICloneable<IStyle>
+    public interface IStyle : ICloneable<IStyle>
     {
         /// <summary>
         /// Gets or sets the foreground color.

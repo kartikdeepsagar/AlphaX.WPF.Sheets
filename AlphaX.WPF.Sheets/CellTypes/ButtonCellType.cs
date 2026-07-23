@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.Sheets.Formatters;
 using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Editors;
@@ -13,9 +13,9 @@ namespace AlphaX.WPF.Sheets.CellTypes
         public IAlphaXCommand Command { get; set; }
         public string Text { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip)
+        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip);
+            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
 
             cellRect.Inflate(-3, -3);
             context.DrawRectangle(Brushes.LightGray, null, cellRect);

@@ -12,7 +12,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the sheet collection of this workbook.
         /// </summary>
-        WorkSheets WorkSheets { get; }
+        IWorkSheets WorkSheets { get; }
         /// <summary>
         /// Gets the calculation engine of this worksheet.
         /// </summary>

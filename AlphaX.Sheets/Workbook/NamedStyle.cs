@@ -41,7 +41,6 @@ namespace AlphaX.Sheets
             {
                 _backColor = value;
                 OnPropertyChanged(nameof(BackColor));
-
             }
         }
 
@@ -149,19 +148,6 @@ namespace AlphaX.Sheets
             Padding = new Thickness(5, 5);
             HorizontalAlignment = AlphaXHorizontalAlignment.Auto;
             VerticalAlignment = AlphaXVerticalAlignment.Auto;
-        }
-
-        public void Dispose()
-        {
-            _foreColor = null;
-            _backColor = null;
-            _fontSize = null;
-            _fontFamily = null;
-            _fontWeight = null;
-            _fontStyle = null;
-            _padding = null;
-            _hAligment = null;
-            _vAligment = null;
         }
 
         public virtual IStyle Clone()

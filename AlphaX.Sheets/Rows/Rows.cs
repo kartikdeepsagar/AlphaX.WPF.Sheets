@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    public class Rows : CollectionBase<Row>, IRows
+    public class Rows : CollectionBase<IRow>, IRows
     {
         private Dictionary<int, double> _locationMap;
 
@@ -58,8 +58,17 @@ namespace AlphaX.Sheets
             if (Parent is IWorkSheet workSheet)
             {
                 defaultRowHeight = workSheet.DefaultRowHeight;
-                sum = workSheet.FilterProvider.FilteredRows
-                      .Where(x => x.Key < row).Sum(x => GetRowHeight(x.Key));
+                var filteredRows = workSheet.FilterProvider.FilteredRows;
+                if (filteredRows != null && filteredRows.Count > 0)
+                {
+                    foreach (var kvp in filteredRows)
+                    {
+                        if (kvp.Key < row)
+                        {
+                            sum += GetRowHeight(kvp.Key);
+                        }
+                    }
+                }
             }
             else if (Parent is IRowHeaders rowHeaders)
             {
@@ -82,14 +91,10 @@ namespace AlphaX.Sheets
 
         internal void UpdateRowsLocation(int fromRow, double offset)
         {
-            for(int index = fromRow; index < Count; index++)
-            {
-                if(_locationMap.ContainsKey(index))
-                    _locationMap[index] += offset;
-            }
+            _locationMap?.Clear();
         }
 
-        protected override Row CreateItem(int index)
+        protected override IRow CreateItem(int index)
         {
             var row =  new Row(this);
             row.Index = index;
@@ -182,7 +187,7 @@ namespace AlphaX.Sheets
                     }
                 }
 
-                workSheet.Cells.InsertRows(index, count);
+                ((Cells)workSheet.Cells).InsertRows(index, count);
                 workSheet.RowCount += count;
                 workSheet.OnRowsChanged(new RowChangedEventArgs() 
                 { 
@@ -223,7 +228,7 @@ namespace AlphaX.Sheets
                     }
                 }
 
-                workSheet.Cells.RemoveRows(index, count);
+                ((Cells)workSheet.Cells).RemoveRows(index, count);
                 workSheet.RowCount -= count;
                 workSheet.OnRowsChanged(new RowChangedEventArgs()
                 {

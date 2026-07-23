@@ -45,7 +45,7 @@ namespace AlphaX.Sheets
                 
                 if (Parent.Parent is WorkSheet workSheet)
                 {
-                    workSheet.Columns.UpdateColumnsLocation(Index + 1, value - Width);
+                    ((Columns)workSheet.Columns).UpdateColumnsLocation(Index + 1, value - Width);
                 }
 
                 _width = value;
@@ -93,7 +93,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Columns Parent { get; private set; }
+        public IColumns Parent { get; private set; }
         public DataMap DataMap
         {
             get
@@ -121,7 +121,7 @@ namespace AlphaX.Sheets
         {
             if(Parent.Parent is WorkSheet worksheet)
             {
-                worksheet.Cells.ClearColumnCells(Parent.GetColumnIndex(this));
+                ((Cells)worksheet.Cells).ClearColumnCells(Parent.GetColumnIndex(this));
             }
         }
 

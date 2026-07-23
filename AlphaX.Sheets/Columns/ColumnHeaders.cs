@@ -8,8 +8,8 @@
         {
             get
             {
-                var row = Rows.GetItem(RowCount - 1, false);
-                var rowLocation = Rows.GetLocation(RowCount - 1);
+                var row = _rows.GetItem(RowCount - 1, false);
+                var rowLocation = _rows.GetLocation(RowCount - 1);
 
                 if (row == null)
                     return rowLocation + DefaultRowHeight;

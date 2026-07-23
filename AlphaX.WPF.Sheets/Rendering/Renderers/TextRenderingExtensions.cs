@@ -1,6 +1,8 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
+using AlphaX.Sheets.Utils;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -18,147 +20,132 @@ namespace AlphaX.WPF.Sheets.Rendering
             Rect bounds,
             Style style,
             double pixelsPerDip,
-            bool characterEllipses = false)
+            bool characterEllipses = false,
+            bool allowMultiLineText = true)
         {
             if (string.IsNullOrEmpty(text))
                 return;
 
-            var glyphRun = CreateGlyphRun(text, style, bounds, pixelsPerDip, characterEllipses);
-
-            if (glyphRun != null)
+            if (!allowMultiLineText)
             {
-                context.DrawDrawing(new GlyphRunDrawing(style.Foreground, glyphRun));
+                text = TextUtils.NormalizeToSingleLine(text);
             }
-        }
 
-        private static GlyphRun CreateGlyphRun(
-            string text,
-            Style style,
-            Rect bounds,
-            double pixelsPerDip,
-            bool characterEllipses)
-        {
+            string[] lines = TextUtils.GetLines(text);
             var glyphTypeface = style.GlyphTypeface;
             var glyphMap = glyphTypeface.CharacterToGlyphMap;
             var advanceMap = glyphTypeface.AdvanceWidths;
-
             double fontSize = style.FontSize;
+            double fontLineHeight = Math.Max(fontSize + 2, Math.Round(glyphTypeface.Height * fontSize));
+            double totalTextHeight = fontSize + (lines.Length - 1) * fontLineHeight;
 
-            ushort[] glyphIndexes = new ushort[text.Length];
-            double[] advanceWidths = new double[text.Length];
-
-            int glyphCount = 0;
-            double textWidth = 0;
-
-            ushort dotGlyph = glyphMap['.'];
-            double dotWidth = advanceMap[dotGlyph] * fontSize;
-            double ellipsisWidth = dotWidth * 3;
-
-            for (int i = 0; i < text.Length; i++)
+            double startY;
+            switch (style.VerticalAlignment)
             {
-                char c = text[i];
-
-                ushort glyph = glyphMap[c];
-                double advance = advanceMap[glyph] * fontSize;
-
-                if (characterEllipses &&
-                    i < text.Length - 1 &&
-                    textWidth + advance > bounds.Width - ellipsisWidth)
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        glyphIndexes[glyphCount] = dotGlyph;
-                        advanceWidths[glyphCount] = dotWidth;
-                        glyphCount++;
-                    }
-
-                    textWidth += ellipsisWidth;
+                case AlphaXVerticalAlignment.Top:
+                    startY = Math.Round(bounds.Top + TextPadding);
                     break;
+                case AlphaXVerticalAlignment.Center:
+                    startY = Math.Round(bounds.Top + (bounds.Height - totalTextHeight) / 2);
+                    if (startY < bounds.Top)
+                        startY = bounds.Top;
+                    break;
+                default: // Bottom
+                    startY = Math.Round(bounds.Bottom - TextPadding - totalTextHeight);
+                    if (startY < bounds.Top)
+                        startY = bounds.Top;
+                    break;
+            }
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string lineText = lines[i];
+                double lineBaselineY = Math.Round(startY + fontSize + (i * fontLineHeight));
+
+                if (string.IsNullOrEmpty(lineText))
+                    continue;
+
+                double lineWidth = ComputeTextWidth(lineText, fontSize, glyphTypeface);
+
+                double lineX;
+                switch (style.HorizontalAlignment)
+                {
+                    case AlphaXHorizontalAlignment.Center:
+                        lineX = Math.Round(bounds.Left + (bounds.Width - lineWidth) / 2);
+                        if (lineX < bounds.Left)
+                            lineX = bounds.Left;
+                        break;
+                    case AlphaXHorizontalAlignment.Right:
+                        lineX = Math.Round(bounds.Right - TextPadding - lineWidth);
+                        if (lineX < bounds.Left)
+                            lineX = bounds.Left;
+                        break;
+                    default: // Left or Auto
+                        lineX = Math.Round(bounds.Left + TextPadding);
+                        break;
                 }
 
-                glyphIndexes[glyphCount] = glyph;
-                advanceWidths[glyphCount] = advance;
-                glyphCount++;
+                Point renderPosition = new Point(lineX, lineBaselineY);
 
-                textWidth += advance;
+                ushort[] glyphIndexes = new ushort[lineText.Length];
+                double[] advanceWidths = new double[lineText.Length];
+                int glyphCount = 0;
+                double currentLineWidth = 0;
+
+                ushort dotGlyph = glyphMap.TryGetValue('.', out ushort dot) ? dot : (ushort)0;
+                double dotWidth = advanceMap.TryGetValue(dotGlyph, out double dw) ? dw * fontSize : 0;
+                double ellipsisWidth = dotWidth * 3;
+
+                for (int j = 0; j < lineText.Length; j++)
+                {
+                    char c = lineText[j];
+                    if (!glyphMap.TryGetValue(c, out ushort glyph))
+                        continue;
+
+                    double advance = advanceMap[glyph] * fontSize;
+
+                    if (characterEllipses &&
+                        j < lineText.Length - 1 &&
+                        currentLineWidth + advance > bounds.Width - ellipsisWidth)
+                    {
+                        for (int k = 0; k < 3; k++)
+                        {
+                            glyphIndexes[glyphCount] = dotGlyph;
+                            advanceWidths[glyphCount] = dotWidth;
+                            glyphCount++;
+                        }
+                        currentLineWidth += ellipsisWidth;
+                        break;
+                    }
+
+                    glyphIndexes[glyphCount] = glyph;
+                    advanceWidths[glyphCount] = advance;
+                    glyphCount++;
+                    currentLineWidth += advance;
+                }
+
+                if (glyphCount > 0)
+                {
+                    if (glyphCount != glyphIndexes.Length)
+                    {
+                        Array.Resize(ref glyphIndexes, glyphCount);
+                        Array.Resize(ref advanceWidths, glyphCount);
+                    }
+
+                    var glyphRun = new GlyphRun(
+                        glyphTypeface,
+                        0,
+                        false,
+                        fontSize,
+                        (float)pixelsPerDip,
+                        glyphIndexes,
+                        renderPosition,
+                        advanceWidths,
+                        null, null, null, null, null, null);
+
+                    context.DrawDrawing(new GlyphRunDrawing(style.Foreground, glyphRun));
+                }
             }
-
-            if (glyphCount != glyphIndexes.Length)
-            {
-                Array.Resize(ref glyphIndexes, glyphCount);
-                Array.Resize(ref advanceWidths, glyphCount);
-            }
-
-            Point renderPosition = ComputeTextAlignment(
-                bounds.BottomLeft,
-                bounds,
-                textWidth,
-                fontSize,
-                style.HorizontalAlignment,
-                style.VerticalAlignment);
-
-            renderPosition.Offset(pixelsPerDip, -pixelsPerDip);
-
-            return new GlyphRun(
-                glyphTypeface,
-                0,
-                false,
-                fontSize,
-                (float)pixelsPerDip,
-                glyphIndexes,
-                renderPosition,
-                advanceWidths,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-        }
-
-        private static Point ComputeTextAlignment(
-            Point renderPosition,
-            Rect bounds,
-            double textWidth,
-            double textHeight,
-            AlphaXHorizontalAlignment hAlign,
-            AlphaXVerticalAlignment vAlign)
-        {
-            switch (hAlign)
-            {
-                case AlphaXHorizontalAlignment.Center:
-                    renderPosition.Offset((bounds.Width - textWidth) / 2, -TextPadding);
-
-                    if (renderPosition.X < bounds.X)
-                        renderPosition.X = bounds.X;
-
-                    break;
-
-                case AlphaXHorizontalAlignment.Left:
-                    renderPosition.Offset(TextPadding, -TextPadding);
-                    break;
-
-                case AlphaXHorizontalAlignment.Right:
-                    renderPosition.Offset(bounds.Width - textWidth - TextPadding, -TextPadding);
-                    break;
-            }
-
-            switch (vAlign)
-            {
-                case AlphaXVerticalAlignment.Center:
-                    renderPosition.Offset(0, -(bounds.Height - textHeight) / 2);
-
-                    if (renderPosition.Y < bounds.Y)
-                        renderPosition.Y = bounds.Y;
-
-                    break;
-
-                case AlphaXVerticalAlignment.Top:
-                    renderPosition.Y = bounds.Top + textHeight + TextPadding;
-                    break;
-            }
-
-            return renderPosition;
         }
 
         public static int ComputeTextWidth(
@@ -172,15 +159,23 @@ namespace AlphaX.WPF.Sheets.Rendering
             var glyphMap = glyphTypeface.CharacterToGlyphMap;
             var advanceMap = glyphTypeface.AdvanceWidths;
 
-            double width = 0;
-
-            foreach (char c in text)
+            double maxWidth = 0;
+            string[] lines = TextUtils.GetLines(text);
+            foreach (var line in lines)
             {
-                ushort glyph = glyphMap[c];
-                width += advanceMap[glyph] * fontSize;
+                double lineW = 0;
+                foreach (char c in line)
+                {
+                    if (glyphMap.TryGetValue(c, out ushort glyph))
+                    {
+                        lineW += advanceMap[glyph] * fontSize;
+                    }
+                }
+                if (lineW > maxWidth)
+                    maxWidth = lineW;
             }
 
-            return (int)Math.Ceiling(width);
+            return (int)Math.Ceiling(maxWidth);
         }
     }
 }

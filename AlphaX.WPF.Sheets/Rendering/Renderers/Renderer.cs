@@ -35,6 +35,11 @@ namespace AlphaX.WPF.Sheets.Rendering
         /// <returns></returns>
         public void Render(int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
+            if (!SheetView.Spread.IsLoaded)
+            {
+                return;
+            }
+
             Drawing.ClipGeometry = Engine.RenderInfo.ViewPortGeometry;
             if (_context != null)
                 _context.Close();

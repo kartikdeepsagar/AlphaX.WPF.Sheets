@@ -1,5 +1,6 @@
 using AlphaX.FormulaEngine;
 using AlphaX.WPF.Sheets.Components;
+using AlphaX.Sheets.Utils;
 using System;
 using System.Linq;
 using System.Windows;
@@ -62,6 +63,8 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         public AlphaXTextBox()
         {
             BorderThickness = new Thickness();
+            AcceptsReturn = true;
+            TextWrapping = TextWrapping.Wrap;
             _suggestionPopup.PlacementTarget = this;
             Unloaded += OnUnloaded;
             Loaded += OnLoaded;
@@ -72,6 +75,34 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+
+            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (key == Key.Enter && (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Alt) || Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)))
+            {
+                if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                    return;
+
+                e.Handled = true;
+                int caretIndex = CaretIndex;
+                string currentText = Text ?? "";
+                if (SelectionLength > 0)
+                {
+                    currentText = currentText.Remove(SelectionStart, SelectionLength);
+                    caretIndex = SelectionStart;
+                }
+                Text = currentText.Insert(caretIndex, Environment.NewLine);
+                CaretIndex = caretIndex + Environment.NewLine.Length;
+
+                if (SheetView != null)
+                {
+                    var cellRect = SheetView.ViewPort.GetCellRect(Row, Column);
+                    int lineCount = TextUtils.GetLineCount(Text);
+                    double fontLineHeight = FontSize * 1.3;
+                    double requiredHeight = Math.Max(cellRect.Height - 3, lineCount * fontLineHeight + 6);
+                    Height = requiredHeight;
+                }
+                return;
+            }
 
             if(_suggestionPopup.IsOpen && _suggestionListBox.Items.Count > 0)
             {
@@ -95,7 +126,10 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         {
             base.OnTextChanged(e);
             if(SheetView.Spread.FormulaTextBox != null)
+            {
                 SheetView.Spread.FormulaTextBox._txtEditor.Text = Text;
+                SheetView.Spread.FormulaTextBox._txtEditor.ScrollToEnd();
+            }
             TryShowSuggestionPopup();
         }
 
@@ -136,8 +170,11 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _ownerWindow = Window.GetWindow(this);
-            _ownerWindow.Deactivated += OnMainWindowDeactivated;
-            _ownerWindow.LocationChanged += OnWindowLocationChanged;
+            if (_ownerWindow != null)
+            {
+                _ownerWindow.Deactivated += OnMainWindowDeactivated;
+                _ownerWindow.LocationChanged += OnWindowLocationChanged;
+            }
             _suggestionListBox.PreviewMouseLeftButtonDown += OnSuggestionListBoxMouseLeftButtonDown;
             _suggestionListBox.SelectionChanged += OnFormulaSelected;
         }
@@ -145,11 +182,15 @@ namespace AlphaX.WPF.Sheets.UI.Editors
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _suggestionPopup.IsOpen = false;
-            _ownerWindow.Deactivated -= OnMainWindowDeactivated;
-            _ownerWindow.LocationChanged -= OnWindowLocationChanged;
+            _descriptionPopup.IsOpen = false;
+            if (_ownerWindow != null)
+            {
+                _ownerWindow.Deactivated -= OnMainWindowDeactivated;
+                _ownerWindow.LocationChanged -= OnWindowLocationChanged;
+                _ownerWindow = null;
+            }
             _suggestionListBox.PreviewMouseLeftButtonDown -= OnSuggestionListBoxMouseLeftButtonDown;
             _suggestionListBox.SelectionChanged -= OnFormulaSelected;
-            Unloaded -= OnUnloaded;
         }
 
         private void OnFormulaSelected(object sender, SelectionChangedEventArgs e)

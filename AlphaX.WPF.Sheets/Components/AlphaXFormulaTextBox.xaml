@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AlphaX.WPF.Sheets"
+             HorizontalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
@@ -16,7 +18,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -40,7 +42,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -65,7 +67,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="3"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -90,7 +92,7 @@
             <Setter Property="Padding" Value="8,4"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontFamily" Value="Segoe UI, Calibri, sans-serif"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -98,12 +100,12 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4"
+                                CornerRadius="0"
                                 SnapsToDevicePixels="True">
                             <ScrollViewer x:Name="PART_ContentHost"
                                           Focusable="False"
                                           HorizontalScrollBarVisibility="Hidden"
-                                          VerticalScrollBarVisibility="Hidden"/>
+                                          VerticalScrollBarVisibility="Auto"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -124,14 +126,16 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
         <Border Background="#F9FAFB"
                 BorderBrush="#D1D5DB"
                 BorderThickness="1"
-                CornerRadius="4"
+                CornerRadius="0"
                 Margin="0,0,4,0"
-                Padding="2">
+                Padding="2"
+                VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Button x:Name="_btnCancel" 
                         Command="{Binding CancelCommand}" 
@@ -168,8 +172,30 @@
         <TextBox x:Name="_txtEditor" 
                  Grid.Column="1"
                  MinWidth="100"
+                 Height="64"
+                 MinHeight="64"
+                 MaxHeight="64"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
                  Style="{StaticResource FormulaEditorStyle}"
                  TextChanged="OnTextChanged"
                  KeyDown="OnTextBoxKeyDown"/>
+
+        <Button x:Name="_btnExpand"
+                Grid.Column="2"
+                Style="{StaticResource ActionButtonStyle}"
+                Width="24"
+                Height="24"
+                Margin="4,1,0,0"
+                VerticalAlignment="Top"
+                Click="OnExpandToggleClick"
+                ToolTip="Collapse Formula Bar (Ctrl+Shift+U)">
+            <Path x:Name="_expandIcon"
+                  Data="M 2 7 L 6 3 L 10 7"
+                  Stroke="#4B5563"
+                  StrokeThickness="1.5"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"/>
+        </Button>
     </Grid>
 </UserControl>

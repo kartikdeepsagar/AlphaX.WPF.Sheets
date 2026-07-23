@@ -39,13 +39,13 @@ namespace AlphaX.Sheets
 
         public void SetMetaData(string sheetName, int row, int column, object data)
         {
-            var cell = _workBook.WorkSheets.GetSheet(sheetName).Cells[row, column];
+            var cell = (Cell)_workBook.WorkSheets.GetSheet(sheetName).Cells[row, column];
             cell.MetaData = data;
         }
 
         public object GetMetaData(string sheetName, int row, int column)
         {
-            var cell = _workBook.WorkSheets.GetSheet(sheetName).Cells.GetCell(row, column, false);
+            var cell = (Cell)((Cells)_workBook.WorkSheets.GetSheet(sheetName).Cells).GetCell(row, column, false);
 
             if (cell == null)
                 return null;

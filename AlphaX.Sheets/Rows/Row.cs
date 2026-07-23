@@ -42,7 +42,7 @@ namespace AlphaX.Sheets
                 double oldHeight = Height;
                 if (Parent.Parent is WorkSheet workSheet)
                 {
-                    workSheet.Rows.UpdateRowsLocation(Index + 1, value - Height);
+                    ((Rows)workSheet.Rows).UpdateRowsLocation(Index + 1, value - Height);
                 }
 
                 _height = value;
@@ -62,7 +62,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Rows Parent { get; private set; }
+        public IRows Parent { get; private set; }
 
         public string StyleName
         {

@@ -167,6 +167,10 @@ namespace AlphaX.WPF.Sheets
         /// </summary>
         public ISelectionManager SelectionManager { get; }
         /// <summary>
+        /// Gets the clipboard manager.
+        /// </summary>
+        public IClipboardManager ClipboardManager { get; }
+        /// <summary>
         /// Gets the sheetview collection.
         /// </summary>
         public SheetViewCollection SheetViews { get; }
@@ -194,9 +198,10 @@ namespace AlphaX.WPF.Sheets
             WorkBook.WorkSheets.ActiveSheet = workSheet;
             EditingManager = new EditingManager(this);
             SelectionManager = new SelectionManager(this);
+            ClipboardManager = new ClipboardManager(this);
             SelectionManager.SelectCell(0, 0);
+            Loaded += OnLoaded;
         }
-
         #endregion
 
         #region Public Methods
@@ -242,7 +247,7 @@ namespace AlphaX.WPF.Sheets
         public void ScrollToRow(IAlphaXSheetView sheetView, int row)
         {
             var workSheet = sheetView.WorkSheet;
-            SheetTabControl.VScrollBar.Value = workSheet.Rows.GetLocation(row);
+            SheetTabControl.VScrollBar.Value = ((Rows)workSheet.Rows).GetLocation(row);
         }
 
         /// <summary>
@@ -253,26 +258,12 @@ namespace AlphaX.WPF.Sheets
         public void ScrollToColumn(IAlphaXSheetView sheetView, int column)
         {
             var workSheet = sheetView.WorkSheet;
-            SheetTabControl.HScrollBar.Value = workSheet.Columns.GetLocation(column);
+            SheetTabControl.HScrollBar.Value = ((Columns)workSheet.Columns).GetLocation(column);
         }
       
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Gets the extent sheet size.
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <returns></returns>
-        private Size GetSheetSize(IWorkSheet sheet)
-        {
-            var columns = sheet.Columns.As<Columns>();
-            var rows = sheet.Rows.As<Rows>();
-            double width = columns.GetLocation(sheet.ColumnCount - 1) + columns.GetColumnWidth(sheet.ColumnCount - 1);
-            double height = rows.GetLocation(sheet.RowCount - 1) + rows.GetRowHeight(sheet.RowCount - 1);
-            return new Size(width, height);
-        }
-
         /// <summary>
         /// Updates the grid line pen.
         /// </summary>
@@ -297,29 +288,44 @@ namespace AlphaX.WPF.Sheets
 
         private void AddDefaultStyles(WorkBook workBook)
         {
-            var rowHeaderStyle = new Style();
-            rowHeaderStyle.FontSize = 14;
-            rowHeaderStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;
-            rowHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.Gray;
+            var rowHeaderStyle = new Style
+            {
+                FontSize = 14,
+                HorizontalAlignment = AlphaXHorizontalAlignment.Center,
+                BackColor = AlphaX.Sheets.Drawing.Color.Gray
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultRowHeaderStyleKey, rowHeaderStyle);
 
-            var columnHeaderStyle = new Style();
-            columnHeaderStyle.FontSize = 14;
-            columnHeaderStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;
-            columnHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.Gray;
+            var columnHeaderStyle = new Style
+            {
+                FontSize = 14,
+                HorizontalAlignment = AlphaXHorizontalAlignment.Center,
+                BackColor = AlphaX.Sheets.Drawing.Color.Gray
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey, columnHeaderStyle);
 
-            var sheetStyle = new Style();
-            sheetStyle.BackColor =  AlphaX.Sheets.Drawing.Color.White;
+            var sheetStyle = new Style
+            {
+                BackColor = AlphaX.Sheets.Drawing.Color.White
+            };
+
             workBook.AddNamedStyle(StyleKeys.DefaultSheetStyleKey, sheetStyle);
 
-            var topLeftStyle = new Style();
-            topLeftStyle.ForeColor = AlphaX.Sheets.Drawing.Color.LightGray;
+            var topLeftStyle = new Style
+            {
+                ForeColor = AlphaX.Sheets.Drawing.Color.LightGray
+            };
             workBook.AddNamedStyle(StyleKeys.DefaultTopLeftStyleKey, topLeftStyle);
 
             rowHeaderStyle.BackColor = topLeftStyle.BackColor = columnHeaderStyle.BackColor = AlphaX.Sheets.Drawing.Color.FromArgb(255, 240, 240, 240);
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SheetViews?.ActiveSheetView?.Invalidate(true);
+        }
         #endregion
 
         #region Internal Methods
@@ -348,15 +354,15 @@ namespace AlphaX.WPF.Sheets
                 switch (e.Key)
                 {
                     case Key.C:
-                        activeSheetView.CopyToClipboard();
+                        ClipboardManager.Copy(activeSheetView);
                         break;
 
                     case Key.A:
-                        SelectionManager.SelectRange(activeSheetView.WorkSheet.Cells.AsCellRange());
+                        SelectionManager.SelectRange(((Cells)activeSheetView.WorkSheet.Cells).AsCellRange());
                         break;
 
                     case Key.V:
-                        activeSheetView.PasteFromClipboard();
+                        ClipboardManager.Paste(activeSheetView);
                         break;
 
                     case Key.Y:
@@ -442,6 +448,7 @@ namespace AlphaX.WPF.Sheets
         /// </summary>
         public void Dispose()
         {
+            Loaded -= OnLoaded;
             WorkBook.Dispose();
             SheetTabControl.Dispose();
             SheetViewPane.Dispose();

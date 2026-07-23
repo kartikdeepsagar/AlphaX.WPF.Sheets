@@ -2,24 +2,29 @@
 {
     public abstract class HeadersBase : IHeaders
     {
-        public Rows Rows { get; }
-        public Columns Columns { get; }
-        public Cells Cells { get; }    
-        public WorkSheet WorkSheet { get; }
+        protected Columns _columns;
+        protected Rows _rows;
+        protected Cells _cells;
+        protected WorkSheet _workSheet;
+
+        public IRows Rows => _rows;
+        public IColumns Columns => _columns;
+        public IRange Cells => _cells;
+        public IWorkSheet WorkSheet => _workSheet;
 
         internal HeadersBase(WorkSheet workSheet)
         {
-            WorkSheet = workSheet;
-            Rows = new Rows(this);
-            Columns = new Columns(this);
-            Cells = new Cells(this);
+            _workSheet = workSheet;
+            _rows = new Rows(this);
+            _columns = new Columns(this);
+            _cells = new Cells(this);
         }
 
         public void Dispose()
         {
-            Cells.Dispose();
-            Columns.Dispose();
-            Rows.Dispose();
+            _cells.Dispose();
+            _columns.Dispose();
+            _rows.Dispose();
         }
     }
 }

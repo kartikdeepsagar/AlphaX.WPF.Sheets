@@ -11,10 +11,10 @@ namespace AlphaX.WPF.Sheets.Rendering
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var rows = workSheet.ColumnHeaders.Rows;
-            var columns = workSheet.Columns;
-            var cells = workSheet.ColumnHeaders.Cells;
-            var viewport = SheetView.ViewPort.As<ViewPort>();
+            var rows = (Rows)workSheet.ColumnHeaders.Rows;
+            var columns = (Columns)workSheet.Columns;
+            var cells = (Cells)workSheet.ColumnHeaders.Cells;
+            var viewport = (ViewPort)SheetView.ViewPort;
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
             GuidelineSet guidelines = new GuidelineSet();
@@ -50,24 +50,19 @@ namespace AlphaX.WPF.Sheets.Rendering
 
                     var cellRect = new Rect(colLocation - viewport.LeftColumnLocation, rowLocation, columnWidth, rowHeight);
 
-                    var style = workSheet.WorkBook.PickStyle(cell, sheetColumn, sheetRow);
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);
 
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey);
 
-                    style = style.Clone();
-
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip);
-
-                    style.Dispose();
-                    style = null;
                 }
             }
 
             context.Pop();
         }
 
-        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, ICell cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
+        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
         {
             var style = baseStyle.As<Style>();
 

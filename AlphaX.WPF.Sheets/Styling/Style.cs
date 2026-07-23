@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using System.Windows;
 using System.Windows.Media;
 
@@ -41,11 +41,13 @@ namespace AlphaX.WPF.Sheets
         public void SetBackground(AlphaX.Sheets.Drawing.Color color)
         {
             Background = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
+            Background.Freeze();
         }
 
         public void SetForeground(AlphaX.Sheets.Drawing.Color color)
         {
             Foreground = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
+            Foreground.Freeze();
         }
 
         public void SetFontFamily(AlphaX.Sheets.Drawing.FontFamily fontFamily)

@@ -66,8 +66,14 @@ namespace AlphaX.WPF.Sheets.Rendering
                 return;
 
             _spread.RenderEngine.BeginRender();
-            _spread.RenderEngine.DrawCellRange(topRow, leftCol, bottomRow, rightCol);
-            _spread.RenderEngine.EndRender();
+            try
+            {
+                _spread.RenderEngine.DrawCellRange(topRow, leftCol, bottomRow, rightCol);
+            }
+            finally
+            {
+                _spread.RenderEngine.EndRender();
+            }
         }
 
         /// <summary>
@@ -90,23 +96,27 @@ namespace AlphaX.WPF.Sheets.Rendering
                 return;
 
             _spread.RenderEngine.BeginRender();
+            try
+            {
+                if (columnHeaders)
+                    _spread.RenderEngine.DrawColumnHeaderCells(viewRange.LeftColumn, viewRange.RightColumn);
 
-            if (columnHeaders)
-                _spread.RenderEngine.DrawColumnHeaderCells(viewRange.LeftColumn, viewRange.RightColumn);
+                if (rowHeaders)
+                    _spread.RenderEngine.DrawRowHeaderCells(viewRange.TopRow, viewRange.BottomRow);
 
-            if (rowHeaders)
-                _spread.RenderEngine.DrawRowHeaderCells(viewRange.TopRow, viewRange.BottomRow);
+                if (topLeft)
+                    _spread.RenderEngine.DrawTopLeft();
 
-            if (topLeft)
-                _spread.RenderEngine.DrawTopLeft();
+                if (cells)
+                    _spread.RenderEngine.DrawCellRange(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
 
-            if (cells)
-                _spread.RenderEngine.DrawCellRange(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
-
-            if (gridLines)
-                _spread.RenderEngine.DrawGridLines(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
-
-            _spread.RenderEngine.EndRender();
+                if (gridLines)
+                    _spread.RenderEngine.DrawGridLines(viewRange.TopRow, viewRange.LeftColumn, viewRange.BottomRow, viewRange.RightColumn);
+            }
+            finally
+            {
+                _spread.RenderEngine.EndRender();
+            }
         }
 
         private void InitInteractionLayers()

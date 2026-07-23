@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.Sheets.Formatters;
 using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Editors;
@@ -10,9 +10,9 @@ namespace AlphaX.WPF.Sheets.CellTypes
 {
     public class TextCellType : BaseCellType
     {
-        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip)
+        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip);
+            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
 
             if (value != null && !string.IsNullOrEmpty(value.ToString()))
             {
@@ -29,7 +29,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
                     value = formatter.Format(value);
                 }
 
-                context.DrawText((string)value, cellRect, style, pixelPerDip);
+                context.DrawText((string)value, cellRect, style, pixelPerDip, false, allowMultiLineText);
             }
         }
 

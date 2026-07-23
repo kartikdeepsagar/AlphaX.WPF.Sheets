@@ -1,4 +1,5 @@
 
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System;
 using System.Windows;
@@ -17,9 +18,9 @@ namespace AlphaX.WPF.Sheets.Rendering
         private void DrawHorizontalGridlines(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var rows = workSheet.Rows;
-            var columns = workSheet.Columns;
-            var viewport = SheetView.ViewPort.As<ViewPort>();
+            var rows = (Rows)workSheet.Rows;
+            var columns = (Columns)workSheet.Columns;
+            var viewport = (ViewPort)SheetView.ViewPort;
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             GuidelineSet guidelines = new GuidelineSet();
@@ -50,9 +51,9 @@ namespace AlphaX.WPF.Sheets.Rendering
         private void DrawVerticalGridlines(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var rows = workSheet.Rows;
-            var columns = workSheet.Columns;
-            var viewport = SheetView.ViewPort.As<ViewPort>();
+            var rows = (Rows)workSheet.Rows;
+            var columns = (Columns)workSheet.Columns;
+            var viewport = (ViewPort)SheetView.ViewPort;
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             GuidelineSet guidelines = new GuidelineSet();

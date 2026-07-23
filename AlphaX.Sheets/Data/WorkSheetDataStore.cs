@@ -6,7 +6,7 @@ using System.Data;
 
 namespace AlphaX.Sheets.Data
 {
-    public class WorkSheetDataStore : IDisposable
+    public class WorkSheetDataStore : IDataStore, IDisposable
     {
         private WorkSheet _workSheet;
         private Dictionary<Cell, object> _unboundValues;
@@ -50,7 +50,7 @@ namespace AlphaX.Sheets.Data
 
         public object GetValue(int row, int column)
         {
-            var cell = _workSheet.Cells.GetCell(row, column, false);
+            var cell = ((Cells)_workSheet.Cells).GetCell(row, column, false);
 
             if (cell != null && _unboundValues.ContainsKey(cell))
             {
@@ -58,7 +58,7 @@ namespace AlphaX.Sheets.Data
             }
             else if (cell != null && cell.Formula != null)
             {
-                var result = _workSheet.WorkBook.CalcEngine.GetValue(_workSheet.Name, row, column) as CalcValue;
+                var result = ((WorkBook)_workSheet.WorkBook).CalcEngine.GetValue(_workSheet.Name, row, column) as CalcValue;
 
                 if (result.Kind == CalcValueKind.Error)
                 {
@@ -88,7 +88,7 @@ namespace AlphaX.Sheets.Data
             }
             else if (IsValid && ActualDataSource != null && row <= _collection.Count - 1)
             {
-                var sheetColumn = _workSheet.Columns.GetItem(column, false);
+                var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, false);
                 var dataMap = cell?.DataMap != null ? cell.DataMap : sheetColumn?.DataMap;
                 if (dataMap != null && dataMap is PropertyDataMap propertyDataMap
                     && !string.IsNullOrEmpty(propertyDataMap.PropertyName))
@@ -120,12 +120,12 @@ namespace AlphaX.Sheets.Data
             if (oldValue == value)
                 return;
 
-            var cell = _workSheet.Cells[row, column];
+            var cell = ((Cells)_workSheet.Cells).GetCell(row, column, false);
 
             if (cell.Formula != null)
                 cell.Formula = null;
 
-            var sheetColumn = _workSheet.Columns.GetItem(column, false);
+            var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, false);
             var dataMap = cell.DataMap != null ? cell.DataMap : sheetColumn?.DataMap;
 
             if (_collection != null && row >= _collection.Count)
@@ -143,7 +143,7 @@ namespace AlphaX.Sheets.Data
                 SetUnboundCellValue(cell, value);
             }
 
-            _workSheet.WorkBook.DataProvider.RaiseValueChanged(new ValueChangedEventArgs()
+            ((WorkBook)_workSheet.WorkBook).DataProvider.RaiseValueChanged(new ValueChangedEventArgs()
             {
                 Row = row,
                 Column = column,

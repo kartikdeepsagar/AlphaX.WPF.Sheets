@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using System;
 using System.Windows.Threading;
 
@@ -41,17 +41,15 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
 
                 if (!sheetView.ViewPort.ViewRange.ContainsCell(row, column))
-                return;
+                    return;
       
                 if (sheetView.ViewPort.ViewRange.ContainsCell(row, column))
                 {
                     switch (changeType)
                     {
                         case ChangeType.Value:
-                            sheetView.Invalidate();
-                            break;
-
                         case ChangeType.Formula:
+                            worksheet.AutoSizeRow(row);
                             sheetView.Invalidate();
                             break;
 

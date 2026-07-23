@@ -31,7 +31,7 @@ namespace AlphaX.WPF.Sheets
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        internal static IStyle PickStyle(this WorkBook workBook, ICell cell, IColumn column, IRow row)
+        internal static IStyle PickStyle(this WorkBook workBook, IRange cell, IColumn column, IRow row)
         {
             if (cell != null && !string.IsNullOrEmpty(cell.StyleName))
             {
@@ -58,7 +58,7 @@ namespace AlphaX.WPF.Sheets
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        internal static IFormatter PickFormatter(this IWorkSheet sheet, ICell cell, IColumn column, IRow row)
+        internal static IFormatter PickFormatter(this IWorkSheet sheet, IRange cell, IColumn column, IRow row)
         {
             if (cell != null && cell.Formatter != null)
             {

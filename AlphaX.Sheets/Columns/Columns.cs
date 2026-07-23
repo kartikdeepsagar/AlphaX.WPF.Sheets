@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    public class Columns : CollectionBase<Column>, IColumns
+    public class Columns : CollectionBase<IColumn>, IColumns
     {
         private Dictionary<int, double> _locationMap;
         protected override int Count
@@ -15,7 +15,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Column this[string address]
+        public IColumn this[string address]
         {
             get
             {               
@@ -95,7 +95,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        protected override Column CreateItem(int index)
+        protected override IColumn CreateItem(int index)
         {
             var column =  new Column(this);
             column.Index = index;
@@ -176,13 +176,17 @@ namespace AlphaX.Sheets
         {
             if (Parent is IWorkSheet workSheet)
             {
-                foreach(var item in InternalCollection.ToList())
-                {
-                    if (item.Key < index)
-                        continue;
+                var items = InternalCollection.ToList();
 
-                    InternalCollection.Remove(item.Key);
-                    InternalCollection.Add(item.Key + count, item.Value);
+                for (int itemIndex = items.Count - 1; itemIndex >= 0; itemIndex--)
+                {
+                    var item = items[itemIndex];
+
+                    if (item.Key >= index)
+                    {
+                        InternalCollection.Remove(item.Key);
+                        InternalCollection.Add(item.Key + count, item.Value);
+                    }
                 }
 
                 workSheet.ColumnCount += count;

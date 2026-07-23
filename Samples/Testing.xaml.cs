@@ -15,6 +15,8 @@ namespace AlphaXSpreadSamplesExplorer
             InitializeComponent();
             spread.MouseDoubleClick += Spread_MouseDoubleClick;
             var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
+            worksheet.AllowMultiLineText = true;
+            spread.ScrollMode = AlphaX.WPF.Sheets.SheetScrollMode.Pixel;
         }
 
         private void Spread_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +7,14 @@ namespace AlphaX.Sheets
 {
     public class WorkSheets : IWorkSheets
     {
-        private Dictionary<string, WorkSheet> _sheets;
-        private WorkSheet _activeSheet;
+        private Dictionary<string, IWorkSheet> _sheets;
+        private IWorkSheet _activeSheet;
+        private WorkBook _workBook;
 
         public int Count => _sheets.Count;
-        public WorkBook WorkBook { get; private set; }
+        public IWorkBook WorkBook => _workBook;
 
-        public WorkSheet this[string sheetName]
+        public IWorkSheet this[string sheetName]
         {
             get
             {
@@ -21,7 +22,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public WorkSheet this[int index]
+        public IWorkSheet this[int index]
         {
             get
             {
@@ -29,7 +30,7 @@ namespace AlphaX.Sheets
             }
         }
 
-        public WorkSheet ActiveSheet
+        public IWorkSheet ActiveSheet
         {
             get
             {
@@ -67,14 +68,14 @@ namespace AlphaX.Sheets
 
         internal WorkSheets(WorkBook workBook)
         {
-            WorkBook = workBook;
-            _sheets = new Dictionary<string, WorkSheet>();
+            _workBook = workBook;
+            _sheets = new Dictionary<string, IWorkSheet>();
         }
 
-        public WorkSheet AddSheet(string name)
+        public IWorkSheet AddSheet(string name)
         {
             VerifySheetName(name);
-            var workSheet = new WorkSheet(WorkBook, name);
+            var workSheet = new WorkSheet(_workBook, name);
             _sheets.Add(name.ToLowerInvariant(), workSheet);
             SheetAdded?.Invoke(this, new SheetEventArgs(workSheet));
             return workSheet;
@@ -91,7 +92,7 @@ namespace AlphaX.Sheets
                 throw new ArgumentException($"Sheet with name '{name}' already present.");
         }
 
-        public WorkSheet GetSheet(string sheetName)
+        public IWorkSheet GetSheet(string sheetName)
         {
             sheetName = sheetName.ToLowerInvariant();
 
@@ -102,7 +103,7 @@ namespace AlphaX.Sheets
             return sheet;
         }
 
-        public WorkSheet GetSheet(int index)
+        public IWorkSheet GetSheet(int index)
         {
             if (_sheets.Count <= index)
                 throw new IndexOutOfRangeException("Sheet index is out of range.");
@@ -111,7 +112,7 @@ namespace AlphaX.Sheets
             return sheet;
         }
 
-        private void SetActiveSheet(WorkSheet sheet)
+        private void SetActiveSheet(IWorkSheet sheet)
         {
             _activeSheet = sheet;
             OnActiveSheetChanged(sheet);
@@ -121,13 +122,18 @@ namespace AlphaX.Sheets
         {
             var sheet = GetSheet(name);
             _sheets.Remove(sheet.Name.ToLowerInvariant());
+            if (_activeSheet == sheet)
+                _activeSheet = null;
+            sheet.Dispose();
             SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
         }
 
         public void RemoveSheet(int index)
         {
             var sheet = GetSheet(index);
-            _sheets.Remove(sheet.Name);
+            _sheets.Remove(sheet.Name.ToLowerInvariant());
+            if (_activeSheet == sheet)
+                _activeSheet = null;
             sheet.Dispose();
             SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
         }
@@ -141,7 +147,7 @@ namespace AlphaX.Sheets
             _activeSheet = null;
         }
 
-        protected virtual void OnActiveSheetChanged(WorkSheet sheet)
+        protected virtual void OnActiveSheetChanged(IWorkSheet sheet)
         {
             ActiveSheetChanged?.Invoke(this, new SheetEventArgs(sheet));
         }
@@ -150,11 +156,11 @@ namespace AlphaX.Sheets
         {
             Clear();
             _sheets = null;
-            WorkBook = null;
+            _workBook = null;
             _activeSheet = null;
         }
 
-        public IEnumerator<WorkSheet> GetEnumerator()
+        public IEnumerator<IWorkSheet> GetEnumerator()
         {
             return _sheets.Values.GetEnumerator();
         }
