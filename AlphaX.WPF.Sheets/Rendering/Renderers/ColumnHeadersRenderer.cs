@@ -83,7 +83,7 @@ namespace AlphaX.WPF.Sheets.Rendering
         private void DrawHiddenColumnIndicator(DrawingContext context, double x, double rowLocation, double rowHeight, WorkSheet workSheet)
         {
             var pen = SheetView.Spread.GridLinePen;
-            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey).As<Style>();
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey).As<AlphaXStyle>();
 
             double line1X, line2X;
             if (x <= 0)
@@ -112,7 +112,7 @@ namespace AlphaX.WPF.Sheets.Rendering
 
         private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
         {
-            var style = baseStyle.As<Style>();
+            var style = baseStyle.As<AlphaXStyle>();
 
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
             if (cell != null && cell.Value != null)

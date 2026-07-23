@@ -87,7 +87,7 @@ namespace AlphaX.WPF.Sheets.Rendering
         private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, Columns columns, WorkSheet workSheet)
         {
             var pen = SheetView.Spread.GridLinePen;
-            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<Style>();
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<AlphaXStyle>();
 
             double line1Y, line2Y;
             if (y <= 0)
@@ -134,9 +134,9 @@ namespace AlphaX.WPF.Sheets.Rendering
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col, false);
                     var sheetRow = rows.GetItem(row, false);
-                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).As<Style>();
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).As<AlphaXStyle>();
                     if (style == null)
-                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<Style>();
+                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).As<AlphaXStyle>();
                     var textWidth = TextRenderingExtensions
                         .ComputeTextWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, style.GlyphTypeface);
                     textWidth += 10;
@@ -155,7 +155,7 @@ namespace AlphaX.WPF.Sheets.Rendering
 
         private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
         {
-            var style = baseStyle.As<Style>();
+            var style = baseStyle.As<AlphaXStyle>();
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
 
             if (cell != null && cell.Value != null)

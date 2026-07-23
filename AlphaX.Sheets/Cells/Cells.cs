@@ -1,4 +1,4 @@
-﻿using AlphaX.CalcEngine.Parsers;
+using AlphaX.CalcEngine.Parsers;
 using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
 using System;
@@ -162,6 +162,22 @@ namespace AlphaX.Sheets
             set
             {
                 ApplyToRange(x => x.StyleName = value);
+            }
+        }
+
+        public IStyle Style
+        {
+            get
+            {
+                var cell = GetCell(Row, Column, false);
+                if (cell != null)
+                    return cell.Style;
+                else
+                    return null;
+            }
+            set
+            {
+                ApplyToRange(x => x.Style = value);
             }
         }
 

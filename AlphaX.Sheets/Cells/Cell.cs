@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Data;
+using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
 
 namespace AlphaX.Sheets
@@ -7,6 +7,7 @@ namespace AlphaX.Sheets
     {
         private object _value;
         private string _styleName;
+        private IStyle _style;
 
         public IFormatter Formatter { get; set; }
         public object Value
@@ -106,6 +107,34 @@ namespace AlphaX.Sheets
             }
         }
 
+        public IStyle Style
+        {
+            get
+            {
+                return _style;
+            }
+            set
+            {
+                if (_style != value)
+                {
+                    if (Parent.Parent is WorkSheet worksheet)
+                    {
+                        worksheet.OnCellChanged(new CellChangedEventArgs()
+                        {
+                            Row = Row,
+                            OldValue = _style,
+                            NewValue = value,
+                            Column = Column,
+                            ChangeType = ChangeType.Style,
+                            Action = SheetAction.None
+                        });
+                    }
+                }
+
+                _style = value;
+            }
+        }
+
         public Cells Parent { get; private set; }
         public DataMap DataMap { get; set; }
         public ICellType CellType { get; set; }
@@ -143,6 +172,7 @@ namespace AlphaX.Sheets
             Parent = null;
             CellType = null;
             StyleName = null;
+            Style = null;
         }
     }
 }

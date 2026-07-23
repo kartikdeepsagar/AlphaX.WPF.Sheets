@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Data;
+using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
 using System;
 
@@ -83,5 +83,9 @@ namespace AlphaX.Sheets
         /// Gets or sets the column span for this cell.
         /// </summary>
         int ColumnSpan { get; set; }
+        /// <summary>
+        /// Gets or sets the cell style.
+        /// </summary>
+        IStyle Style { get; set; }
     }
 }

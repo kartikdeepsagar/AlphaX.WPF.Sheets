@@ -10,7 +10,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
 {
     public class TextCellType : BaseCellType
     {
-        internal override void DrawCell(DrawingContext context, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, AlphaXStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
             base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
 
@@ -33,7 +33,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
             }
         }
 
-        public override AlphaXEditorBase GetEditor(Style style)
+        public override AlphaXEditorBase GetEditor(AlphaXStyle style)
         {
             var editor = new AlphaXTextBox();
             editor.FontFamily = style.WpfFontFamily;

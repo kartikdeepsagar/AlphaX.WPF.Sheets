@@ -1,4 +1,4 @@
-﻿using AlphaX.CalcEngine;
+using AlphaX.CalcEngine;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ namespace AlphaX.Sheets
     {
         private WorkBookDataProvider _dataProvider;
         private IUpdateProvider _updateProvider;
-        private Dictionary<string, NamedStyle> _namedStyles;
+        private Dictionary<string, Style> _namedStyles;
 
         public string Name { get; set; }
         public IWorkSheets WorkSheets { get; private set; }
@@ -33,7 +33,7 @@ namespace AlphaX.Sheets
 
             Name = name;
             WorkSheets = new WorkSheets(this);
-            _namedStyles = new Dictionary<string, NamedStyle>();
+            _namedStyles = new Dictionary<string, Style>();
             _dataProvider = new WorkBookDataProvider(this);
             CalcEngine = new AlphaXCalcEngine(_dataProvider);
         }
@@ -46,7 +46,7 @@ namespace AlphaX.Sheets
             UpdateProvider = updateProvider;
         }
 
-        public void AddNamedStyle(string styleName, NamedStyle style)
+        public void AddNamedStyle(string styleName, Style style)
         {
             if (_namedStyles.ContainsKey(styleName))
                 throw new ArgumentException($"A style is already registered with the name '{styleName}'");
@@ -54,9 +54,9 @@ namespace AlphaX.Sheets
             _namedStyles.Add(styleName, style);
         }
 
-        public NamedStyle GetNamedStyle(string styleName)
+        public Style GetNamedStyle(string styleName)
         {
-            if(_namedStyles.TryGetValue(styleName, out NamedStyle style))
+            if(_namedStyles.TryGetValue(styleName, out Style style))
                 return style;
 
             return null;

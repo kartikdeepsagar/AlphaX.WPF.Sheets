@@ -11,6 +11,7 @@ namespace AlphaX.Sheets
         public event EventHandler<RangeChangedEventArgs> RangeSorted;
         public event EventHandler<RowChangedEventArgs> RowsChanged;
         public event EventHandler<ColumnChangedEventArgs> ColumnsChanged;
+        private string _name;
         private WorkBook _workBook;
         private Cells _cells;
         private Rows _rows;
@@ -21,7 +22,21 @@ namespace AlphaX.Sheets
         private FilterProvider _filterProvider;
         private WorkSheetDataStore _dataStore;
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (_name != value)
+                {
+                    ((WorkSheets)_workBook.WorkSheets).VerifySheetName(value);
+                    _name = value;
+                }
+            }
+        }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
         public int DefaultRowHeight { get; set; }
@@ -54,11 +69,11 @@ namespace AlphaX.Sheets
 
         internal WorkSheet(WorkBook book, string name)
         {
+            _workBook = book;
             Name = name;
             DefaultRowHeight = 22;
             DefaultColumnWidth = 70;
             AllowMultiLineText = true;
-            _workBook = book;
             _rows = new Rows(this);
             _columns = new Columns(this);
             _topLeft = new TopLeft(this);

@@ -1,4 +1,4 @@
-﻿using AlphaX.CalcEngine;
+using AlphaX.CalcEngine;
 using System;
 
 namespace AlphaX.Sheets

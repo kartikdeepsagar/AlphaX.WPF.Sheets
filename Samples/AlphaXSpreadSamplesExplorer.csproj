@@ -72,6 +72,9 @@
     <Compile Include="SamplesSideBar.xaml.cs">
       <DependentUpon>SamplesSideBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Samples\Formulas.xaml.cs">
+      <DependentUpon>Formulas.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Samples\CellTypes.xaml.cs">
       <DependentUpon>CellTypes.xaml</DependentUpon>
     </Compile>
@@ -103,6 +106,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SamplesSideBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Samples\Formulas.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -43,7 +43,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new Style();
+                var headerStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
                 headerStyle.BackColor = Color.White;
                 headerStyle.ForeColor = Color.Black;
@@ -58,7 +58,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
             {
-                var rowStyle = new Style();
+                var rowStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
                 rowStyle.BackColor = Color.FromArgb(255, 240, 240, 240);
                 rowStyle.ForeColor = Color.Black;
@@ -82,7 +82,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new Style();
+                var headerStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
                 headerStyle.BackColor = Color.FromArgb(255, 131, 84, 139);
                 headerStyle.ForeColor = Color.White;
@@ -99,7 +99,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if(worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
             {
-                var rowStyle = new Style();
+                var rowStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
                 rowStyle.BackColor = Color.FromArgb(255, 238, 232, 246);
                 rowStyle.ForeColor = Color.Black;           
@@ -124,7 +124,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new Style();
+                var headerStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
                 headerStyle.BackColor = Color.FromArgb(255, 44, 62, 80);
                 headerStyle.ForeColor = Color.White;
@@ -140,7 +140,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
             {
-                var rowStyle = new Style();
+                var rowStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
                 rowStyle.BackColor = Color.FromArgb(255, 44, 62, 80);
                 rowStyle.ForeColor = Color.White;
@@ -150,7 +150,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(altRow2Style) == null)
             {
-                var row2Style = new Style();
+                var row2Style = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(altRow2Style, row2Style);
                 row2Style.BackColor = Color.FromArgb(255, 44, 62, 80);
                 row2Style.ForeColor = Color.White;
@@ -178,7 +178,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new Style();
+                var headerStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
                 headerStyle.BackColor = Color.FromArgb(255, 188, 221, 255);
                 headerStyle.ForeColor = Color.Black;
@@ -193,7 +193,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
             {
-                var rowStyle = new Style();
+                var rowStyle = new AlphaXStyle();
                 worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
                 rowStyle.BackColor = Color.FromArgb(255, 216, 225, 240);
                 rowStyle.ForeColor = Color.Black;

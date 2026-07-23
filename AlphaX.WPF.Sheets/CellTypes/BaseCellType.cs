@@ -8,7 +8,7 @@ namespace AlphaX.WPF.Sheets.CellTypes
 {
     public abstract class BaseCellType : ICellType
     {
-        internal virtual void DrawCell(DrawingContext drawingContext, object value, Style style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal virtual void DrawCell(DrawingContext drawingContext, object value, AlphaXStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
         {
             if (style.BackColor != AlphaX.Sheets.Drawing.Color.Transparent)
             {
@@ -20,6 +20,6 @@ namespace AlphaX.WPF.Sheets.CellTypes
         /// Gets the editor for cell type
         /// </summary>
         /// <returns></returns>
-        public abstract AlphaXEditorBase GetEditor(Style style);
+        public abstract AlphaXEditorBase GetEditor(AlphaXStyle style);
     }
 }
