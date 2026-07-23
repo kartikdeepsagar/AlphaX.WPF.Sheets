@@ -1,9 +1,10 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI;
 using System;
 using System.Text;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace AlphaX.WPF.Sheets
 {
@@ -60,75 +61,17 @@ namespace AlphaX.WPF.Sheets
         #region Public
         public void CopyToClipboard()
         {
-            CopyToClipboard(Selection);
+            Spread.ClipboardManager.Copy(this);
         }
 
         public void PasteFromClipboard()
         {
-            var dataObject = Clipboard.GetDataObject();
-
-            if (dataObject == null)
-                return;
-
-            if(dataObject.GetDataPresent("InternalDataObject"))
-            {
-                var data = (object[,])dataObject.GetData("InternalDataObject");
-
-                if (data == null)
-                    return;
-
-                Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
-
-                var pasteAction = new ClipboardPasteAction() { SheetView = this };
-                pasteAction.OldState.Value = ((WorkBook)_workSheet.WorkBook).DataProvider.GetRangeValue(_workSheet.Name, ActiveRow, ActiveColumn, data.GetLength(0), data.GetLength(1));
-                pasteAction.OldState.Row = ActiveRow;
-                pasteAction.OldState.Column = ActiveColumn;
-                pasteAction.OldState.Selection = Selection.Clone();
-
-                for (int row = 0; row < data.GetLength(0); row++)
-                {
-                    for (int column = 0; column < data.GetLength(1); column++)
-                    {
-                        var value = data[row, column];
-                        WorkSheet.Cells[ActiveRow + row, ActiveColumn + column].Value = value;
-                    }
-                }
-
-                Spread.SelectionManager.SelectRange(ActiveRow, ActiveColumn, data.GetLength(0), data.GetLength(1));
-
-                pasteAction.NewState.Value = data;
-                pasteAction.NewState.Row = ActiveRow;
-                pasteAction.NewState.Column = ActiveColumn;
-                pasteAction.NewState.Selection = Selection.Clone();
-
-                Spread.UndoRedoManager.AddAction(pasteAction);
-                Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
-            }
+            Spread.ClipboardManager.Paste();
         }
 
         public void CopyToClipboard(CellRange range)
         {
-            var stringBuilder = new StringBuilder();
-
-            var data = ((WorkBook)_workSheet.WorkBook).DataProvider.GetRangeValue(_workSheet.Name, range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount);
-
-            for(int row = 0; row < data.GetLength(0); row++)
-            {
-                for(int column = 0; column < data.GetLength(1); column++)
-                {
-                    stringBuilder.Append(data[row, column]);
-                    if (column < range.ColumnCount - 1)
-                        stringBuilder.Append(SheetUtils.Tab);
-                }
-                
-                if (row < range.RowCount - 1)
-                    stringBuilder.Append(SheetUtils.NextLine);
-            }
-
-            var dataObject = new DataObject();
-            dataObject.SetData(DataFormats.Text, stringBuilder.ToString());
-            dataObject.SetData("InternalDataObject", data);
-            Clipboard.SetDataObject(dataObject);
+            Spread.ClipboardManager.Copy(this, range);
         }
 
         public void Invalidate(bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool topLeft = true)

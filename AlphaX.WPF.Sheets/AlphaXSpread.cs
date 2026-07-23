@@ -167,6 +167,10 @@ namespace AlphaX.WPF.Sheets
         /// </summary>
         public ISelectionManager SelectionManager { get; }
         /// <summary>
+        /// Gets the clipboard manager.
+        /// </summary>
+        public IClipboardManager ClipboardManager { get; }
+        /// <summary>
         /// Gets the sheetview collection.
         /// </summary>
         public SheetViewCollection SheetViews { get; }
@@ -194,6 +198,7 @@ namespace AlphaX.WPF.Sheets
             WorkBook.WorkSheets.ActiveSheet = workSheet;
             EditingManager = new EditingManager(this);
             SelectionManager = new SelectionManager(this);
+            ClipboardManager = new ClipboardManager(this);
             SelectionManager.SelectCell(0, 0);
             Loaded += OnLoaded;
         }
@@ -349,7 +354,7 @@ namespace AlphaX.WPF.Sheets
                 switch (e.Key)
                 {
                     case Key.C:
-                        activeSheetView.CopyToClipboard();
+                        ClipboardManager.Copy(activeSheetView);
                         break;
 
                     case Key.A:
@@ -357,7 +362,7 @@ namespace AlphaX.WPF.Sheets
                         break;
 
                     case Key.V:
-                        activeSheetView.PasteFromClipboard();
+                        ClipboardManager.Paste(activeSheetView);
                         break;
 
                     case Key.Y:
