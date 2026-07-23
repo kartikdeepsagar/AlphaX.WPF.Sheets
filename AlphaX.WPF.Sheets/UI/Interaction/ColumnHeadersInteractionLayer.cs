@@ -1,4 +1,4 @@
-﻿using AlphaX.WPF.Sheets.Rendering;
+using AlphaX.WPF.Sheets.Rendering;
 using AlphaX.WPF.Sheets.UI.Managers;
 using System;
 using System.Windows;
@@ -18,6 +18,12 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
 
             if (hitTest.Element == VisualElement.ColumnHeaderResizeBar && SheetView.Spread.AllowColumnResize)
             {
+                if (e.ClickCount == 2)
+                {
+                    SheetView.AutoSizeColumn(hitTest.Column);
+                    return;
+                }
+
                 _resizeManager.BeginResizeColumn(hitTest.Column, (int)hitTest.Position.X);
                 Children.Add(_resizeManager.ResizeLine);
             }

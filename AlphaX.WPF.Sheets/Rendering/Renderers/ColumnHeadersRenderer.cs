@@ -1,8 +1,8 @@
-using AlphaX.Sheets;
-
-using AlphaX.WPF.Sheets.UI;
+using System;
 using System.Windows;
 using System.Windows.Media;
+using AlphaX.Sheets;
+using AlphaX.WPF.Sheets.UI;
 
 namespace AlphaX.WPF.Sheets.Rendering
 {
@@ -57,9 +57,57 @@ namespace AlphaX.WPF.Sheets.Rendering
 
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip);
                 }
+
+                // Render double vertical lines for hidden columns
+                int minCol = Math.Max(0, leftColumn);
+                int maxCol = Math.Min(workSheet.ColumnCount - 1, rightColumn + 1);
+
+                for (int col = minCol; col <= maxCol; col++)
+                {
+                    if (columns.GetColumnWidth(col) == 0)
+                    {
+                        // Draw double line indicator only for the first hidden column in a contiguous block
+                        if (col == 0 || columns.GetColumnWidth(col - 1) > 0)
+                        {
+                            var colLocation = columns.GetLocation(col);
+                            var x = colLocation - viewport.LeftColumnLocation;
+                            DrawHiddenColumnIndicator(context, x, rowLocation, rowHeight, workSheet);
+                        }
+                    }
+                }
             }
 
             context.Pop();
+        }
+
+        private void DrawHiddenColumnIndicator(DrawingContext context, double x, double rowLocation, double rowHeight, WorkSheet workSheet)
+        {
+            var pen = SheetView.Spread.GridLinePen;
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey).As<Style>();
+
+            double line1X, line2X;
+            if (x <= 0)
+            {
+                line1X = x + 1.5;
+                line2X = x + 4.5;
+            }
+            else
+            {
+                line1X = x - 1.5;
+                line2X = x + 1.5;
+            }
+
+            var rectLeft = Math.Min(line1X, line2X) - 0.5;
+            var rectWidth = Math.Abs(line2X - line1X) + 1.0;
+            var gapRect = new Rect(rectLeft, rowLocation, rectWidth, rowHeight);
+
+            if (defaultStyle != null && defaultStyle.Background != null)
+            {
+                context.DrawRectangle(defaultStyle.Background, null, gapRect);
+            }
+
+            context.DrawLine(pen, new Point(line1X, rowLocation), new Point(line1X, rowLocation + rowHeight));
+            context.DrawLine(pen, new Point(line2X, rowLocation), new Point(line2X, rowLocation + rowHeight));
         }
 
         private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)

@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
 using System.Windows.Media;
@@ -41,18 +41,75 @@ namespace AlphaX.WPF.Sheets.Rendering
 
             double x = 0, y = 0;
 
+            // Check for hidden row resize handle hit first
+            for (int row = 0; row < _workSheet.RowCount; row++)
+            {
+                if (rows.GetRowHeight(row) == 0)
+                {
+                    int startHiddenRow = row;
+                    int lastHiddenRow = row;
+                    while (lastHiddenRow + 1 < _workSheet.RowCount && rows.GetRowHeight(lastHiddenRow + 1) == 0)
+                    {
+                        lastHiddenRow++;
+                    }
+
+                    var rowLocation = rows.GetLocation(startHiddenRow);
+                    bool isHit;
+                    if (rowLocation == 0)
+                    {
+                        isHit = point.Y >= 0 && point.Y <= _resizeDelta + 2;
+                    }
+                    else
+                    {
+                        isHit = point.Y >= rowLocation - 2 && point.Y <= rowLocation + _resizeDelta;
+                    }
+
+                    if (isHit)
+                    {
+                        hitTestInfo.Element = VisualElement.RowHeaderResizeBar;
+                        hitTestInfo.Row = lastHiddenRow;
+                        y = rowLocation;
+                        hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                            y - _viewPort.TopRowLocation);
+                        return hitTestInfo;
+                    }
+
+                    row = lastHiddenRow;
+                }
+            }
+
+            // Check visible row resize boundaries (centered around bottom edge)
             for (int row = viewRange.TopRow; row <= viewRange.BottomRow; row++)
             {
                 var rowLocation = rows.GetLocation(row);
                 double rowHeight = _workSheet.Rows.GetRowHeight(row);
 
+                if (rowHeight == 0)
+                    continue;
+
+                double bottomEdge = rowLocation + rowHeight;
+                if (point.Y >= bottomEdge - _resizeDelta && point.Y <= bottomEdge + _resizeDelta)
+                {
+                    hitTestInfo.Element = VisualElement.RowHeaderResizeBar;
+                    hitTestInfo.Row = row;
+                    y = rowLocation;
+                    hitTestInfo.Position = new Point(x - _viewPort.LeftColumnLocation,
+                        y - _viewPort.TopRowLocation);
+                    return hitTestInfo;
+                }
+            }
+
+            // Check visible row body hit
+            for (int row = viewRange.TopRow; row <= viewRange.BottomRow; row++)
+            {
+                var rowLocation = rows.GetLocation(row);
+                double rowHeight = _workSheet.Rows.GetRowHeight(row);
+
+                if (rowHeight == 0)
+                    continue;
+
                 if (point.Y >= rowLocation && point.Y < rowLocation + rowHeight)
                 {
-                    if (point.Y > rowLocation + rowHeight - _resizeDelta)
-                    {
-                        hitTestInfo.Element = VisualElement.RowHeaderResizeBar;
-                    }
-
                     hitTestInfo.Row = row;
                     y = rowLocation;
                     break;
