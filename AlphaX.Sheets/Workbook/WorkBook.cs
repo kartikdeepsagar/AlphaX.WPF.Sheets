@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AlphaX.Sheets
 {
-    public class WorkBook : IWorkBook
+    internal class WorkBook : IWorkBook
     {
         private WorkBookDataProvider _dataProvider;
         private IUpdateProvider _updateProvider;
@@ -14,18 +14,8 @@ namespace AlphaX.Sheets
         public string Name { get; set; }
         public IWorkSheets WorkSheets { get; private set; }
         public ICalcEngine CalcEngine { get; private set; }
-        public StylePalette StylePalette { get; private set; }
-        public IUpdateProvider UpdateProvider
-        {
-            get
-            {
-                return _updateProvider;
-            }
-            private set
-            {
-                _updateProvider = value;
-            }
-        }
+        public IStylePalette StylePalette { get; private set; }
+        internal IUpdateProvider UpdateProvider => _updateProvider;
         internal WorkBookDataProvider DataProvider => _dataProvider;
 
         public WorkBook(string name)
@@ -41,12 +31,12 @@ namespace AlphaX.Sheets
             StylePalette = new StylePalette();
         }
 
-        public WorkBook(string name, IUpdateProvider updateProvider) : this(name)
+        internal WorkBook(string name, IUpdateProvider updateProvider) : this(name)
         {
             if(updateProvider == null)
                 throw new ArgumentNullException(nameof(updateProvider));
 
-            UpdateProvider = updateProvider;
+            _updateProvider = updateProvider;
         }
 
         public void AddNamedStyle(string styleName, Style style)
@@ -75,6 +65,11 @@ namespace AlphaX.Sheets
             CalcEngine = null;
             _namedStyles = null;
             _dataProvider = null;
+        }
+
+        public object[,] GetRangeValue(string sheetName, int rowIndex, int columnIndex, int rowCount, int columnCount)
+        {
+            return DataProvider.GetRangeValue(sheetName, rowIndex, columnIndex, rowCount, columnCount);
         }
     }
 }

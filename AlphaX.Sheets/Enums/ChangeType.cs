@@ -1,12 +1,40 @@
-﻿namespace AlphaX.Sheets
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace AlphaX.Sheets
 {
-    public enum ChangeType
+    public enum CellChangeType
     {
-        None,
         Value,
         Formula,
         Style,
-        Size,
-        Count
+        Merge,
+        Unmerge
+    }
+
+    public enum RowChangeType
+    {
+        Insert,
+        Delete,
+        Height,
+        Style
+    }
+
+    public enum ColumnChangeType
+    {
+        Insert,
+        Delete,
+        Width,
+        Style
+    }
+
+    public enum RangeChangeType
+    {
+        Sort,
+        Clear,
+        Move,
+        Merge,
+        Value
     }
 }

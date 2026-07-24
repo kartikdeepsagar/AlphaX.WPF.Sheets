@@ -1,4 +1,5 @@
 using AlphaX.CalcEngine;
+using AlphaX.Sheets.Core;
 using System;
 
 namespace AlphaX.Sheets
@@ -18,8 +19,19 @@ namespace AlphaX.Sheets
         /// </summary>
         ICalcEngine CalcEngine { get; }
         /// <summary>
-        /// Gets the update provider.
+        /// Gets the style palette of this workbook.
         /// </summary>
-        IUpdateProvider UpdateProvider { get; }
+        IStylePalette StylePalette { get; }
+
+        /// <summary>
+        /// Gets the values of the range as 2d array
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
+        /// <param name="rowCount"></param>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
+        object[,] GetRangeValue(string sheetName, int rowIndex, int columnIndex, int rowCount, int columnCount);
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AlphaX.Sheets
 {
-    public class Cells : IRange
+    internal class Cells : IRange
     {
         static Cells()
         {
@@ -21,6 +21,8 @@ namespace AlphaX.Sheets
         private static NaturalSortComparer _sortComparer;
         private int _rowCount;
         private int _columnCount;
+        internal SheetRegion Region { get; }
+        private WorkSheet _workSheet;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private Dictionary<int, ColumnData> _columnStore;
@@ -67,7 +69,7 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_rowCount == -1 && SheetParent is WorkSheet sheet)
+                if (_rowCount == -1 && Parent is WorkSheet sheet)
                     return sheet.RowCount;
 
                 return _rowCount;
@@ -78,7 +80,7 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_columnCount == -1 && SheetParent is WorkSheet sheet)
+                if (_columnCount == -1 && Parent is WorkSheet sheet)
                     return sheet.ColumnCount;
 
                 return _columnCount;
@@ -145,8 +147,8 @@ namespace AlphaX.Sheets
             }
         }
 
-        public Cells Parent { get; private set; }
-        internal object SheetParent { get; private set; }
+        public IRange ParentRange { get; private set; }
+        internal object Parent { get; private set; }
 
         public DataMap DataMap
         {
@@ -192,9 +194,9 @@ namespace AlphaX.Sheets
             {
                 return GetCell(Row, Column, false)?.IsVisible ?? true;
             }
-            set
+            internal set
             {
-                ApplyToRange((range) => range.IsVisible = value);
+                ApplyToRange((range) => ((Cell)range).IsVisible = value);
             }
         }
 
@@ -222,26 +224,47 @@ namespace AlphaX.Sheets
             }
         }
 
-        internal Cells(object parent)
+        private Cells()
         {
-            SheetParent = parent;
-            Parent = parent as Cells;
             Row = Column = 0;
             _rowCount = _columnCount = -1;
             _columnStore = new Dictionary<int, ColumnData>();
             _activeCellInstances = new Dictionary<string, Cell>();
         }
 
+        internal Cells(RowHeaders parent) : this()
+        {
+            Parent = parent;
+            Region = SheetRegion.RowHeader;
+            _workSheet = (WorkSheet)parent.WorkSheet;
+        }
+
+        internal Cells(ColumnHeaders parent) : this()
+        {
+            Parent = parent;
+            Region = SheetRegion.ColumnHeader;
+            _workSheet = (WorkSheet)parent.WorkSheet;
+        }
+
+        internal Cells(WorkSheet parent) : this()
+        {
+            Parent = parent;
+            Region = SheetRegion.Cells;
+            _workSheet = parent;
+        }
+
         internal Cells(Cells parentRange, int row, int column, int rowCount, int columnCount)
         {
-            SheetParent = parentRange?.SheetParent;
-            Parent = parentRange;
+            Parent = parentRange?.Parent;
+            ParentRange = parentRange;
             Row = row;
             Column = column;
             _rowCount = rowCount;
             _columnCount = columnCount;
             _columnStore = parentRange._columnStore;
             _activeCellInstances = parentRange._activeCellInstances;
+            Region = parentRange.Region;
+            _workSheet = parentRange._workSheet;
         }
 
         internal ColumnData GetColumnData(int column, bool createIfNotExists = true)
@@ -330,7 +353,7 @@ namespace AlphaX.Sheets
             for (int r = sortStartRow; r < sortStartRow + sortRowCount; r++)
             {
                 object keyVal = null;
-                if (SheetParent is WorkSheet ws)
+                if (Parent is WorkSheet ws)
                     keyVal = ws.DataStore.GetValue(r, keyColumn);
 
                 if (keyVal == null)
@@ -365,7 +388,7 @@ namespace AlphaX.Sheets
                     {
                         colData.SetCellData(targetRow, cellData);
 
-                        if (SheetParent is WorkSheet ws)
+                        if (Parent is WorkSheet ws)
                         {
                             if (ws.DataSource != null)
                                 ws.DataStore.SetValue(targetRow, c, cellData.Value);
@@ -374,22 +397,17 @@ namespace AlphaX.Sheets
                     else
                     {
                         colData.ClearRow(targetRow);
-                        if (SheetParent is WorkSheet ws && ws.DataSource != null)
+                        if (Parent is WorkSheet ws && ws.DataSource != null)
                             ws.DataStore.SetValue(targetRow, c, null);
                     }
                 }
             }
 
-            if (SheetParent is WorkSheet workSheet)
-            {
-                workSheet.OnRangeChanged(new RangeChangedEventArgs()
-                {
-                    Action = SheetAction.Sort,
-                    ChangeType = ChangeType.None,
-                    SortState = ascending ? SortState.Ascending : SortState.Descending,
-                    CellRange = new CellRange(sortStartRow, targetStartCol, sortRowCount, targetEndCol - targetStartCol + 1)
-                });
-            }
+            _workSheet.OnRangeChanged(new RangeChangedEventArgs(
+                 Region,
+                 new CellRange(sortStartRow, targetStartCol, sortRowCount, targetEndCol - targetStartCol + 1),
+                 RangeChangeType.Sort
+             ));
         }
 
         internal void Sort(bool ascending)
@@ -429,15 +447,11 @@ namespace AlphaX.Sheets
                 }
             }
 
-            if (SheetParent is WorkSheet workSheet)
-            {
-                workSheet.OnRangeChanged(new RangeChangedEventArgs()
-                {
-                    ChangeType = ChangeType.None,
-                    Action = SheetAction.Merge,
-                    CellRange = new CellRange(Row, Column, RowCount, ColumnCount)
-                });
-            }
+            _workSheet.OnRangeChanged(new RangeChangedEventArgs(
+                Region,
+                new CellRange(Row, Column, RowCount, ColumnCount),
+                RangeChangeType.Merge
+            ));
         }
 
         internal void ClearCellStore()
@@ -453,7 +467,7 @@ namespace AlphaX.Sheets
 
         internal void InsertRows(int index, int count)
         {
-            if (SheetParent is WorkSheet)
+            if (Parent is WorkSheet)
             {
                 foreach (var colData in _columnStore.Values)
                 {
@@ -478,7 +492,7 @@ namespace AlphaX.Sheets
 
         internal void RemoveRows(int index, int count)
         {
-            if (SheetParent is WorkSheet workSheet)
+            if (Parent is WorkSheet workSheet)
             {
                 foreach (var colData in _columnStore.Values)
                 {
@@ -539,6 +553,11 @@ namespace AlphaX.Sheets
             }
         }
 
+        internal WorkSheet GetWorkSheet()
+        {
+            return _workSheet;
+        }
+
         internal void LoadData(object[,] data, int startRow = 0, int startCol = 0)
         {
             if (data == null)
@@ -549,8 +568,6 @@ namespace AlphaX.Sheets
 
             if (rows == 0 || cols == 0)
                 return;
-
-            var ws = SheetParent as WorkSheet;
 
             for (int c = 0; c < cols; c++)
             {
@@ -563,22 +580,17 @@ namespace AlphaX.Sheets
                     object val = data[r, c];
                     colData.SetValue(rowIndex, val);
 
-                    if (ws != null && ws.DataSource != null)
+                    if (_workSheet != null && _workSheet.DataSource != null)
                     {
-                        ws.DataStore.SetValue(rowIndex, colIndex, val);
+                        _workSheet.DataStore.SetValue(rowIndex, colIndex, val);
                     }
                 }
             }
 
-            if (ws != null)
-            {
-                ws.OnRangeChanged(new RangeChangedEventArgs()
-                {
-                    Action = SheetAction.LoadData,
-                    ChangeType = ChangeType.Value,
-                    CellRange = new CellRange(startRow, startCol, rows, cols)
-                });
-            }
+            _workSheet.OnRangeChanged(new RangeChangedEventArgs(
+                     SheetRegion.Cells,
+                     new CellRange(startRow, startCol, rows, cols),
+                      RangeChangeType.Value));
         }
 
         public void Dispose()

@@ -1,10 +1,11 @@
-﻿using AlphaXSpreadSamplesExplorer.Data;
+using AlphaXSpreadSamplesExplorer.Data;
 using AlphaX.Sheets;
 using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Drawing;
 using AlphaX.WPF.Sheets;
 using System;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace AlphaXSpreadSamplesExplorer.Samples
@@ -14,121 +15,92 @@ namespace AlphaXSpreadSamplesExplorer.Samples
     /// </summary>
     public partial class Styling : UserControl
     {
+        private bool _isInitializing = true;
+
         public Styling()
         {
             InitializeComponent();
-            Setup(spread1, SetupSpread1Style);
-            Setup(spread2, SetupSpread2Style);
-            Setup(spread3, SetupSpread3Style);
-            Setup(spread4, SetupSpread4Style);
+            _isInitializing = false;
+
+            // Setup main spread
+            Setup(spreadMain, (view) => UpdateSheetStyle(view, GetSelectedThemeKey(), GetAltRowsEnabled(), GetSelectedAlignment()));
+
+            // Setup grid showcase spreads
+            Setup(spread1, (view) => UpdateSheetStyle(view, "Slate", true, AlphaXHorizontalAlignment.Center));
+            Setup(spread2, (view) => UpdateSheetStyle(view, "Emerald", true, AlphaXHorizontalAlignment.Center));
+            Setup(spread3, (view) => UpdateSheetStyle(view, "Indigo", true, AlphaXHorizontalAlignment.Center));
+            Setup(spread4, (view) => UpdateSheetStyle(view, "Corporate", true, AlphaXHorizontalAlignment.Center));
         }
 
         private void Setup(AlphaXSpread spread, Action<IAlphaXSheetView> styleAction)
         {
             var sheet = spread.WorkBook.WorkSheets.GetSheet(0);
-            styleAction(spread.SheetViews.GetSheetView(sheet));
             SetupSheetDataSource(sheet);
+            styleAction(spread.SheetViews.GetSheetView(sheet));
+
             spread.WorkBook.WorkSheets.SheetAdded += (s, e) =>
             {
                 styleAction(spread.SheetViews.GetSheetView(e.WorkSheet));
             };
         }
 
-        private void SetupSpread1Style(IAlphaXSheetView sheetView)
+        private void UpdateSheetStyle(IAlphaXSheetView sheetView, string themeKey, bool useAltRows, AlphaXHorizontalAlignment alignment)
         {
             var worksheet = sheetView.WorkSheet;
 
-            // Headers Styling
-            string headerStyleName = "HeaderStyle";
+            Color headerBg, headerFg, altRowBg, altRowFg;
 
+            switch (themeKey)
+            {
+                case "Emerald":
+                    headerBg = Color.FromArgb(255, 230, 244, 234);
+                    headerFg = Color.FromArgb(255, 13, 101, 45);
+                    altRowBg = Color.FromArgb(255, 246, 251, 247);
+                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    break;
+
+                case "Indigo":
+                    headerBg = Color.FromArgb(255, 238, 242, 255);
+                    headerFg = Color.FromArgb(255, 55, 48, 163);
+                    altRowBg = Color.FromArgb(255, 248, 250, 252);
+                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    break;
+
+                case "Charcoal":
+                    headerBg = Color.FromArgb(255, 24, 24, 27);
+                    headerFg = Color.FromArgb(255, 255, 255, 255);
+                    altRowBg = Color.FromArgb(255, 39, 39, 42);
+                    altRowFg = Color.FromArgb(255, 244, 244, 245);
+                    break;
+
+                case "Corporate":
+                    headerBg = Color.FromArgb(255, 30, 58, 138);
+                    headerFg = Color.FromArgb(255, 255, 255, 255);
+                    altRowBg = Color.FromArgb(255, 240, 246, 255);
+                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    break;
+
+                case "Slate":
+                default:
+                    headerBg = Color.FromArgb(255, 241, 245, 249);
+                    headerFg = Color.FromArgb(255, 15, 23, 42);
+                    altRowBg = Color.FromArgb(255, 248, 250, 252);
+                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    break;
+            }
+
+            // Headers Styling
+            string headerStyleName = "HeaderStyle_" + themeKey + "_" + alignment.ToString();
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
-                headerStyle.BackColor = Color.White;
-                headerStyle.ForeColor = Color.Black;
-                headerStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;      
-            }
-
-            worksheet.ColumnHeaders.Rows[0].StyleName = headerStyleName;
-            worksheet.RowHeaders.Columns[0].StyleName = headerStyleName;
-            worksheet.TopLeft.StyleName = headerStyleName;
-
-            string altRowStyle = "AlternatingStyle";
-
-            if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
-            {
-                var rowStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
-                rowStyle.BackColor = Color.FromArgb(255, 240, 240, 240);
-                rowStyle.ForeColor = Color.Black;
-            }
-
-            for (int row = 0; row < worksheet.RowCount; row++)
-            {
-                if (row % 2 != 0)
+                var headerStyle = new AlphaXStyle
                 {
-                    worksheet.Rows[row].StyleName = altRowStyle;
-                }
-            }
-        }
-
-        private void SetupSpread2Style(IAlphaXSheetView sheetView)
-        {
-            var worksheet = sheetView.WorkSheet;
-
-            // Headers Styling
-            string headerStyleName = "HeaderStyle";
-
-            if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
-            {
-                var headerStyle = new AlphaXStyle();
+                    BackColor = headerBg,
+                    ForeColor = headerFg,
+                    HorizontalAlignment = alignment,
+                    FontWeight = AlphaX.Sheets.Drawing.FontWeight.Bold
+                };
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
-                headerStyle.BackColor = Color.FromArgb(255, 131, 84, 139);
-                headerStyle.ForeColor = Color.White;
-                headerStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;
-                
-            }
-
-            worksheet.ColumnHeaders.Rows[0].StyleName = headerStyleName;
-            worksheet.RowHeaders.Columns[0].StyleName = headerStyleName;
-            worksheet.TopLeft.StyleName = headerStyleName;
-
-            // Alternating Row Styling
-            string altRowStyle = "AlternatingStyle";
-
-            if(worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
-            {
-                var rowStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
-                rowStyle.BackColor = Color.FromArgb(255, 238, 232, 246);
-                rowStyle.ForeColor = Color.Black;           
-            }
-
-            for (int row = 0; row < worksheet.RowCount; row++)
-            {
-                if (row % 2 != 0)
-                {
-                    worksheet.Rows[row].StyleName = altRowStyle;
-                }
-            }
-        }
-
-        private void SetupSpread3Style(IAlphaXSheetView sheetView)
-        {
-            sheetView.Spread.SelectionBorderBrush = System.Windows.Media.Brushes.White;
-            var worksheet = sheetView.WorkSheet;
-
-            // Headers Styling
-            string headerStyleName = "HeaderStyle";
-
-            if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
-            {
-                var headerStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
-                headerStyle.BackColor = Color.FromArgb(255, 44, 62, 80);
-                headerStyle.ForeColor = Color.White;
-                headerStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;            
             }
 
             worksheet.ColumnHeaders.Rows[0].StyleName = headerStyleName;
@@ -136,75 +108,38 @@ namespace AlphaXSpreadSamplesExplorer.Samples
             worksheet.TopLeft.StyleName = headerStyleName;
 
             // Alternating Row Styling
-            string altRowStyle = "AlternatingStyle";
+            string altRowStyleName = "AltRowStyle_" + themeKey;
+            string normalRowStyleName = "NormalRowStyle_" + themeKey;
 
-            if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
+            if (worksheet.WorkBook.GetNamedStyle(altRowStyleName) == null)
             {
-                var rowStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
-                rowStyle.BackColor = Color.FromArgb(255, 44, 62, 80);
-                rowStyle.ForeColor = Color.White;
+                var rowStyle = new AlphaXStyle
+                {
+                    BackColor = altRowBg,
+                    ForeColor = altRowFg
+                };
+                worksheet.WorkBook.AddNamedStyle(altRowStyleName, rowStyle);
             }
 
-            string altRow2Style = "Alternating2Style";
-
-            if (worksheet.WorkBook.GetNamedStyle(altRow2Style) == null)
+            if (worksheet.WorkBook.GetNamedStyle(normalRowStyleName) == null)
             {
-                var row2Style = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(altRow2Style, row2Style);
-                row2Style.BackColor = Color.FromArgb(255, 44, 62, 80);
-                row2Style.ForeColor = Color.White;
+                var normalStyle = new AlphaXStyle
+                {
+                    BackColor = Color.White,
+                    ForeColor = altRowFg
+                };
+                worksheet.WorkBook.AddNamedStyle(normalRowStyleName, normalStyle);
             }
 
             for (int row = 0; row < worksheet.RowCount; row++)
             {
-                if (row % 2 != 0)
+                if (useAltRows && row % 2 != 0)
                 {
-                    worksheet.Rows[row].StyleName = altRowStyle;
+                    worksheet.Rows[row].StyleName = altRowStyleName;
                 }
                 else
                 {
-                    worksheet.Rows[row].StyleName = altRow2Style;
-                }
-            }
-        }
-
-        private void SetupSpread4Style(IAlphaXSheetView sheetView)
-        {
-            var worksheet = sheetView.WorkSheet;
-
-            // Headers Styling
-            string headerStyleName = "HeaderStyle";
-
-            if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
-            {
-                var headerStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
-                headerStyle.BackColor = Color.FromArgb(255, 188, 221, 255);
-                headerStyle.ForeColor = Color.Black;
-                headerStyle.HorizontalAlignment = AlphaXHorizontalAlignment.Center;             
-            }
-
-            worksheet.ColumnHeaders.Rows[0].StyleName = headerStyleName;
-            worksheet.RowHeaders.Columns[0].StyleName = headerStyleName;
-            worksheet.TopLeft.StyleName = headerStyleName;
-
-            string altRowStyle = "AlternatingStyle";
-
-            if (worksheet.WorkBook.GetNamedStyle(altRowStyle) == null)
-            {
-                var rowStyle = new AlphaXStyle();
-                worksheet.WorkBook.AddNamedStyle(altRowStyle, rowStyle);
-                rowStyle.BackColor = Color.FromArgb(255, 216, 225, 240);
-                rowStyle.ForeColor = Color.Black;
-            }
-
-
-            for (int row = 0; row < worksheet.RowCount; row++)
-            {
-                if (row % 2 != 0)
-                {
-                    worksheet.Rows[row].StyleName = altRowStyle;
+                    worksheet.Rows[row].StyleName = normalRowStyleName;
                 }
             }
         }
@@ -221,7 +156,73 @@ namespace AlphaXSpreadSamplesExplorer.Samples
             worksheet.Columns[5].DataMap = new PropertyDataMap("Email");
             worksheet.Columns[5].Width = 200;
             worksheet.Columns[6].DataMap = new PropertyDataMap("Phone");
-            worksheet.Columns[6].Width = 100;
+            worksheet.Columns[6].Width = 120;
+        }
+
+        private string GetSelectedThemeKey()
+        {
+            if (_cmbTheme?.SelectedItem is ComboBoxItem item && item.Tag != null)
+                return item.Tag.ToString();
+            return "Slate";
+        }
+
+        private bool GetAltRowsEnabled()
+        {
+            return _chkAltRows?.IsChecked == true;
+        }
+
+        private AlphaXHorizontalAlignment GetSelectedAlignment()
+        {
+            if (_cmbAlign?.SelectedItem is ComboBoxItem item && item.Tag != null)
+            {
+                switch (item.Tag.ToString())
+                {
+                    case "Left": return AlphaXHorizontalAlignment.Left;
+                    case "Right": return AlphaXHorizontalAlignment.Right;
+                }
+            }
+            return AlphaXHorizontalAlignment.Center;
+        }
+
+        private void ApplyMainTheme()
+        {
+            if (_isInitializing || spreadMain == null)
+                return;
+
+            var sheetView = spreadMain.SheetViews.GetSheetView(spreadMain.WorkBook.WorkSheets.GetSheet(0));
+            UpdateSheetStyle(sheetView, GetSelectedThemeKey(), GetAltRowsEnabled(), GetSelectedAlignment());
+        }
+
+        private void OnThemeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyMainTheme();
+        }
+
+        private void OnOptionChanged(object sender, RoutedEventArgs e)
+        {
+            ApplyMainTheme();
+        }
+
+        private void OnOptionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyMainTheme();
+        }
+
+        private void OnViewModeChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isInitializing || _bdrSingleView == null || _gridQuadView == null)
+                return;
+
+            if (_radioSingleView.IsChecked == true)
+            {
+                _bdrSingleView.Visibility = Visibility.Visible;
+                _gridQuadView.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                _bdrSingleView.Visibility = Visibility.Collapsed;
+                _gridQuadView.Visibility = Visibility.Visible;
+            }
         }
     }
 }

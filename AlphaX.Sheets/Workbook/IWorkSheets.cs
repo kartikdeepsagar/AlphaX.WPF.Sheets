@@ -8,15 +8,15 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Fired when a sheet is removed.
         /// </summary>
-        event EventHandler<SheetEventArgs> SheetRemoved;
+        event EventHandler<SheetChangedEventArgs> SheetRemoved;
         /// <summary>
         /// Fired when a sheet is added.
         /// </summary>
-        event EventHandler<SheetEventArgs> SheetAdded;
+        event EventHandler<SheetChangedEventArgs> SheetAdded;
         /// <summary>
         /// Fired when active sheet is changed.
         /// </summary>
-        event EventHandler<SheetEventArgs> ActiveSheetChanged;
+        event EventHandler<SheetChangedEventArgs> ActiveSheetChanged;
         /// <summary>
         /// Gets the sheet count.
         /// </summary>

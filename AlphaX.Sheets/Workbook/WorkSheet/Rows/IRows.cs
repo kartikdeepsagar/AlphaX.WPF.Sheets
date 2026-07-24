@@ -5,10 +5,6 @@ namespace AlphaX.Sheets
     public interface IRows : IEnumerableEx<IRow>, IDisposable
     {
         /// <summary>
-        /// Gets the parent this collection belongs to.
-        /// </summary>
-        object Parent { get; }
-        /// <summary>
         /// Gets the row present at the provided index.
         /// </summary>
         /// <param name="index">

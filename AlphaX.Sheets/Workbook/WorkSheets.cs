@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    public class WorkSheets : IWorkSheets
+    internal class WorkSheets : IWorkSheets
     {
         private HashSet<IWorkSheet> _sheets;
         private IWorkSheet _activeSheet;
@@ -62,9 +62,9 @@ namespace AlphaX.Sheets
             }
         }
 
-        public event EventHandler<SheetEventArgs> SheetAdded;
-        public event EventHandler<SheetEventArgs> SheetRemoved;
-        public event EventHandler<SheetEventArgs> ActiveSheetChanged;
+        public event EventHandler<SheetChangedEventArgs> SheetAdded;
+        public event EventHandler<SheetChangedEventArgs> SheetRemoved;
+        public event EventHandler<SheetChangedEventArgs> ActiveSheetChanged;
 
         internal WorkSheets(WorkBook workBook)
         {
@@ -77,7 +77,7 @@ namespace AlphaX.Sheets
             VerifySheetName(name);
             var workSheet = new WorkSheet(_workBook, name);
             _sheets.Add(workSheet);
-            SheetAdded?.Invoke(this, new SheetEventArgs(workSheet));
+            SheetAdded?.Invoke(this, new SheetChangedEventArgs(workSheet));
             return workSheet;
         }
 
@@ -130,7 +130,7 @@ namespace AlphaX.Sheets
             if (_activeSheet == sheet)
                 _activeSheet = null;
             sheet.Dispose();
-            SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
+            SheetRemoved?.Invoke(this, new SheetChangedEventArgs(sheet));
         }
 
         public void RemoveSheet(int index)
@@ -140,7 +140,7 @@ namespace AlphaX.Sheets
             if (_activeSheet == sheet)
                 _activeSheet = null;
             sheet.Dispose();
-            SheetRemoved?.Invoke(this, new SheetEventArgs(sheet));
+            SheetRemoved?.Invoke(this, new SheetChangedEventArgs(sheet));
         }
 
         public void Clear()
@@ -154,7 +154,7 @@ namespace AlphaX.Sheets
 
         protected virtual void OnActiveSheetChanged(IWorkSheet sheet)
         {
-            ActiveSheetChanged?.Invoke(this, new SheetEventArgs(sheet));
+            ActiveSheetChanged?.Invoke(this, new SheetChangedEventArgs(sheet));
         }
 
         public void Dispose()

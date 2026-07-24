@@ -5,41 +5,102 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer"
         mc:Ignorable="d" WindowState="Maximized"
-        Title="AlphaX Spread Samples Explorer" Height="650" Width="1000">
-    <Grid Background="#F8F9FA">
+        Title="AlphaX Spread Samples Explorer" Height="720" Width="1180"
+        Background="#FAFAFA" FontFamily="Segoe UI, Segoe UI Variable, Inter, sans-serif">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Top Header Bar -->
-        <Border Grid.Row="0" Background="#1E293B" Padding="16,10">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="AlphaX Spread" FontSize="18" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
-                <TextBlock Text=" | Feature Showcase &amp; Samples Explorer" FontSize="14" Foreground="#94A3B8" VerticalAlignment="Center" Margin="5,0,0,0"/>
-            </StackPanel>
+        <!-- Top Header Bar (Material Minimal Light Surface) -->
+        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="20,12" Effect="{StaticResource HeaderShadow}">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Brand Icon -->
+                    <Border Background="#18181B" CornerRadius="8" Width="34" Height="34" Margin="0,0,14,0">
+                        <Path Data="M3 3h18v18H3V3zm2 2v4h6V5H5zm8 0v4h6V5h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6z"
+                              Fill="White" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="AlphaX Spread" FontSize="17" FontWeight="Bold" Foreground="#18181B"/>
+                            <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="v2.5 Showcase" FontSize="10.5" FontWeight="SemiBold" Foreground="#52525B"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Spreadsheet &amp; Calculation Engine Explorer" FontSize="11.5" Foreground="#71717A" Margin="0,1,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Top Right Status Indicator -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border Background="#F4F4F5" CornerRadius="6" Padding="10,5" BorderBrush="#E4E4E7" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="7" Height="7" Fill="#10B981" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <TextBlock Text="Engine Status: Ready" Foreground="#52525B" FontSize="11" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Main Content Split View -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="280" MinWidth="220" MaxWidth="400"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <local:SamplesSideBar x:Name="_samplesSideBar" Margin="8,8,4,8"
-                                  Grid.Column="0"
+            <!-- Navigation Sidebar -->
+            <local:SamplesSideBar x:Name="_samplesSideBar" Grid.Column="0"
                                   SampleSelected="OnSampleSelected"/>
 
-            <GridSplitter Grid.Column="0" Width="4"
-                          Margin="0,8,0,8"
-                          Background="#CBD5E1"
-                          HorizontalAlignment="Right"
-                          ShowsPreview="True" 
-                          ResizeDirection="Columns"/>
-            
-            <Border x:Name="_samplesViewerBdr" Grid.Column="1" BorderThickness="1" 
-                    BorderBrush="#E2E8F0" Background="White" Margin="4,8,8,8" Padding="5" CornerRadius="4">
+            <!-- Resizable Splitter -->
+            <GridSplitter Grid.Column="1" Style="{StaticResource ModernGridSplitter}" ShowsPreview="True" ResizeDirection="Columns"/>
+
+            <!-- Main Sample Workspace Card -->
+            <Border Grid.Column="2" Style="{StaticResource ModernCard}" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Sample Header Control Bar -->
+                    <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="16,12" CornerRadius="10,10,0,0">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Sample Icon Container -->
+                                <Border x:Name="_sampleIconBox" Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <Path x:Name="_sampleIconPath" Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                                          Fill="#18181B" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock x:Name="_txtSampleTitle" Text="Sample View" FontSize="15" FontWeight="SemiBold" Foreground="#18181B"/>
+                                        <Border x:Name="_bdrCategory" Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="7,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock x:Name="_txtCategory" Text="CATEGORY" FontSize="9.5" FontWeight="Bold" Foreground="#52525B"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock x:Name="_txtSampleDesc" Text="Interactive demonstration of spreadsheet capability." FontSize="11.5" Foreground="#71717A" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Actions -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Button Content="Reload Sample" Style="{StaticResource ModernOutlineButton}" Click="OnReloadSampleClicked"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Active Sample Host -->
+                    <Border x:Name="_samplesViewerBdr" Grid.Row="1" Background="White" Padding="10" CornerRadius="0,0,10,10">
+                    </Border>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

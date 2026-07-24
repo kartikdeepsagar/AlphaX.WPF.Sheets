@@ -1,6 +1,6 @@
 ﻿namespace AlphaX.Sheets
 {
-    public abstract class HeadersBase : IHeaders
+    internal abstract class HeadersBase : IHeaders
     {
         protected Columns _columns;
         protected Rows _rows;
@@ -15,9 +15,6 @@
         internal HeadersBase(WorkSheet workSheet)
         {
             _workSheet = workSheet;
-            _rows = new Rows(this);
-            _columns = new Columns(this);
-            _cells = new Cells(this);
         }
 
         public void Dispose()

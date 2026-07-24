@@ -5,10 +5,6 @@ namespace AlphaX.Sheets
     public interface IColumns : IEnumerableEx<IColumn>, IDisposable
     {
         /// <summary>
-        /// Gets the parent this collection belongs to.
-        /// </summary>
-        object Parent { get; }
-        /// <summary>
         /// Gets the column present at the provided index.
         /// </summary>
         /// <param name="index">

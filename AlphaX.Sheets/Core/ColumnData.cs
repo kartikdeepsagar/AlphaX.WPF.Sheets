@@ -24,7 +24,7 @@ namespace AlphaX.Sheets.Core
     /// <summary>
     /// Columnar data storage for a single column across all rows.
     /// </summary>
-    public class ColumnData
+    internal class ColumnData
     {
         public int ColumnIndex { get; }
 

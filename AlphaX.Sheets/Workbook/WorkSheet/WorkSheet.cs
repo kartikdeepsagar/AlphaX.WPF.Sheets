@@ -8,7 +8,7 @@ namespace AlphaX.Sheets
     public class WorkSheet : IWorkSheet
     {
         public event EventHandler<CellChangedEventArgs> CellChanged;
-        public event EventHandler<RangeChangedEventArgs> RangeSorted;
+        public event EventHandler<RangeChangedEventArgs> RangeChanged;
         public event EventHandler<RowChangedEventArgs> RowsChanged;
         public event EventHandler<ColumnChangedEventArgs> ColumnsChanged;
         private string _name;
@@ -138,32 +138,37 @@ namespace AlphaX.Sheets
 
         internal void OnCellChanged(CellChangedEventArgs args)
         {
-            if (WorkBook.UpdateProvider != null && !WorkBook.UpdateProvider.SuspendUpdates)
-                WorkBook.UpdateProvider.CellChanged(this, args.Row, args.Column, args.OldValue, args.NewValue, args.Action, args.ChangeType);
+            args.WorkSheet = this;
+            if (_workBook.UpdateProvider != null && !_workBook.UpdateProvider.SuspendUpdates)
+                _workBook.UpdateProvider.CellChanged(this, args.Row, args.Column, args.OldValue, args.NewValue, args.Region, args.ChangeType);
 
             CellChanged?.Invoke(this, args);
         }
 
         internal void OnRangeChanged(RangeChangedEventArgs args)
         {
-            if (WorkBook.UpdateProvider != null && !WorkBook.UpdateProvider.SuspendUpdates)
-                WorkBook.UpdateProvider.RangeChanged(this, args.CellRange, args.Action, args.ChangeType);
+            args.WorkSheet = this;
+            if (_workBook.UpdateProvider != null && !_workBook.UpdateProvider.SuspendUpdates)
+                _workBook.UpdateProvider.RangeChanged(this, args.Range, args.Region, args.ChangeType);
 
-            RangeSorted?.Invoke(this, args);
+            RangeChanged?.Invoke(this, args);
         }
 
         internal void OnRowsChanged(RowChangedEventArgs args)
         {
-            if (WorkBook.UpdateProvider != null && !WorkBook.UpdateProvider.SuspendUpdates)
-                WorkBook.UpdateProvider.RowsChanged(this, args.Index, args.Count, args.Action, args.ChangeType);
+            args.WorkSheet = this;
+            if (_workBook.UpdateProvider != null && !_workBook.UpdateProvider.SuspendUpdates)
+                _workBook.UpdateProvider.RowsChanged(this, args.Index, args.Count, args.Region, args.ChangeType);
 
             RowsChanged?.Invoke(this, args);
         }
 
         internal void OnColumnsChanged(ColumnChangedEventArgs args)
         {
-            if (WorkBook.UpdateProvider != null && !WorkBook.UpdateProvider.SuspendUpdates)
-                WorkBook.UpdateProvider.ColumnsChanged(this, args.Index, args.Count, args.Action, args.ChangeType);
+            args.WorkSheet = this;
+
+            if (_workBook.UpdateProvider != null && !_workBook.UpdateProvider.SuspendUpdates)
+                _workBook.UpdateProvider.ColumnsChanged(this, args.Index, args.Count, args.Region, args.ChangeType);
 
             ColumnsChanged?.Invoke(this, args);
         }
