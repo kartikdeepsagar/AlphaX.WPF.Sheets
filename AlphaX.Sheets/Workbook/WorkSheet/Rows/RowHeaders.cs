@@ -1,6 +1,6 @@
 ﻿namespace AlphaX.Sheets
 {
-    public class RowHeaders : HeadersBase, IRowHeaders
+    internal class RowHeaders : HeadersBase, IRowHeaders
     {
         public int ColumnCount { get; set; }
         public int DefaultColumnWidth { get; set; }
@@ -22,6 +22,9 @@
         {
             DefaultColumnWidth = 30;
             ColumnCount = 1;
+            _cells = new Cells(this);
+            _rows = new Rows(this);
+            _columns = new Columns(this);
         }
     }
 }

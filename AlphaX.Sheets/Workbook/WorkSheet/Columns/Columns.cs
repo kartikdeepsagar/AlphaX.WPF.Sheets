@@ -4,9 +4,10 @@ using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    public class Columns : CollectionBase<IColumn>, IColumns
+    internal class Columns : CollectionBase<IColumn>, IColumns
     {
         private Dictionary<int, double> _locationMap;
+        
         protected override int Count
         {
             get
@@ -23,9 +24,34 @@ namespace AlphaX.Sheets
             }
         }
 
-        internal Columns(object parent) : base(parent)
+        public SheetRegion Region { get; }
+        public WorkSheet WorkSheet { get; }
+        public RowHeaders RowHeaders { get; }
+        public ColumnHeaders ColumnHeaders { get; }
+
+        private Columns() : base()
         {
             _locationMap = new Dictionary<int, double>();
+        }
+
+        internal Columns(WorkSheet parent) : this()
+        {
+            WorkSheet = parent;
+            Region = SheetRegion.Cells;
+        }
+
+        internal Columns(RowHeaders parent) : this()
+        {
+            RowHeaders = parent;
+            WorkSheet = (WorkSheet)parent.WorkSheet;
+            Region = SheetRegion.RowHeader;
+        }
+
+        internal Columns(ColumnHeaders parent) : this()
+        {
+            ColumnHeaders = parent;
+            WorkSheet = (WorkSheet)parent.WorkSheet;
+            Region = SheetRegion.ColumnHeader;
         }
 
         /// <summary>
@@ -69,20 +95,7 @@ namespace AlphaX.Sheets
                 }
             }
 
-            var defaultColumnWidth = 0;
-
-            if (Parent is IWorkSheet workSheet)
-            {
-                defaultColumnWidth = workSheet.DefaultColumnWidth;
-            }
-            else if (Parent is IRowHeaders rowHeaders)
-            {
-                defaultColumnWidth = rowHeaders.DefaultColumnWidth;
-            }
-            else if (Parent is IColumnHeaders columnHeaders)
-            {
-                defaultColumnWidth = columnHeaders.WorkSheet.DefaultColumnWidth;
-            }
+            var defaultColumnWidth = GetDefaultColumnWidth();
 
             var location = xLocation + (count * defaultColumnWidth) + deltaWidth;
 
@@ -122,17 +135,14 @@ namespace AlphaX.Sheets
 
         private int GetDefaultColumnWidth()
         {
-            if (Parent is IWorkSheet workSheet)
+            switch (Region)
             {
-                return workSheet.DefaultColumnWidth;
-            }
-            else if (Parent is IRowHeaders rowHeaders)
-            {
-                return rowHeaders.DefaultColumnWidth;
-            }
-            else if (Parent is IColumnHeaders columnHeaders)
-            {
-                return columnHeaders.WorkSheet.DefaultColumnWidth;
+                case SheetRegion.Cells:
+                case SheetRegion.ColumnHeader:
+                    return WorkSheet.DefaultColumnWidth;
+
+                case SheetRegion.RowHeader:
+                    return RowHeaders.DefaultColumnWidth;
             }
 
             return 0;
@@ -140,17 +150,14 @@ namespace AlphaX.Sheets
 
         private int GetCount()
         {
-            if (Parent is IWorkSheet workSheet)
+            switch (Region)
             {
-                return workSheet.ColumnCount;
-            }
-            else if (Parent is IRowHeaders rowHeaders)
-            {
-                return rowHeaders.ColumnCount;
-            }
-            else if (Parent is IColumnHeaders columnHeaders)
-            {
-                return columnHeaders.WorkSheet.ColumnCount;
+                case SheetRegion.Cells:
+                case SheetRegion.ColumnHeader:
+                    return WorkSheet.ColumnCount;
+
+                case SheetRegion.RowHeader:
+                    return RowHeaders.ColumnCount;
             }
 
             return 0;
@@ -182,30 +189,34 @@ namespace AlphaX.Sheets
 
         public override void InsertBelow(int index, int count)
         {
-            if (Parent is IWorkSheet workSheet)
+            switch (Region)
             {
-                var items = InternalCollection.ToList();
+                case SheetRegion.Cells:
+                    var items = InternalCollection.ToList();
 
-                for (int itemIndex = items.Count - 1; itemIndex >= 0; itemIndex--)
-                {
-                    var item = items[itemIndex];
-
-                    if (item.Key >= index)
+                    for (int itemIndex = items.Count - 1; itemIndex >= 0; itemIndex--)
                     {
-                        InternalCollection.Remove(item.Key);
-                        InternalCollection.Add(item.Key + count, item.Value);
-                    }
-                }
+                        var item = items[itemIndex];
 
-                workSheet.ColumnCount += count;
+                        if (item.Key >= index)
+                        {
+                            InternalCollection.Remove(item.Key);
+                            InternalCollection.Add(item.Key + count, item.Value);
+                        }
+                    }
+
+                    WorkSheet.ColumnCount += count;
+                    break;
             }
         }
 
         public override void Add(int count)
         {
-            if (Parent is WorkSheet workSheet)
+            switch (Region)
             {
-                workSheet.ColumnCount += count;
+                case SheetRegion.Cells:
+                    WorkSheet.ColumnCount += count;
+                    break;
             }
         }
 

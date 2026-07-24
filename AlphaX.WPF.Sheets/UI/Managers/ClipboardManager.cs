@@ -53,8 +53,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                 return;
 
             var stringBuilder = new StringBuilder();
-            var data = _spread.WorkBook.DataProvider.GetRangeValue(
-                sheetView.WorkSheet.Name,
+            var data = sheetView.WorkSheet.GetData(
                 range.TopRow,
                 range.LeftColumn,
                 range.RowCount,
@@ -115,13 +114,12 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             int activeColumn = concreteSheetView.ActiveColumn;
             var workSheet = concreteSheetView.WorkSheet;
 
-            _spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+            _spread.SuspendUpdates = true;
 
             try
             {
                 var pasteAction = new ClipboardPasteAction() { SheetView = concreteSheetView };
-                pasteAction.OldState.Value = _spread.WorkBook.DataProvider.GetRangeValue(
-                    workSheet.Name, activeRow, activeColumn, data.GetLength(0), data.GetLength(1));
+                pasteAction.OldState.Value = concreteSheetView.WorkSheet.GetData(activeRow, activeColumn, data.GetLength(0), data.GetLength(1));
                 pasteAction.OldState.Row = activeRow;
                 pasteAction.OldState.Column = activeColumn;
                 pasteAction.OldState.Selection = concreteSheetView.Selection.Clone();
@@ -160,7 +158,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }
             finally
             {
-                _spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+                _spread.SuspendUpdates = false;
             }
         }
 

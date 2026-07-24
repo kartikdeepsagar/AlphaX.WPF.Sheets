@@ -1,4 +1,5 @@
 using AlphaX.CalcEngine;
+using AlphaX.Sheets.Core;
 using System;
 
 namespace AlphaX.Sheets
@@ -18,8 +19,8 @@ namespace AlphaX.Sheets
         /// </summary>
         ICalcEngine CalcEngine { get; }
         /// <summary>
-        /// Gets the update provider.
+        /// Gets the style palette of this workbook.
         /// </summary>
-        IUpdateProvider UpdateProvider { get; }
+        IStylePalette StylePalette { get; }
     }
 }

@@ -19,7 +19,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
         private void SetupWorkbook()
         {
-            spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+            spread.SuspendUpdates = true;
 
             var workBook = spread.WorkBook;
 
@@ -43,7 +43,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
             // Set Active Sheet to Summary Dashboard
             workBook.WorkSheets.ActiveSheet = summarySheet;
 
-            spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+            spread.SuspendUpdates = false;
         }
 
         private void SetupSalesSheet(IWorkSheet sheet)

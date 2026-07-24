@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AlphaXSpreadSamplesExplorer.Samples.Styling"
+<UserControl x:Class="AlphaXSpreadSamplesExplorer.Samples.Styling"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,19 +6,130 @@
              xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer.Samples" 
              xmlns:sheets="http://schemas.gcspreadsheet.com/2022/wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="600" d:DesignWidth="950">
+    <Grid Margin="4">
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <sheets:AlphaXSpread x:Name="spread1" Margin="5" Grid.Row="0" Grid.Column="0"></sheets:AlphaXSpread>
-        <sheets:AlphaXSpread x:Name="spread2" Margin="5" Grid.Row="0" Grid.Column="1"></sheets:AlphaXSpread>
-        <sheets:AlphaXSpread x:Name="spread3" Margin="5" Grid.Row="1" Grid.Column="0"></sheets:AlphaXSpread>
-        <sheets:AlphaXSpread x:Name="spread4" Margin="5" Grid.Row="1" Grid.Column="1"></sheets:AlphaXSpread>
+
+        <!-- Top Interactive Styling Toolbar -->
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Preset Palette:" VerticalAlignment="Center" FontWeight="Medium" Foreground="#3F3F46" Margin="0,0,10,0"/>
+                    <ComboBox x:Name="_cmbTheme" Style="{StaticResource ModernComboBox}" Width="170"
+                              SelectionChanged="OnThemeChanged" SelectedIndex="0">
+                        <ComboBoxItem Tag="Slate">Slate Minimalist</ComboBoxItem>
+                        <ComboBoxItem Tag="Excel">Excel Classic Green</ComboBoxItem>
+                        <ComboBoxItem Tag="Emerald">Emerald Sage</ComboBoxItem>
+                        <ComboBoxItem Tag="Indigo">Indigo Studio</ComboBoxItem>
+                        <ComboBoxItem Tag="Corporate">Corporate Navy</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Options -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                    <CheckBox x:Name="_chkAltRows" Content="Alternating Rows" IsChecked="True" 
+                              VerticalAlignment="Center" Margin="0,0,16,0" Checked="OnOptionChanged" Unchecked="OnOptionChanged"/>
+                    <TextBlock Text="Align:" VerticalAlignment="Center" Foreground="#52525B" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="_cmbAlign" Style="{StaticResource ModernComboBox}" Width="100" SelectedIndex="1" SelectionChanged="OnOptionChanged">
+                        <ComboBoxItem Tag="Left">Left</ComboBoxItem>
+                        <ComboBoxItem Tag="Center">Center</ComboBoxItem>
+                        <ComboBoxItem Tag="Right">Right</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- View Mode Switch -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <RadioButton x:Name="_radioSingleView" Content="Single View" GroupName="ViewMode" IsChecked="True" 
+                                 Margin="0,0,10,0" Checked="OnViewModeChanged"/>
+                    <RadioButton x:Name="_radioQuadView" Content="Grid Showcase" GroupName="ViewMode" 
+                                 Checked="OnViewModeChanged"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Workspace Area -->
+        <Grid Grid.Row="1">
+            <!-- Single Full Sheet View -->
+            <Border x:Name="_bdrSingleView" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White" Visibility="Visible">
+                <sheets:AlphaXSpread x:Name="spreadMain"/>
+            </Border>
+
+            <!-- 4-Quadrant Theme Showcase Grid View -->
+            <Grid x:Name="_gridQuadView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Quadrant 1 -->
+                <Border Grid.Row="0" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="8" Margin="4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Slate Minimalist" FontSize="11.5" FontWeight="SemiBold" Foreground="#18181B" Margin="0,0,0,6"/>
+                        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White">
+                            <sheets:AlphaXSpread x:Name="spread1"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Quadrant 2 -->
+                <Border Grid.Row="0" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="8" Margin="4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Excel Classic Green" FontSize="11.5" FontWeight="SemiBold" Foreground="#107C41" Margin="0,0,0,6"/>
+                        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White">
+                            <sheets:AlphaXSpread x:Name="spread2"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Quadrant 3 -->
+                <Border Grid.Row="1" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="8" Margin="4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Indigo Studio" FontSize="11.5" FontWeight="SemiBold" Foreground="#18181B" Margin="0,0,0,6"/>
+                        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White">
+                            <sheets:AlphaXSpread x:Name="spread3"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Quadrant 4 -->
+                <Border Grid.Row="1" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="8" Margin="4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Corporate Navy" FontSize="11.5" FontWeight="SemiBold" Foreground="#18181B" Margin="0,0,0,6"/>
+                        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White">
+                            <sheets:AlphaXSpread x:Name="spread4"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

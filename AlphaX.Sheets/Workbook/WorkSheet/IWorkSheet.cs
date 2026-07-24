@@ -4,14 +4,6 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public enum WorkSheetClearMode
-    {
-        Data,
-        Formula,
-        Styles,
-        All
-    }
-
     public interface IWorkSheet : IDisposable
     {
         /// <summary>
@@ -19,9 +11,9 @@ namespace AlphaX.Sheets
         /// </summary>
         event EventHandler<CellChangedEventArgs> CellChanged;
         /// <summary>
-        /// Fires when a range is sorted.
+        /// Fires when a range is changed.
         /// </summary>
-        event EventHandler<RangeChangedEventArgs> RangeSorted;
+        event EventHandler<RangeChangedEventArgs> RangeChanged;
         /// <summary>
         /// Fires when row/rows changes.
         /// </summary>
@@ -133,6 +125,14 @@ namespace AlphaX.Sheets
         /// Clears worksheet.
         /// </summary>
         void Clear(WorkSheetClearMode mode);
+        /// <summary>
+        /// Checks if the worksheet contains this range
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="rowCount"></param>
+        /// <param name="columnCount"></param>
+        /// <returns></returns>
         bool ContainsRange(int row, int column, int rowCount, int columnCount);
         /// <summary>
         /// Auto sizes the row height based on cell text content.

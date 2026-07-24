@@ -33,7 +33,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }
 
             ResizeLine.Visibility = Visibility.Visible;
-            Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+            Spread.SuspendUpdates = true;
         }
 
         public void ResizeRow(int currentLocation)
@@ -122,7 +122,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             _initialHeights = null;
             ResizeLine.Visibility = Visibility.Collapsed;
             Spread.SheetTabControl.UpdateScrollbars();
-            Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+            Spread.SuspendUpdates = false;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace AlphaX.Sheets.Core
     /// <summary>
     /// Shared style palette mapping IStyle instances to 16-bit integer IDs.
     /// </summary>
-    public class StylePalette
+    public class StylePalette : IStylePalette
     {
         private readonly Dictionary<ushort, IStyle> _idToStyleMap;
         private readonly Dictionary<IStyle, ushort> _styleToIdMap;

@@ -28,7 +28,7 @@ namespace AlphaX.WPF.Sheets
         {
             var data = (object[,])state.Value;
 
-            SheetView.Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+            SheetView.Spread.SuspendUpdates = true;
 
             for (int row = 0; row < data.GetLength(0); row++)
             {
@@ -43,7 +43,7 @@ namespace AlphaX.WPF.Sheets
             SheetView.ActiveRow = state.Row;
             SheetView.ActiveColumn = state.Column;
             SheetView.Spread.SelectionManager.SelectRange(selection.TopRow, selection.LeftColumn, selection.RowCount, selection.ColumnCount);
-            SheetView.Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+            SheetView.Spread.SuspendUpdates = false;
         }
     }
 }

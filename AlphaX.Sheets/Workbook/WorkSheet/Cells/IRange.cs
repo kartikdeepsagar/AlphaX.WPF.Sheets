@@ -42,7 +42,7 @@ namespace AlphaX.Sheets
         /// <summary>
         /// Gets the parent cell collection.
         /// </summary>
-        Cells Parent { get; }
+        IRange ParentRange { get; }
         /// <summary>
         /// Gets or sets the cell value.
         /// </summary>
@@ -72,9 +72,9 @@ namespace AlphaX.Sheets
         /// </summary>
         IFormatter Formatter { get; set; }
         /// <summary>
-        /// Gets or sets whether this cell is visible or not.
+        /// Gets whether this range is visible or not.
         /// </summary>
-        bool IsVisible { get; set; }
+        bool IsVisible { get; }
         /// <summary>
         /// Gets or sets the row span for this cell.
         /// </summary>

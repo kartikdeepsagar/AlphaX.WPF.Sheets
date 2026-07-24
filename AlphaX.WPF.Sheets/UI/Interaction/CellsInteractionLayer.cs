@@ -271,7 +271,7 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
 
                 case Key.Delete:
                     e.Handled = true;
-                    SheetView.Spread.WorkBook.UpdateProvider.SuspendUpdates = true;
+                    SheetView.Spread.SuspendUpdates = true;
                     for (int row = SheetView.Selection.TopRow; row <= SheetView.Selection.BottomRow; row++)
                     {
                         for (int column = SheetView.Selection.LeftColumn; column <= SheetView.Selection.RightColumn; column++)
@@ -285,7 +285,7 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
                             }
                         }
                     }
-                    SheetView.Spread.WorkBook.UpdateProvider.SuspendUpdates = false;
+                    SheetView.Spread.SuspendUpdates = false;
 
                     for (int row = SheetView.Selection.TopRow; row <= SheetView.Selection.BottomRow; row++)
                     {

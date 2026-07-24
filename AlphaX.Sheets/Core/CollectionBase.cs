@@ -16,11 +16,8 @@ namespace AlphaX.Sheets
             }
         }
 
-        public object Parent { get; }
-
-        internal CollectionBase(object parent)
+        internal CollectionBase()
         {
-            Parent = parent;
             InternalCollection = new SortedDictionary<int, T>();
         }
 

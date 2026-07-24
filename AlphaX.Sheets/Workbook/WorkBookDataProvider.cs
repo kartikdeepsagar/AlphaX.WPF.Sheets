@@ -3,7 +3,7 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public class WorkBookDataProvider : IDataProvider, IDisposable
+    internal class WorkBookDataProvider : IDataProvider, IDisposable
     {
         private WorkBook _workBook;
 

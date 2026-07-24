@@ -134,6 +134,7 @@ namespace AlphaX.WPF.Sheets
         #endregion
 
         private AlphaXSheetTabControl _tabControl;
+        private WorkBook _workBook;
 
         /// <summary>
         /// Fires when cell selection changes.
@@ -157,7 +158,7 @@ namespace AlphaX.WPF.Sheets
         /// <summary>
         /// Gets the workbook.
         /// </summary>
-        public WorkBook WorkBook { get; }
+        public IWorkBook WorkBook => _workBook;
         /// <summary>
         /// Gets the editing manager.
         /// </summary>
@@ -175,12 +176,27 @@ namespace AlphaX.WPF.Sheets
         /// </summary>
         public SheetViewCollection SheetViews { get; }
 
+        /// <summary>
+        /// Suspend UI updates
+        /// </summary>
+        public bool SuspendUpdates
+        {
+            get
+            {
+                return _workBook.UpdateProvider.SuspendUpdates;
+            }
+            set
+            {
+                _workBook.UpdateProvider.SuspendUpdates = value;
+            }
+        }
+
         #region ctor
         public AlphaXSpread()
         {
-            WorkBook = new WorkBook("Book1", new UIUpdateProvider(this));
+            _workBook = new WorkBook("Book1", new UIUpdateProvider(this));
             UndoRedoManager = new UndoRedoManager(this);
-            AddDefaultStyles(WorkBook);
+            AddDefaultStyles(_workBook);
             SheetViews = new SheetViewCollection(this);
             RenderEngine = new RenderEngine();
             SheetViewPane = new AlphaXSheetViewPane(this);

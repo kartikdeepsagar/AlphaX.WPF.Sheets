@@ -4,7 +4,7 @@ using System.Windows.Threading;
 
 namespace AlphaX.WPF.Sheets.UI.Managers
 {
-    public class UIUpdateProvider : IUpdateProvider
+    internal sealed class UIUpdateProvider : IUpdateProvider
     {
         private AlphaXSpread _spread;
         private bool _suspendUpdates;
@@ -31,7 +31,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }
         }
 
-        void IUpdateProvider.CellChanged(WorkSheet worksheet, int row, int column, object oldValue, object newValue, AlphaX.Sheets.SheetAction action, ChangeType changeType)
+        void IUpdateProvider.CellChanged(WorkSheet worksheet, int row, int column, object oldValue, object newValue, SheetRegion region, CellChangeType changeType)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => {
 
@@ -47,13 +47,13 @@ namespace AlphaX.WPF.Sheets.UI.Managers
                 {
                     switch (changeType)
                     {
-                        case ChangeType.Value:
-                        case ChangeType.Formula:
+                        case CellChangeType.Value:
+                        case CellChangeType.Formula:
                             worksheet.AutoSizeRow(row);
                             sheetView.Invalidate();
                             break;
 
-                        case ChangeType.Style:
+                        case CellChangeType.Style:
                             sheetView.InvalidateCellRange(row, column, row, column);
                             break;
                     }
@@ -61,7 +61,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }));
         }
 
-        void IUpdateProvider.ColumnsChanged(WorkSheet worksheet, int index, int count, AlphaX.Sheets.SheetAction action, ChangeType changeType)
+        void IUpdateProvider.ColumnsChanged(WorkSheet worksheet, int index, int count, SheetRegion region, ColumnChangeType changeType)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
@@ -78,7 +78,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }));
         }
 
-        void IUpdateProvider.RangeChanged(WorkSheet worksheet, CellRange range, AlphaX.Sheets.SheetAction action, ChangeType changeType)
+        void IUpdateProvider.RangeChanged(WorkSheet worksheet, CellRange range, SheetRegion region, RangeChangeType changeType)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
@@ -93,7 +93,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             }));
         }
 
-        void IUpdateProvider.RowsChanged(WorkSheet worksheet, int index, int count, AlphaX.Sheets.SheetAction action, ChangeType changeType)
+        void IUpdateProvider.RowsChanged(WorkSheet worksheet, int index, int count, SheetRegion region, RowChangeType changeType)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
             {
