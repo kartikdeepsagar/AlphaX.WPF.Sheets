@@ -26,6 +26,8 @@ namespace AlphaX.WPF.Sheets.Rendering
         public AlphaXSheetViewPane(AlphaXSpread spread)
         {
             _spread = spread;
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
+            TextOptions.SetTextRenderingMode(this, TextRenderingMode.Auto);
             InitPaneLayout();
             InitRegions();
             InitInteractionLayers();
@@ -53,6 +55,34 @@ namespace AlphaX.WPF.Sheets.Rendering
 
             var style = _spread.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
             CellsRegion.Background = style.GetWpfStyle()?.Background;
+            UpdateZoomTransform();
+        }
+
+        public void UpdateZoomTransform()
+        {
+            if (_sheetView != null && _spread != null)
+            {
+                var zoom = _sheetView.ZoomFactor > 0 ? _sheetView.ZoomFactor : 1.0;
+                var parentBorder = _spread.SheetTabControl?.SheetViewPaneBorder;
+                if (parentBorder != null && parentBorder.ActualWidth > 0 && parentBorder.ActualHeight > 0)
+                {
+                    Width = parentBorder.ActualWidth / zoom;
+                    Height = parentBorder.ActualHeight / zoom;
+                }
+                else
+                {
+                    Width = double.NaN;
+                    Height = double.NaN;
+                }
+
+                LayoutTransform = new ScaleTransform(zoom, zoom);
+            }
+            else
+            {
+                Width = double.NaN;
+                Height = double.NaN;
+                LayoutTransform = null;
+            }
         }
 
         public void DrawRange(int topRow, int leftCol, int bottomRow, int rightCol)
@@ -213,6 +243,12 @@ namespace AlphaX.WPF.Sheets.Rendering
             base.OnRenderSizeChanged(sizeInfo);
             UpdateHeadersSize();
             Clip = new RectangleGeometry(new Rect(new Point(-1, -1), sizeInfo.NewSize));
+
+            if (_sheetView != null)
+            {
+                _sheetView.ViewPort?.As<UI.ViewPort>()?.CalculateVisibleRange();
+                _sheetView.Invalidate();
+            }
         }
 
         public void Dispose()

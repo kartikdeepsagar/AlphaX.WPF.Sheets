@@ -119,12 +119,12 @@ namespace AlphaX.Sheets.Data
             if (oldValue == value)
                 return;
 
-            var cell = ((Cells)_workSheet.Cells).GetCell(row, column, false);
+            var cell = ((Cells)_workSheet.Cells).GetCell(row, column, true);
 
             if (cell.Formula != null)
                 cell.Formula = null;
 
-            var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, false);
+            var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, true);
             var dataMap = cell.DataMap != null ? cell.DataMap : sheetColumn?.DataMap;
 
             if (_collection != null && row >= _collection.Count)

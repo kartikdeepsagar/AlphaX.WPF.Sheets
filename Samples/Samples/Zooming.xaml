@@ -1,0 +1,58 @@
+<UserControl x:Class="AlphaXSpreadSamplesExplorer.Samples.Zooming"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer.Samples"
+             xmlns:sheets="http://schemas.gcspreadsheet.com/2022/wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Control Bar -->
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Zoom Factor:" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#3F3F46" Margin="0,0,10,0"/>
+
+                    <Button Content="-" Width="26" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Click="OnZoomOutClicked" ToolTip="Zoom Out"/>
+                    <Slider x:Name="_sldZoom" Width="130" Minimum="0.1" Maximum="4.0" Value="{Binding ElementName=spread, Path=ZoomFactor, Mode=TwoWay}"
+                            SmallChange="0.1" LargeChange="0.25" TickFrequency="0.1" IsSnapToTickEnabled="False" VerticalAlignment="Center" Margin="8,0"/>
+                    <Button Content="+" Width="26" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Click="OnZoomInClicked" ToolTip="Zoom In"/>
+
+                    <TextBlock x:Name="_txtZoomPercent" Text="100%" Width="45" TextAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="#107C41" Margin="8,0,16,0"/>
+
+                    <!-- Presets -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="50%" Width="44" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Margin="0,0,4,0" Click="OnPresetZoomClicked" Tag="0.5"/>
+                        <Button Content="100%" Width="48" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Margin="0,0,4,0" Click="OnPresetZoomClicked" Tag="1.0"/>
+                        <Button Content="150%" Width="48" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Margin="0,0,4,0" Click="OnPresetZoomClicked" Tag="1.5"/>
+                        <Button Content="200%" Width="48" Height="26" Style="{StaticResource ModernOutlineButton}" Padding="0" Margin="0,0,4,0" Click="OnPresetZoomClicked" Tag="2.0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Shortcut Info Badge -->
+                <Border Grid.Column="1" HorizontalAlignment="Right" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="6" Padding="10,5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="💡 Shortcut:" FontWeight="Bold" Foreground="#107C41" FontSize="11.5" Margin="0,0,5,0"/>
+                        <TextBlock Text="Hold Ctrl + Scroll Mouse Wheel over sheet" Foreground="#15803D" FontSize="11.5"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main Spreadsheet View -->
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6">
+            <sheets:AlphaXSpread x:Name="spread"/>
+        </Border>
+    </Grid>
+</UserControl>

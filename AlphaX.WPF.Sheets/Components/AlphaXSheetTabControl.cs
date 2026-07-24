@@ -26,6 +26,7 @@ namespace AlphaX.WPF.Sheets.Components
 
         internal ScrollBar HScrollBar => _hScrollBar;
         internal ScrollBar VScrollBar => _vScrollBar;
+        internal Border SheetViewPaneBorder => _sheetViewPaneBorder;
         internal AlphaXSpread Spread { get; private set; }
 
         public AlphaXSheetTabControl()
@@ -42,6 +43,7 @@ namespace AlphaX.WPF.Sheets.Components
             _sheetViewPaneBorder.Child = Spread.SheetViewPane;
             _sheetViewPaneBorder.BorderBrush = Spread.BorderBrush;
             _sheetViewPaneBorder.BorderThickness = new Thickness(0);
+            _sheetViewPaneBorder.SizeChanged += (s, e) => Spread?.SheetViewPane?.UpdateZoomTransform();
             _hScrollBar = GetTemplateChild("_hScrollBar").As<ScrollBar>();
             _vScrollBar = GetTemplateChild("_vScrollBar").As<ScrollBar>();
             _sheetsListBox = GetTemplateChild("_sheetsListBox").As<ListBox>();
@@ -58,6 +60,15 @@ namespace AlphaX.WPF.Sheets.Components
             var sheetView = Spread.SheetViews.ActiveSheetView.As<AlphaXSheetView>();
             Spread.SheetViewPane.AttachSheet(sheetView);
             Spread.RenderEngine.SetRenderSheet(sheetView);
+
+            double oldZoom = Spread.ZoomFactor;
+            Spread.ZoomFactor = sheetView.ZoomFactor;
+            Spread.SheetViewPane.UpdateZoomTransform();
+            if (oldZoom != sheetView.ZoomFactor)
+            {
+                Spread.RaiseZoomChanged(oldZoom, sheetView.ZoomFactor);
+            }
+
             UpdateScrollbars();
             _hScrollBar.Value = sheetView.ScrollPosition.X;
             _vScrollBar.Value = sheetView.ScrollPosition.Y;

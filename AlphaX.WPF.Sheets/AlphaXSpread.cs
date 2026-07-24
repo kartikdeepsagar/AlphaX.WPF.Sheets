@@ -28,9 +28,13 @@ namespace AlphaX.WPF.Sheets
         public static readonly DependencyProperty ShowFormulaSuggestionsProperty;
         public static readonly DependencyProperty SheetTabsVisibilityProperty;
 
+        public static readonly DependencyProperty ZoomFactorProperty;
+
         static AlphaXSpread()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AlphaXSpread), new FrameworkPropertyMetadata(typeof(AlphaXSpread)));
+            ZoomFactorProperty = DependencyProperty.Register("ZoomFactor", typeof(double), typeof(AlphaXSpread),
+                new FrameworkPropertyMetadata(1.0, OnZoomFactorChanged, CoerceZoomFactor));
             ScrollModeProperty = DependencyProperty.Register("ScrollMode", typeof(SheetScrollMode), typeof(AlphaXSpread),
                 new PropertyMetadata(SheetScrollMode.Item));
             SelectionBackgroundProperty = DependencyProperty.Register("SelectionBackground", typeof(Brush), typeof(AlphaXSpread),
@@ -131,6 +135,15 @@ namespace AlphaX.WPF.Sheets
             get { return (Brush)GetValue(SelectionBorderBrushProperty); }
             set { SetValue(SelectionBorderBrushProperty, value); }
         }
+
+        /// <summary>
+        /// Gets or sets the zoom factor for the active worksheet view. (1.0 = 100%).
+        /// </summary>
+        public double ZoomFactor
+        {
+            get { return (double)GetValue(ZoomFactorProperty); }
+            set { SetValue(ZoomFactorProperty, value); }
+        }
         #endregion
 
         private AlphaXSheetTabControl _tabControl;
@@ -144,6 +157,10 @@ namespace AlphaX.WPF.Sheets
         /// Fires on calculation error.
         /// </summary>
         public event EventHandler<CalcErrorEventArgs> CalculationError;
+        /// <summary>
+        /// Fires when sheet zoom factor changes.
+        /// </summary>
+        public event EventHandler<ZoomChangedEventArgs> ZoomChanged;
         internal RenderEngine RenderEngine { get; }
         internal AlphaXSheetViewPane SheetViewPane { get; }
         internal AlphaXSheetTabControl SheetTabControl => _tabControl;
@@ -205,7 +222,7 @@ namespace AlphaX.WPF.Sheets
             BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(209, 213, 219));
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
-            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
             TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
             BorderThickness = new Thickness(1);
             GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
@@ -228,26 +245,28 @@ namespace AlphaX.WPF.Sheets
         /// <returns></returns>
         public SpreadHitTestResult HitTest(Point point)
         {
-            if(SheetViews.ActiveSheetView != null)
+            if (SheetViews.ActiveSheetView != null)
             {
                 var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
                 var columnHeaderHeight = activeSheetView.GetColumnHeaderHeight();
                 var rowHeaderWidth = activeSheetView.GetRowHeaderWidth();
 
+                var panePoint = TranslatePoint(point, SheetViewPane);
+
                 // Row headers hit test
-                if (point.X >= 0 && point.X < rowHeaderWidth && point.Y >= columnHeaderHeight && point.Y < SheetViewPane.RenderSize.Height)
-                    return SheetViewPane.RowHeadersRegion.HitTest(SheetViewPane.TranslatePoint(point, SheetViewPane.RowHeadersRegion));
+                if (panePoint.X >= 0 && panePoint.X < rowHeaderWidth && panePoint.Y >= columnHeaderHeight && panePoint.Y < SheetViewPane.ActualHeight)
+                    return SheetViewPane.RowHeadersRegion.HitTest(TranslatePoint(point, SheetViewPane.RowHeadersRegion));
 
                 // Cells hit test
-                if (point.X >= rowHeaderWidth && point.Y >= columnHeaderHeight && point.X < SheetViewPane.RenderSize.Width && point.Y < SheetViewPane.RenderSize.Height)
-                    return SheetViewPane.CellsRegion.HitTest(SheetViewPane.TranslatePoint(point, SheetViewPane.CellsRegion));
+                if (panePoint.X >= rowHeaderWidth && panePoint.Y >= columnHeaderHeight && panePoint.X < SheetViewPane.ActualWidth && panePoint.Y < SheetViewPane.ActualHeight)
+                    return SheetViewPane.CellsRegion.HitTest(TranslatePoint(point, SheetViewPane.CellsRegion));
 
                 // Column headers hit test
-                if (point.X >= rowHeaderWidth && point.Y >= 0 && point.Y < columnHeaderHeight && point.X < SheetViewPane.RenderSize.Width)
-                    return SheetViewPane.ColumnHeadersRegion.HitTest(SheetViewPane.TranslatePoint(point, SheetViewPane.ColumnHeadersRegion));
+                if (panePoint.X >= rowHeaderWidth && panePoint.Y >= 0 && panePoint.Y < columnHeaderHeight && panePoint.X < SheetViewPane.ActualWidth)
+                    return SheetViewPane.ColumnHeadersRegion.HitTest(TranslatePoint(point, SheetViewPane.ColumnHeadersRegion));
 
-                if (point.X < rowHeaderWidth && point.Y < columnHeaderHeight)
-                    return SheetViewPane.TopLeftRegion.HitTest(SheetViewPane.TranslatePoint(point, SheetViewPane.TopLeftRegion));
+                if (panePoint.X < rowHeaderWidth && panePoint.Y < columnHeaderHeight)
+                    return SheetViewPane.TopLeftRegion.HitTest(TranslatePoint(point, SheetViewPane.TopLeftRegion));
 
                 return null;
             }
@@ -398,6 +417,20 @@ namespace AlphaX.WPF.Sheets
 
             var activeSheetView = SheetViews.ActiveSheetView.As<AlphaXSheetView>();
 
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                if (e.Delta > 0)
+                {
+                    ZoomFactor = Math.Min(4.0, Math.Round(ZoomFactor + 0.1, 2));
+                }
+                else if (e.Delta < 0)
+                {
+                    ZoomFactor = Math.Max(0.1, Math.Round(ZoomFactor - 0.1, 2));
+                }
+                e.Handled = true;
+                return;
+            }
+
             switch (activeSheetView.MouseWheelScrollDirection)
             {
                 case MouseWheelScrollDirection.Vertical:
@@ -444,6 +477,35 @@ namespace AlphaX.WPF.Sheets
         #endregion
 
         #region PropertyChanged Callbacks
+        private static object CoerceZoomFactor(DependencyObject d, object baseValue)
+        {
+            if (baseValue is double val)
+            {
+                return Math.Max(0.1, Math.Min(4.0, Math.Round(val, 2)));
+            }
+            return 1.0;
+        }
+
+        private static void OnZoomFactorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var spread = d as AlphaXSpread;
+            if (spread?.SheetViews?.ActiveSheetView != null)
+            {
+                var newZoom = (double)e.NewValue;
+                var oldZoom = (double)e.OldValue;
+                if (spread.SheetViews.ActiveSheetView.ZoomFactor != newZoom)
+                {
+                    spread.SheetViews.ActiveSheetView.ZoomFactor = newZoom;
+                }
+                spread.RaiseZoomChanged(oldZoom, newZoom);
+            }
+        }
+
+        internal void RaiseZoomChanged(double oldZoom, double newZoom)
+        {
+            ZoomChanged?.Invoke(this, new ZoomChangedEventArgs(oldZoom, newZoom));
+        }
+
         private static void OnSelectionBorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var spread = d as AlphaXSpread;

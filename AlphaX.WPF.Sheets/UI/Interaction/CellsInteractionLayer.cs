@@ -360,7 +360,7 @@ namespace AlphaX.WPF.Sheets.UI.Interaction
 
             do
             {
-                var position = Mouse.GetPosition(SheetView.Spread);
+                var position = Mouse.GetPosition(this);
 
                 bool up = position.Y < 0;
                 bool down = position.Y > SheetView.ViewPort.ActualBounds.Height;

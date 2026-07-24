@@ -16,6 +16,9 @@ namespace AlphaX.WPF.Sheets
         private Rows _rows;
         private Cells _cells;
         private Columns _columns;
+        private double _zoomFactor = 1.0;
+
+        public event EventHandler<ZoomChangedEventArgs> ZoomChanged;
 
         #region Properties
         public GridLineVisibility GridLineVisibility { get; set; }
@@ -29,6 +32,27 @@ namespace AlphaX.WPF.Sheets
             {
                 _headersVisibility = value;
                 SetHeadersVisibility();
+            }
+        }
+        public double ZoomFactor
+        {
+            get => _zoomFactor;
+            set
+            {
+                var clamped = Math.Max(0.1, Math.Min(4.0, Math.Round(value, 2)));
+                if (Math.Abs(_zoomFactor - clamped) > 0.001)
+                {
+                    var oldVal = _zoomFactor;
+                    _zoomFactor = clamped;
+                    ZoomChanged?.Invoke(this, new ZoomChangedEventArgs(oldVal, _zoomFactor));
+                    if (Spread.SheetViews?.ActiveSheetView == this)
+                    {
+                        Spread.SheetViewPane?.UpdateZoomTransform();
+                        _viewPort?.CalculateVisibleRange();
+                        Spread.SheetTabControl?.UpdateScrollbars();
+                        Invalidate();
+                    }
+                }
             }
         }
         public IViewPort ViewPort => _viewPort;
@@ -49,6 +73,7 @@ namespace AlphaX.WPF.Sheets
             _rows = (Rows)_workSheet.Rows;
             _columns = (Columns)_workSheet.Columns;
             _cells = (Cells)_workSheet.Cells;
+            _zoomFactor = 1.0;
             GridLineVisibility = GridLineVisibility.Both;
             SelectionMode = SelectionMode.CellRange;
             MouseWheelScrollDirection = MouseWheelScrollDirection.Vertical;
