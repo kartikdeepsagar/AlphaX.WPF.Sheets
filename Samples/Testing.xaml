@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="#18181B" CornerRadius="4" Padding="7,3" Margin="0,0,8,0" VerticalAlignment="Center">
+                <Border Grid.Column="0" Background="#107C41" CornerRadius="4" Padding="7,3" Margin="0,0,8,0" VerticalAlignment="Center">
                     <TextBlock Text="fx" Foreground="White" FontWeight="Bold" FontSize="12" FontFamily="Consolas, Segoe UI"/>
                 </Border>
 

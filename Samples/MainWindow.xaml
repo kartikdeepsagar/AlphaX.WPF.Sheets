@@ -13,12 +13,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Top Header Bar (Material Minimal Light Surface) -->
+        <!-- Top Header Bar (Excel Minimal Light Surface) -->
         <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="20,12" Effect="{StaticResource HeaderShadow}">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Brand Icon -->
-                    <Border Background="#18181B" CornerRadius="8" Width="34" Height="34" Margin="0,0,14,0">
+                    <!-- Brand Icon (Excel Green) -->
+                    <Border Background="#107C41" CornerRadius="8" Width="34" Height="34" Margin="0,0,14,0">
                         <Path Data="M3 3h18v18H3V3zm2 2v4h6V5H5zm8 0v4h6V5h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6z"
                               Fill="White" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
@@ -26,8 +26,8 @@
                     <StackPanel VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="AlphaX Spread" FontSize="17" FontWeight="Bold" Foreground="#18181B"/>
-                            <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="v2.5 Showcase" FontSize="10.5" FontWeight="SemiBold" Foreground="#52525B"/>
+                            <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="v2.5 Showcase" FontSize="10.5" FontWeight="SemiBold" Foreground="#107C41"/>
                             </Border>
                         </StackPanel>
                         <TextBlock Text="Spreadsheet &amp; Calculation Engine Explorer" FontSize="11.5" Foreground="#71717A" Margin="0,1,0,0"/>
@@ -36,10 +36,10 @@
 
                 <!-- Top Right Status Indicator -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border Background="#F4F4F5" CornerRadius="6" Padding="10,5" BorderBrush="#E4E4E7" BorderThickness="1">
+                    <Border Background="#F0FDF4" CornerRadius="6" Padding="10,5" BorderBrush="#BBF7D0" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="7" Height="7" Fill="#10B981" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock Text="Engine Status: Ready" Foreground="#52525B" FontSize="11" FontWeight="Medium"/>
+                            <Ellipse Width="7" Height="7" Fill="#107C41" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <TextBlock Text="Engine Status: Ready" Foreground="#107C41" FontSize="11" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -70,20 +70,20 @@
                     </Grid.RowDefinitions>
 
                     <!-- Sample Header Control Bar -->
-                    <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="16,12" CornerRadius="10,10,0,0">
+                    <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="16,12" CornerRadius="8,8,0,0">
                         <Grid>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <!-- Sample Icon Container -->
-                                <Border x:Name="_sampleIconBox" Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+                                <Border x:Name="_sampleIconBox" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="6" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
                                     <Path x:Name="_sampleIconPath" Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                                          Fill="#18181B" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                          Fill="#107C41" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
 
                                 <StackPanel VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <TextBlock x:Name="_txtSampleTitle" Text="Sample View" FontSize="15" FontWeight="SemiBold" Foreground="#18181B"/>
-                                        <Border x:Name="_bdrCategory" Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="7,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock x:Name="_txtCategory" Text="CATEGORY" FontSize="9.5" FontWeight="Bold" Foreground="#52525B"/>
+                                        <Border x:Name="_bdrCategory" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="7,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock x:Name="_txtCategory" Text="CATEGORY" FontSize="9.5" FontWeight="Bold" Foreground="#107C41"/>
                                         </Border>
                                     </StackPanel>
                                     <TextBlock x:Name="_txtSampleDesc" Text="Interactive demonstration of spreadsheet capability." FontSize="11.5" Foreground="#71717A" Margin="0,2,0,0"/>
@@ -98,7 +98,7 @@
                     </Border>
 
                     <!-- Active Sample Host -->
-                    <Border x:Name="_samplesViewerBdr" Grid.Row="1" Background="White" Padding="10" CornerRadius="0,0,10,10">
+                    <Border x:Name="_samplesViewerBdr" Grid.Row="1" Background="White" Padding="10" CornerRadius="0,0,8,8">
                     </Border>
                 </Grid>
             </Border>

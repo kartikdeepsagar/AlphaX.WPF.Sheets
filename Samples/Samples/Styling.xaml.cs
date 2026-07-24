@@ -27,7 +27,7 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             // Setup grid showcase spreads
             Setup(spread1, (view) => UpdateSheetStyle(view, "Slate", true, AlphaXHorizontalAlignment.Center));
-            Setup(spread2, (view) => UpdateSheetStyle(view, "Emerald", true, AlphaXHorizontalAlignment.Center));
+            Setup(spread2, (view) => UpdateSheetStyle(view, "Excel", true, AlphaXHorizontalAlignment.Center));
             Setup(spread3, (view) => UpdateSheetStyle(view, "Indigo", true, AlphaXHorizontalAlignment.Center));
             Setup(spread4, (view) => UpdateSheetStyle(view, "Corporate", true, AlphaXHorizontalAlignment.Center));
         }
@@ -52,6 +52,13 @@ namespace AlphaXSpreadSamplesExplorer.Samples
 
             switch (themeKey)
             {
+                case "Excel":
+                    headerBg = Color.FromArgb(255, 16, 124, 65); // #107C41 Excel Green
+                    headerFg = Color.FromArgb(255, 255, 255, 255);
+                    altRowBg = Color.FromArgb(255, 240, 253, 244);
+                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    break;
+
                 case "Emerald":
                     headerBg = Color.FromArgb(255, 230, 244, 234);
                     headerFg = Color.FromArgb(255, 13, 101, 45);
@@ -64,13 +71,6 @@ namespace AlphaXSpreadSamplesExplorer.Samples
                     headerFg = Color.FromArgb(255, 55, 48, 163);
                     altRowBg = Color.FromArgb(255, 248, 250, 252);
                     altRowFg = Color.FromArgb(255, 24, 24, 27);
-                    break;
-
-                case "Charcoal":
-                    headerBg = Color.FromArgb(255, 24, 24, 27);
-                    headerFg = Color.FromArgb(255, 255, 255, 255);
-                    altRowBg = Color.FromArgb(255, 39, 39, 42);
-                    altRowFg = Color.FromArgb(255, 244, 244, 245);
                     break;
 
                 case "Corporate":

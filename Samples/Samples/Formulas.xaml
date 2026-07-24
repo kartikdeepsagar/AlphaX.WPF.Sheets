@@ -14,30 +14,36 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header Banner -->
-        <Border Grid.Row="0" Background="#18181B" CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
+        <!-- Header Banner (Excel Green Gradient) -->
+        <Border Grid.Row="0" CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#107C41" Offset="0"/>
+                    <GradientStop Color="#0E6B38" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <StackPanel>
                 <TextBlock Text="Multi-Sheet Formulas &amp; Dependent Calculation Engine" 
                            Foreground="White" FontSize="15" FontWeight="SemiBold"/>
                 <TextBlock Text="Demonstrating basic, advanced, dependent, and cross-sheet interlinked formulas across multiple worksheets." 
-                           Foreground="#A1A1AA" FontSize="11.5" Margin="0,3,0,0"/>
+                           Foreground="#E8F5E9" FontSize="11.5" Margin="0,3,0,0"/>
             </StackPanel>
         </Border>
 
         <!-- Feature Badges & Info Bar -->
         <Border Grid.Row="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="10,6" Margin="0,0,0,8">
             <WrapPanel VerticalAlignment="Center">
-                <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
-                    <TextBlock Text="🔗 Interlinked Sheets" Foreground="#3F3F46" FontSize="11" FontWeight="Medium"/>
+                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                    <TextBlock Text="🔗 Interlinked Sheets" Foreground="#107C41" FontSize="11" FontWeight="Medium"/>
                 </Border>
-                <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
-                    <TextBlock Text="⚡ Dependent Formulas" Foreground="#3F3F46" FontSize="11" FontWeight="Medium"/>
+                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                    <TextBlock Text="⚡ Dependent Formulas" Foreground="#107C41" FontSize="11" FontWeight="Medium"/>
                 </Border>
-                <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
-                    <TextBlock Text="📊 SUM, AVG, MIN, MAX, COUNT" Foreground="#3F3F46" FontSize="11" FontWeight="Medium"/>
+                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                    <TextBlock Text="📊 SUM, AVG, MIN, MAX, COUNT" Foreground="#107C41" FontSize="11" FontWeight="Medium"/>
                 </Border>
-                <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
-                    <TextBlock Text="🔄 Real-Time Recalculation" Foreground="#3F3F46" FontSize="11" FontWeight="Medium"/>
+                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                    <TextBlock Text="🔄 Real-Time Recalculation" Foreground="#107C41" FontSize="11" FontWeight="Medium"/>
                 </Border>
                 <TextBlock Text="Try editing any value in 'Regional Sales' to see 'Summary Dashboard' update!" 
                            Foreground="#71717A" FontSize="11" FontStyle="Italic" VerticalAlignment="Center" Margin="6,0,0,0"/>

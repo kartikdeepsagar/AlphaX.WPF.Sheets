@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:AlphaXSpreadSamplesExplorer"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="280">
-    <Border Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="10">
+    <Border Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -21,7 +21,7 @@
                              Padding="28,7,10,7" 
                              TextChanged="OnSearchTextChanged"/>
                     <Path Data="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" 
-                          Fill="#A1A1AA" Width="13" Height="13" Stretch="Uniform"
+                          Fill="#107C41" Width="13" Height="13" Stretch="Uniform"
                           HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" IsHitTestVisible="False"/>
                 </Grid>
             </Border>
@@ -35,7 +35,7 @@
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" Foreground="#71717A" FontSize="10" FontWeight="Bold" 
+                                <TextBlock Text="{Binding Name}" Foreground="#107C41" FontSize="10.5" FontWeight="Bold" 
                                            Margin="10,14,10,4"/>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
@@ -49,16 +49,16 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
-                                    <Border Name="_Border" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="8" Padding="8,7,8,7" SnapsToDevicePixels="true">
+                                    <Border Name="_Border" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="6" Padding="8,7,8,7" SnapsToDevicePixels="true">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Active Indicator Pill -->
+                                            <!-- Active Indicator Pill (Excel Green) -->
                                             <Rectangle x:Name="_Indicator" Width="3" Height="16" RadiusX="1.5" RadiusY="1.5"
-                                                       Fill="#18181B" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                       Fill="#107C41" HorizontalAlignment="Left" VerticalAlignment="Center"
                                                        Margin="-8,0,6,0" Visibility="Collapsed"/>
 
                                             <!-- Vector Icon -->
@@ -76,17 +76,17 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="true">
-                                            <Setter TargetName="_Border" Property="Background" Value="#F4F4F5"/>
-                                            <Setter TargetName="_TxtTitle" Property="Foreground" Value="#18181B"/>
-                                            <Setter TargetName="_IconPath" Property="Fill" Value="#3F3F46"/>
+                                            <Setter TargetName="_Border" Property="Background" Value="#F0FDF4"/>
+                                            <Setter TargetName="_TxtTitle" Property="Foreground" Value="#0E6B38"/>
+                                            <Setter TargetName="_IconPath" Property="Fill" Value="#107C41"/>
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="true">
                                             <Setter TargetName="_Border" Property="Background" Value="#FFFFFF"/>
-                                            <Setter TargetName="_Border" Property="BorderBrush" Value="#E4E4E7"/>
-                                            <Setter TargetName="_TxtTitle" Property="Foreground" Value="#18181B"/>
+                                            <Setter TargetName="_Border" Property="BorderBrush" Value="#BBF7D0"/>
+                                            <Setter TargetName="_TxtTitle" Property="Foreground" Value="#0E6B38"/>
                                             <Setter TargetName="_TxtTitle" Property="FontWeight" Value="SemiBold"/>
-                                            <Setter TargetName="_TxtDesc" Property="Foreground" Value="#52525B"/>
-                                            <Setter TargetName="_IconPath" Property="Fill" Value="#18181B"/>
+                                            <Setter TargetName="_TxtDesc" Property="Foreground" Value="#3F3F46"/>
+                                            <Setter TargetName="_IconPath" Property="Fill" Value="#107C41"/>
                                             <Setter TargetName="_Indicator" Property="Visibility" Value="Visible"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>

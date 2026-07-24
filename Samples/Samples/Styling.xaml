@@ -27,9 +27,9 @@
                     <ComboBox x:Name="_cmbTheme" Style="{StaticResource ModernComboBox}" Width="170"
                               SelectionChanged="OnThemeChanged" SelectedIndex="0">
                         <ComboBoxItem Tag="Slate">Slate Minimalist</ComboBoxItem>
+                        <ComboBoxItem Tag="Excel">Excel Classic Green</ComboBoxItem>
                         <ComboBoxItem Tag="Emerald">Emerald Sage</ComboBoxItem>
                         <ComboBoxItem Tag="Indigo">Indigo Studio</ComboBoxItem>
-                        <ComboBoxItem Tag="Charcoal">Charcoal Dark</ComboBoxItem>
                         <ComboBoxItem Tag="Corporate">Corporate Navy</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
@@ -95,7 +95,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Emerald Sage" FontSize="11.5" FontWeight="SemiBold" Foreground="#18181B" Margin="0,0,0,6"/>
+                        <TextBlock Text="Excel Classic Green" FontSize="11.5" FontWeight="SemiBold" Foreground="#107C41" Margin="0,0,0,6"/>
                         <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White">
                             <sheets:AlphaXSpread x:Name="spread2"/>
                         </Border>

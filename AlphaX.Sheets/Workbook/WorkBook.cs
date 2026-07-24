@@ -66,10 +66,5 @@ namespace AlphaX.Sheets
             _namedStyles = null;
             _dataProvider = null;
         }
-
-        public object[,] GetRangeValue(string sheetName, int rowIndex, int columnIndex, int rowCount, int columnCount)
-        {
-            return DataProvider.GetRangeValue(sheetName, rowIndex, columnIndex, rowCount, columnCount);
-        }
     }
 }
