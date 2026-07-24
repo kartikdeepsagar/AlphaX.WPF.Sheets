@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets;
+using AlphaX.Sheets;
 using AlphaX.WPF.Sheets.UI;
 using System.Windows;
 
@@ -21,6 +21,14 @@ namespace AlphaX.WPF.Sheets
         /// Gets or sets selection mode.
         /// </summary>
         SelectionMode SelectionMode { get; set; }
+        /// <summary>
+        /// Gets or sets the zoom factor (1.0 = 100%). Clamped between 0.1 and 4.0.
+        /// </summary>
+        double ZoomFactor { get; set; }
+        /// <summary>
+        /// Fires when the ZoomFactor changes.
+        /// </summary>
+        event System.EventHandler<ZoomChangedEventArgs> ZoomChanged;
         /// <summary>
         /// Gets the sheet view port.
         /// </summary>
