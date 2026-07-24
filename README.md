@@ -2,10 +2,10 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/kartikdeepsagar/AlphaX.WPF.Sheets)
 [![Platform](https://img.shields.io/badge/platform-WPF-blue.svg)](https://dotnet.microsoft.com/)
-[![Target Framework](https://img.shields.io/badge/.NET-4.7.2%20%7C%20Standard%202.0-512BD4.svg)](https://dotnet.microsoft.com/)
+[![Target Framework](https://img.shields.io/badge/.NET-10.0%20%7C%204.7.2%20%7C%20Standard%202.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**AlphaX.Sheets** is a modular, high-performance, Excel-like spreadsheet component for WPF applications. It combines a platform-agnostic core spreadsheet data engine, a multi-sheet calculation engine (`AlphaX.CalcEngine`), and a modern WPF view control (`AlphaXSpread`) featuring an Excel-inspired Material 3 aesthetic.
+**AlphaX.Sheets** is a modular, high-performance, Excel-like spreadsheet component for WPF applications. It combines a platform-agnostic core spreadsheet data engine, a multi-sheet calculation engine (`AlphaX.CalcEngine`), and a modern WPF view control (`AlphaXSpread`) featuring an Excel-inspired Material 3 aesthetic and multi-target support for **.NET 10.0** and **.NET Framework 4.7.2**.
 
 ![AlphaX Spread Explorer Preview](docs/alphax_spread_preview.jpg)
 
@@ -14,6 +14,7 @@
 ## ✨ Features at a Glance
 
 - 🚀 **High Performance Grid**: Virtualized rendering supporting smooth navigation and virtual scrolling across 50,000+ data rows.
+- ⚡ **Multi-Targeted .NET 10 & .NET Framework**: Built for modern **.NET 10** performance optimizations while preserving legacy **.NET Framework 4.7.2** compatibility.
 - 🧮 **Multi-Sheet Calculation Engine**: Cross-worksheet formula dependencies with real-time recalculation engine powered by `AlphaX.CalcEngine`.
 - 🎨 **Materialist & Modern Theme**: Excel Green (`#107C41`) accent styling, light-slate surface palette, customizable gridlines, headers, and row striping.
 - 📊 **Two-Way Data Binding**: Native binding to C# POCO collections (`List<T>`) and ADO.NET `DataTable` objects.
@@ -23,27 +24,24 @@
 
 ---
 
-## 🏗️ Architecture & Project Structure
+## 🏗️ Architecture & Multi-Targeting
 
-The project is architected with strict separation of concerns into independent modular assemblies:
+The project is architected with strict separation of concerns into multi-targeted assemblies:
 
 ```
 src/
-├── AlphaX.Sheets/              # Core platform-agnostic spreadsheet data engine
-├── AlphaX.CalcEngine/          # Expression parser & multi-sheet formula engine
-├── AlphaX.WPF.Sheets/          # WPF UI view control (AlphaXSpread) & cell renderers
-└── Samples/                    # Modern Samples Explorer application
+├── AlphaX.Sheets/              # Core data engine (netstandard2.0;net10.0)
+├── AlphaX.CalcEngine/          # Expression parser & calculation engine (netstandard2.0;net10.0)
+├── AlphaX.WPF.Sheets/          # WPF UI control (net472;net10.0-windows)
+└── Samples/                    # Modern Samples Explorer application (net472;net10.0-windows)
 ```
 
-### Core Libraries
-- **AlphaX.Sheets**: Platform-agnostic core library providing workbook, worksheet, cell data store, row/column headers, and event structures.
-- **AlphaX.CalcEngine**: Independent formula evaluation engine providing expression parsing, dependency tracking, and formula evaluation across interlinked worksheets.
-
-### WPF Control
-- **AlphaX.WPF.Sheets**: WPF control library containing `AlphaXSpread`, `AlphaXFormulaTextBox`, interaction layers, selection management, and WPF drawing renderers.
-
-### Showcase Application
-- **AlphaXSpreadSamplesExplorer**: Interactive showcase application featuring categorized live demonstrations, real-time theme customization, search filtering, and dataset benchmarks.
+| Assembly | Target Frameworks | Target Audience |
+| :--- | :--- | :--- |
+| **AlphaX.Sheets** | `netstandard2.0;net10.0` | Platform Agnostic Core Engine |
+| **AlphaX.CalcEngine** | `netstandard2.0;net10.0` | Formula Evaluation Engine |
+| **AlphaX.WPF.Sheets** | `net472;net10.0-windows` | Modern & Legacy WPF Control |
+| **Samples Explorer** | `net472;net10.0-windows` | Showcase & Benchmark App |
 
 ---
 

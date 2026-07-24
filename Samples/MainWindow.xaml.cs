@@ -1,6 +1,7 @@
 using AlphaXSpreadSamplesExplorer.Models;
 using AlphaXSpreadSamplesExplorer.Samples;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 
@@ -17,7 +18,21 @@ namespace AlphaXSpreadSamplesExplorer
         {
             Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             InitializeComponent();
+            DisplayRuntimeInfo();
             RegisterAllSamples();
+        }
+
+        private void DisplayRuntimeInfo()
+        {
+            try
+            {
+                string desc = RuntimeInformation.FrameworkDescription;
+                _txtRuntimeInfo.Text = $"Runtime: {desc}";
+            }
+            catch
+            {
+                _txtRuntimeInfo.Text = "Engine Status: Ready";
+            }
         }
 
         private void RegisterAllSamples()
