@@ -34,12 +34,12 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Top Right Status Indicator -->
+                <!-- Top Right Runtime Status Indicator -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border Background="#F0FDF4" CornerRadius="6" Padding="10,5" BorderBrush="#BBF7D0" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
                             <Ellipse Width="7" Height="7" Fill="#107C41" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock Text="Engine Status: Ready" Foreground="#107C41" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="_txtRuntimeInfo" Text="Engine Status: Ready" Foreground="#107C41" FontSize="11" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
