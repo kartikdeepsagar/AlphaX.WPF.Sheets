@@ -1,4 +1,4 @@
-using AlphaX.CalcEngine.Parsers;
+﻿using AlphaX.CalcEngine.Parsers;
 using AlphaX.Sheets.Core;
 using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
@@ -6,33 +6,25 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace AlphaX.Sheets
 {
-    internal class Cells : IRange, IDisposable
+    internal class ColumnHeaderCells : IRange, IDisposable
     {
         private int _rowCount;
         private int _columnCount;
         private WorkSheet _workSheet;
+        private ColumnHeaders _columnHeaders;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Dictionary<long, Cell> _activeCellInstances;
+        private readonly Dictionary<long, ColumnHeaderCell> _activeCellInstances;
 
         public IRange this[string name]
         {
             get
             {
-                if(name.Contains(":"))
-                {
-                    var rangeRef = new CellRangeRef(name);
-                    return GetRange(rangeRef.TopRow, rangeRef.LeftColumn, rangeRef.RowCount, rangeRef.ColumnCount);
-                }
-                else
-                {
-                    var cell = new CellRef(name);
-                    return GetRange(cell.Row, cell.Column, 1, 1);
-                }
+                throw new NotSupportedException();
             }
         }
 
@@ -61,7 +53,7 @@ namespace AlphaX.Sheets
             get
             {
                 if (_rowCount == -1)
-                    return _workSheet.RowCount;
+                    return _columnHeaders.RowCount;
 
                 return _rowCount;
             }
@@ -186,7 +178,7 @@ namespace AlphaX.Sheets
             }
             internal set
             {
-                ApplyToRange((range) => ((Cell)range).IsVisible = value);
+                ApplyToRange((range) => ((ColumnHeaderCell)range).IsVisible = value);
             }
         }
 
@@ -215,16 +207,18 @@ namespace AlphaX.Sheets
         }
 
         public WorkSheet WorkSheet => _workSheet;
+        public ColumnHeaders ColumnHeaders => _columnHeaders;
 
-        internal Cells(WorkSheet parent)
+        internal ColumnHeaderCells(ColumnHeaders parent)
         {
-            _workSheet = parent;
+            _columnHeaders = parent;
+            _workSheet = parent.WorkSheet;
             Row = Column = 0;
             _rowCount = _columnCount = -1;
-            _activeCellInstances = new Dictionary<long, Cell>();
+            _activeCellInstances = new Dictionary<long, ColumnHeaderCell>();
         }
 
-        internal Cells(Cells parentRange, int row, int column, int rowCount, int columnCount)
+        internal ColumnHeaderCells(ColumnHeaderCells parentRange, int row, int column, int rowCount, int columnCount)
         {
             _workSheet = parentRange._workSheet;
             ParentRange = parentRange;
@@ -236,7 +230,7 @@ namespace AlphaX.Sheets
             _workSheet = parentRange._workSheet;
         }
 
-        internal Cell GetCell(int row, int column, bool createIfNotExists)
+        internal ColumnHeaderCell GetCell(int row, int column, bool createIfNotExists)
         {
             ValidateIndexes(row, column, 1, 1);
             long key = MakeKey(row, column);
@@ -286,19 +280,19 @@ namespace AlphaX.Sheets
         {
             var columnCells = _activeCellInstances.Where(x => GetColumn(x.Key) == column).ToList();
 
-            foreach(var cell in columnCells)
+            foreach (var cell in columnCells)
             {
                 _activeCellInstances.Remove(cell.Key);
             }
         }
 
-        private Cells GetRange(int row, int column, int rowCount, int columnCount)
+        private ColumnHeaderCells GetRange(int row, int column, int rowCount, int columnCount)
         {
             ValidateIndexes(row, column, rowCount, columnCount);
-            return new Cells(this, row, column, rowCount, columnCount);
+            return new ColumnHeaderCells(this, row, column, rowCount, columnCount);
         }
 
-        private Cell CreateCell(int row, int column)
+        private ColumnHeaderCell CreateCell(int row, int column)
         {
             long key = MakeKey(row, column);
             if (_activeCellInstances.TryGetValue(key, out var cell))
@@ -308,7 +302,7 @@ namespace AlphaX.Sheets
                 return cell;
             }
 
-            cell = new Cell(this)
+            cell = new ColumnHeaderCell(this)
             {
                 Row = row,
                 Column = column

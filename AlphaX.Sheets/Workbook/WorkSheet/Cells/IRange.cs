@@ -5,7 +5,7 @@ using System;
 namespace AlphaX.Sheets
 {
     // Represents a cell or range of cells in the spreadsheet.
-    public interface IRange : IDisposable, IStyledObject
+    public interface IRange : IStyledObject
     {
         /// <summary>
         /// Gets the range of cells by name.

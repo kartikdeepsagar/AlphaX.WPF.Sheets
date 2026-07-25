@@ -5,36 +5,24 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    internal class Cell : IRange
+    internal class Cell : IRange, IDisposable
     {
-        private object _value;
-        private WorkSheet _workSheet;
-        private IFormatter _formatter;
-        private IStyle _style;
-        private int _rowSpan = 1;
-        private int _columnSpan = 1;
         private Cells _parentRange;
+        private WorkSheet _workSheet;
 
-        private ColumnData ColData => _parentRange.GetColumnData(Column, true);
-        private ColumnData ColDataReadOnly => _parentRange.GetColumnData(Column, false);
+        private ColumnData ColData => _workSheet.GetColumnData(Column, true);
+        private ColumnData ColDataReadOnly => _workSheet.GetColumnData(Column, false);
         private IStylePalette Palette => _workSheet.WorkBook.StylePalette;
 
         public IFormatter Formatter
         {
             get
             {
-                switch (_parentRange.Region)
+                if (ColDataReadOnly == null)
                 {
-                    case SheetRegion.Cells:
-                        if(ColDataReadOnly == null)
-                        {
-                            return null;
-                        }
-                        return ColDataReadOnly.GetFormatter(Row);
-
-                    default:
-                        return _formatter;
+                    return null;
                 }
+                return ColDataReadOnly.GetFormatter(Row);
             }
             set
             {
@@ -45,16 +33,7 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        ColData.SetFormatter(Row, value);
-                        break;
-
-                    default:
-                        _formatter = value;
-                        break;
-                }
+                ColData.SetFormatter(Row, value);
             }
         }
 
@@ -62,14 +41,7 @@ namespace AlphaX.Sheets
         {
             get
             {
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        return _workSheet.DataStore.GetValue(Row, Column);
-
-                    default:
-                        return _value;
-                }
+                return _workSheet.DataStore.GetValue(Row, Column);
             }
             set
             {
@@ -80,22 +52,13 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        if (HasFormula && value != null)
-                            Formula = null;
+                if (HasFormula && value != null)
+                    Formula = null;
 
-                        _workSheet.DataStore.SetValue(Row, Column, value);
-                        break;
-
-                    default:
-                        _value = value;
-                        break;
-                }
+                _workSheet.DataStore.SetValue(Row, Column, value);
 
                 _workSheet.OnCellChanged(new CellChangedEventArgs(
-                       _parentRange.Region,
+                       SheetRegion.Cells,
                        Row,
                        Column,
                        oldValue,
@@ -108,20 +71,10 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_parentRange.Region != SheetRegion.Cells)
-                {
-                    return null;
-                }
-
                 return _workSheet.WorkBook.CalcEngine.GetFormula(_workSheet.Name, Row, Column);
             }
             set
             {
-                if (_parentRange.Region != SheetRegion.Cells)
-                {
-                    throw new InvalidOperationException(string.Format("Formula not allowed in {0}", _parentRange.Region));
-                }
-
                 var oldValue = Formula;
 
                 if (oldValue == value)
@@ -131,10 +84,11 @@ namespace AlphaX.Sheets
 
                 if (value != null && Value != null)
                     Value = null;
+
                 _workSheet.WorkBook.CalcEngine.SetFormula(_workSheet.Name, Row, Column, value);
 
                 _workSheet.OnCellChanged(new CellChangedEventArgs(
-                      _parentRange.Region,
+                      SheetRegion.Cells,
                       Row,
                       Column,
                       oldValue,
@@ -156,17 +110,19 @@ namespace AlphaX.Sheets
             {
                 var oldStyleName = StyleName;
 
-                if(oldStyleName != value)
+                if (oldStyleName == value)
                 {
-                    ColData.SetStyleName(Row, value);
-                    _workSheet.OnCellChanged(new CellChangedEventArgs(
-                        _parentRange.Region, 
-                        Row, 
-                        Column, 
-                        oldStyleName, 
-                        value, 
-                        CellChangeType.Style));
+                    return;
                 }
+
+                ColData.SetStyleName(Row, value);
+                _workSheet.OnCellChanged(new CellChangedEventArgs(
+                    SheetRegion.Cells,
+                    Row,
+                    Column,
+                    oldStyleName,
+                    value,
+                    CellChangeType.Style));
             }
         }
 
@@ -174,21 +130,15 @@ namespace AlphaX.Sheets
         {
             get
             {
-                switch (_parentRange.Region)
+                if (ColDataReadOnly == null || Palette == null)
                 {
-                    case SheetRegion.Cells:
-                        if (ColDataReadOnly == null || Palette == null)
-                        {
-                            return null;
-                        }
-                        ushort styleId = ColDataReadOnly.GetStyleId(Row);
-                        if (styleId != StylePalette.DefaultStyleId)
-                            return Palette.GetStyle(styleId);
-                        return null;
-
-                    default:
-                        return _style;
+                    return null;
                 }
+
+                ushort styleId = ColDataReadOnly.GetStyleId(Row);
+                if (styleId != StylePalette.DefaultStyleId)
+                    return Palette.GetStyle(styleId);
+                return null;
             }
             set
             {
@@ -199,20 +149,11 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        ushort styleId = Palette.GetOrAdd(value);
-                        ColData.SetStyleId(Row, styleId);
-                        break;
-
-                    default:
-                        _style = value;
-                        break;
-                }
+                ushort styleId = Palette.GetOrAdd(value);
+                ColData.SetStyleId(Row, styleId);
 
                 _workSheet.OnCellChanged(new CellChangedEventArgs(
-                       _parentRange.Region,
+                       SheetRegion.Cells,
                        Row,
                        Column,
                        oldStyle,
@@ -225,7 +166,7 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_parentRange.Region != SheetRegion.Cells || ColDataReadOnly == null)
+                if (ColDataReadOnly == null)
                 {
                     return null;
                 }
@@ -234,11 +175,6 @@ namespace AlphaX.Sheets
             }
             set
             {
-                if (_parentRange.Region != SheetRegion.Cells)
-                {
-                    throw new InvalidOperationException(string.Format("DataMap not allowed in {0}", _parentRange.Region));
-                }
-
                 ColData.SetDataMap(Row, value);
             }
         }
@@ -247,20 +183,15 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_parentRange.Region != SheetRegion.Cells || ColDataReadOnly == null)
+                if (ColDataReadOnly == null)
                 {
                     return null;
                 }
 
-                return ColDataReadOnly.GetCellType(Row); ;
+                return ColDataReadOnly.GetCellType(Row);
             }
             set
             {
-                if (_parentRange.Region != SheetRegion.Cells)
-                {
-                    throw new InvalidOperationException(string.Format("CellType not allowed in {0}", _parentRange.Region));
-                }
-
                 ColData.SetCellType(Row, value);
             }
         }
@@ -269,7 +200,7 @@ namespace AlphaX.Sheets
         {
             get
             {
-                if (_parentRange.Region != SheetRegion.Cells || ColDataReadOnly == null)
+                if (ColDataReadOnly == null)
                 {
                     return false;
                 }
@@ -278,11 +209,6 @@ namespace AlphaX.Sheets
             }
             set
             {
-                if (_parentRange.Region != SheetRegion.Cells)
-                {
-                    throw new InvalidOperationException(string.Format("Locked not allowed in {0}", _parentRange.Region));
-                }
-
                 ColData.SetLocked(Row, value);
             }
         }
@@ -291,18 +217,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                switch (_parentRange.Region)
+                if (ColDataReadOnly == null)
                 {
-                    case SheetRegion.Cells:
-                        if (ColDataReadOnly == null)
-                        {
-                            return 0;
-                        }
-                        return ColDataReadOnly.GetRowSpan(Row);
-
-                    default:
-                        return _rowSpan;
+                    return 0;
                 }
+                return ColDataReadOnly.GetRowSpan(Row);
             }
             set
             {
@@ -313,16 +232,7 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        ColData.SetRowSpan(Row, value);
-                        break;
-
-                    default:
-                        _rowSpan = value;
-                        break;
-                }
+                ColData.SetRowSpan(Row, value);
             }
         }
 
@@ -330,18 +240,11 @@ namespace AlphaX.Sheets
         {
             get
             {
-                switch (_parentRange.Region)
+                if (ColDataReadOnly == null)
                 {
-                    case SheetRegion.Cells:
-                        if (ColDataReadOnly == null)
-                        {
-                            return 0;
-                        }
-                        return ColDataReadOnly.GetColumnSpan(Row);
-
-                    default:
-                        return _columnSpan;
+                    return 0;
                 }
+                return ColDataReadOnly.GetColumnSpan(Row);
             }
             set
             {
@@ -352,24 +255,15 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                switch (_parentRange.Region)
-                {
-                    case SheetRegion.Cells:
-                        ColData.SetColumnSpan(Row, value);
-                        break;
-
-                    default:
-                        _columnSpan = value;
-                        break;
-                }
+                ColData.SetColumnSpan(Row, value);
             }
         }
 
         public int RowCount => 1;
         public int ColumnCount => 1;
         internal object MetaData { get; set; }
-        internal int Row { get; set; }
-        internal int Column { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
         public bool HasFormula => !string.IsNullOrEmpty(Formula);
         public IRange ParentRange => _parentRange;
         public bool IsVisible { get; internal set; }
@@ -380,11 +274,9 @@ namespace AlphaX.Sheets
 
         internal Cell(Cells parent)
         {
-            _workSheet = parent.GetWorkSheet();
             _parentRange = parent;
+            _workSheet = parent.WorkSheet;
             IsVisible = true;
-            _rowSpan = 1;
-            _columnSpan = 1;
         }
 
         public void Dispose()

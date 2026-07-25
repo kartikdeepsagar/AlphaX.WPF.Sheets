@@ -33,7 +33,7 @@ namespace AlphaX.WPF.Sheets.Rendering
         {
             var hitTestInfo = new SpreadHitTestResult() { Element = VisualElement.ColumnHeader, Sheet = sheetView };
             hitTestInfo.ActualHitTestPoint = hitPoint;
-            var rows = _workSheet.ColumnHeaders.Rows.As<Rows>();
+            var rows = _workSheet.ColumnHeaders.Rows.As<ColumnHeaderRows>();
             var columns = _workSheet.Columns.As<Columns>();
             var viewRange = sheetView.ViewPort.ViewRange;
 
@@ -45,7 +45,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             for (int row = viewRange.TopRow; row <= viewRange.BottomRow; row++)
             {
                 var rowLocation = rows.GetLocation(row);
-                var sheetRow = rows.GetItem(row, false);
+                var sheetRow = rows.GetItem(row);
                 double rowHeight = sheetRow == null ? _workSheet.DefaultRowHeight : sheetRow.Height;
 
                 if (point.Y >= rowLocation && point.Y < rowLocation + rowHeight)

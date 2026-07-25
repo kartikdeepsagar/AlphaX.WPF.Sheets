@@ -4,7 +4,7 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public interface IColumn : IDisposable, IStyledObject
+    public interface IColumn : IStyledObject
     {
         /// <summary>
         /// Gets the parent column collection.

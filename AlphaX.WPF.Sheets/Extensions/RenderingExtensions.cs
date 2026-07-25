@@ -53,7 +53,7 @@ namespace AlphaX.WPF.Sheets
                 }
 
                 var workSheet = sheetView.WorkSheet;
-                var sheetRow = ((Rows)workSheet.Rows).GetItem(row, false);
+                var sheetRow = ((Rows)workSheet.Rows).GetItem(row);
                 return sheetRow != null ? sheetRow.Height : workSheet.DefaultRowHeight;
             }
 
@@ -83,7 +83,7 @@ namespace AlphaX.WPF.Sheets
                 }
 
                 var workSheet = sheetView.WorkSheet;
-                var sheetColumn = ((Columns)workSheet.Columns).GetItem(column, false);
+                var sheetColumn = ((Columns)workSheet.Columns).GetItem(column);
                 return sheetColumn != null ? sheetColumn.Width : workSheet.DefaultColumnWidth;
             }
 

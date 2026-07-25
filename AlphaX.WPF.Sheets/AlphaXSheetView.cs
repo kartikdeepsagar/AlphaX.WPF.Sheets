@@ -8,11 +8,12 @@ using System.Collections.Generic;
 
 namespace AlphaX.WPF.Sheets
 {
-    internal class AlphaXSheetView : IAlphaXSheetView
+    internal class AlphaXSheetView : IAlphaXSheetView, IDisposable
     {
         private HeadersVisibility _headersVisibility;
         private ViewPort _viewPort;
         private WorkSheet _workSheet;
+        private WorkBook _workBook;
         private Rows _rows;
         private Cells _cells;
         private Columns _columns;
@@ -70,6 +71,7 @@ namespace AlphaX.WPF.Sheets
         {
             Spread = spread;
             _workSheet = worksheet;
+            _workBook = (WorkBook)_workSheet.WorkBook;
             _rows = (Rows)_workSheet.Rows;
             _columns = (Columns)_workSheet.Columns;
             _cells = (Cells)_workSheet.Cells;
@@ -193,17 +195,17 @@ namespace AlphaX.WPF.Sheets
 
         public void AutoSizeColumn(int column)
         {
-            var sheetColumn = ((Columns)WorkSheet.Columns).GetItem(column, false);
+            var sheetColumn = _columns.GetItem(column);
             var width = 0;
-            var cellValues = ((Cells)WorkSheet.Cells).GetCellValues(column);
+            var cellValues = _cells.GetCellValues(column);
 
             foreach(var cellValue in cellValues)
             {
                 if(cellValue.Value != null)
                 {
-                    var style = ((WorkBook)WorkSheet.WorkBook).PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key, false));
+                    var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key));
                     if (style == null)
-                        style = WorkSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
+                        style = _workBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
                     var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.GetWpfStyle()?.GlyphTypeface);
                     width = Math.Max(width, textWidth + 11);
                 }
@@ -222,6 +224,15 @@ namespace AlphaX.WPF.Sheets
             _viewPort.CalculateVisibleRange();
             Spread.SheetTabControl.UpdateScrollbars();
             Invalidate();
+        }
+
+        public void Dispose()
+        {
+            _workBook = null;
+            _workSheet = null;
+            _cells = null;
+            _rows = null;
+            _columns = null;
         }
     }
 }

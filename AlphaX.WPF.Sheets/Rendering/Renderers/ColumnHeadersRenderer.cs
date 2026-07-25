@@ -11,9 +11,9 @@ namespace AlphaX.WPF.Sheets.Rendering
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var rows = (Rows)workSheet.ColumnHeaders.Rows;
+            var rows = (ColumnHeaderRows)workSheet.ColumnHeaders.Rows;
             var columns = (Columns)workSheet.Columns;
-            var cells = (Cells)workSheet.ColumnHeaders.Cells;
+            var cells = (ColumnHeaderCells)workSheet.ColumnHeaders.Cells;
             var viewport = (ViewPort)SheetView.ViewPort;
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
@@ -25,7 +25,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                 var rowHeight = rows.GetRowHeight(row);
                 if (rowHeight == 0)
                     continue;
-                var sheetRow = rows.GetItem(row, false);
+                var sheetRow = rows.GetItem(row);
                 var rowLocation = rows.GetLocation(row);
 
                 guidelines.GuidelinesY.Add(rowLocation + halfPenWidth);
@@ -38,7 +38,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                         continue;
 
                     var cell = cells.GetCell(row, col, false);
-                    var sheetColumn = columns.GetItem(col, false);
+                    var sheetColumn = columns.GetItem(col);
                     var colLocation = columns.GetLocation(col);
 
                     if (row == topRow)

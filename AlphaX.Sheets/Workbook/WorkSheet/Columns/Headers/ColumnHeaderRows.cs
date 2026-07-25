@@ -1,17 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace AlphaX.Sheets
 {
-    internal class Rows : CollectionBase<IRow>, IRows, IDisposable
+    internal class ColumnHeaderRows : CollectionBase<IRow>, IRows, IDisposable
     {
         private Dictionary<int, double> _locationMap;
-        public WorkSheet WorkSheet { get; }
+        public ColumnHeaders ColumnHeaders { get; }
 
-        internal Rows(WorkSheet parent) : base()
+        internal ColumnHeaderRows(ColumnHeaders parent) : base()
         {
-            WorkSheet = parent;
+            ColumnHeaders = parent;
             _locationMap = new Dictionary<int, double>();
         }
 
@@ -32,7 +33,7 @@ namespace AlphaX.Sheets
 
             if (InternalCollection.Count == 0)
             {
-                double defHeight = WorkSheet.DefaultRowHeight;
+                double defHeight = ColumnHeaders.DefaultRowHeight;
                 double loc = row * defHeight;
                 _locationMap[row] = loc;
                 return loc;
@@ -42,7 +43,7 @@ namespace AlphaX.Sheets
             double deltaHeight = 0;
             int count = 0;
 
-            for(int index = row - 1; index >= 0; index--)
+            for (int index = row - 1; index >= 0; index--)
             {
                 InternalCollection.TryGetValue(index, out var sheetRow);
 
@@ -53,12 +54,12 @@ namespace AlphaX.Sheets
 
                 if (_locationMap.ContainsKey(index))
                 {
-                    yLocation = _locationMap[index];   
+                    yLocation = _locationMap[index];
                     break;
                 }
             }
 
-            var location = yLocation + (count * WorkSheet.DefaultRowHeight) + deltaHeight;
+            var location = yLocation + (count * ColumnHeaders.DefaultRowHeight) + deltaHeight;
 
             if (!_locationMap.ContainsKey(row))
                 _locationMap.Add(row, location);
@@ -75,7 +76,7 @@ namespace AlphaX.Sheets
 
         protected override IRow CreateItem(int index)
         {
-            var row =  new Row(this);
+            var row = new ColumnHeaderRow(this);
             row.Index = index;
             return row;
         }
@@ -85,11 +86,16 @@ namespace AlphaX.Sheets
             var sheetRow = GetItem(row, false);
 
             if (sheetRow == null)
-                return WorkSheet.DefaultRowHeight;
+                return ColumnHeaders.DefaultRowHeight;
 
             return sheetRow.Height;
         }
 
+        public int GetRowIndex(IRow row)
+        {
+            var result = InternalCollection.FirstOrDefault(x => x.Value == row);
+            return result.Key;
+        }
 
         public override void Insert(int index, int count)
         {
@@ -98,7 +104,7 @@ namespace AlphaX.Sheets
 
         public override void Remove(int index, int count)
         {
-            
+
         }
 
         public void Dispose()

@@ -1,27 +1,27 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    internal class Columns : CollectionBase<IColumn>, IColumns, IDisposable
+    internal class RowHeaderColumns : CollectionBase<IColumn>, IColumns, IDisposable
     {
         private Dictionary<int, double> _locationMap;
-        
+
         public IColumn this[string address]
         {
             get
-            {               
+            {
                 return this[Extensions.GetColumnIndex(address)];
             }
         }
 
-        public WorkSheet WorkSheet { get; }
+        public RowHeaders RowHeaders { get; }
 
-        internal Columns(WorkSheet parent) : base()
+        public RowHeaderColumns(RowHeaders parent) : base()
         {
-            WorkSheet = parent;
             _locationMap = new Dictionary<int, double>();
+            RowHeaders = parent;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace AlphaX.Sheets
 
             if (InternalCollection.Count == 0)
             {
-                double defWidth = WorkSheet.DefaultColumnWidth;
+                double defWidth = RowHeaders.DefaultColumnWidth;
                 double loc = column * defWidth;
                 _locationMap[column] = loc;
                 return loc;
@@ -65,7 +65,7 @@ namespace AlphaX.Sheets
                 }
             }
 
-            var location = xLocation + (count * WorkSheet.DefaultColumnWidth) + deltaWidth;
+            var location = xLocation + (count * RowHeaders.DefaultColumnWidth) + deltaWidth;
 
             if (!_locationMap.ContainsKey(column))
                 _locationMap.Add(column, location);
@@ -77,7 +77,7 @@ namespace AlphaX.Sheets
 
         internal void UpdateColumnsLocation(int fromColumn, double offset)
         {
-            for (int index = fromColumn; index < WorkSheet.ColumnCount; index++)
+            for (int index = fromColumn; index < RowHeaders.ColumnCount; index++)
             {
                 if (_locationMap.ContainsKey(index))
                     _locationMap[index] += offset;
@@ -86,7 +86,7 @@ namespace AlphaX.Sheets
 
         protected override IColumn CreateItem(int index)
         {
-            var column =  new Column(this);
+            var column = new RowHeaderColumn(this);
             column.Index = index;
             return column;
         }
@@ -96,8 +96,8 @@ namespace AlphaX.Sheets
             var col = GetItem(column, false);
 
             if (col == null)
-                return WorkSheet.DefaultColumnWidth;
-            
+                return RowHeaders.DefaultColumnWidth;
+
             return col.Width;
         }
 
@@ -117,7 +117,7 @@ namespace AlphaX.Sheets
 
         public override void Insert(int index, int count)
         {
-            
+           
         }
 
         public override void Remove(int index, int count)

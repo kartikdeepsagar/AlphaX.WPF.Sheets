@@ -3,7 +3,7 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    public interface IRow : IDisposable, IStyledObject
+    public interface IRow : IStyledObject
     {
         /// <summary>
         /// Gets the parent row collection.

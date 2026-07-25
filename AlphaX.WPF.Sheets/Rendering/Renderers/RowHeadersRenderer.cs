@@ -12,8 +12,8 @@ namespace AlphaX.WPF.Sheets.Rendering
         {
             var workSheet = SheetView.WorkSheet;
             var rows = (Rows)workSheet.Rows;
-            var columns = (Columns)workSheet.RowHeaders.Columns;
-            var cells = (Cells)workSheet.RowHeaders.Cells;
+            var columns = (RowHeaderColumns)workSheet.RowHeaders.Columns;
+            var cells = (RowHeaderCells)workSheet.RowHeaders.Cells;
             var viewport = (ViewPort)SheetView.ViewPort;
             var workBook = (WorkBook)workSheet.WorkBook;
             
@@ -30,7 +30,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                 if (rowHeight == 0)
                     continue;
 
-                var sheetRow = rows.GetItem(row, false);
+                var sheetRow = rows.GetItem(row);
                 var rowLocation = rows.GetLocation(row);
                 var y = rowLocation - viewport.TopRowLocation;
 
@@ -45,7 +45,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                         continue;
 
                     var cell = cells.GetCell(row, col, false);
-                    var sheetColumn = columns.GetItem(col, false);
+                    var sheetColumn = columns.GetItem(col);
                     var colLocation = columns.GetLocation(col);
 
                     if (row == topRow)
@@ -84,7 +84,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             context.Pop();
         }
 
-        private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, Columns columns, WorkSheet workSheet)
+        private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, RowHeaderColumns columns, WorkSheet workSheet)
         {
             var pen = SheetView.Spread.GridLinePen;
             var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
@@ -122,7 +122,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             }
         }
 
-        private void AdjustHeaderWidth(WorkSheet workSheet, Rows rows, Columns columns, Cells cells, int topRow, int leftColumn, int bottomRow, int rightColumn)
+        private void AdjustHeaderWidth(WorkSheet workSheet, Rows rows, RowHeaderColumns columns, RowHeaderCells cells, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             for (int col = leftColumn; col <= rightColumn; col++)
             {
@@ -132,8 +132,8 @@ namespace AlphaX.WPF.Sheets.Rendering
                 for (int row = topRow; row <= bottomRow; row++)
                 {
                     var cell = cells.GetCell(row, col, false);
-                    var sheetColumn = columns.GetItem(col, false);
-                    var sheetRow = rows.GetItem(row, false);
+                    var sheetColumn = columns.GetItem(col);
+                    var sheetRow = rows.GetItem(row);
                     var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).GetWpfStyle();
                     if (style == null)
                         style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();

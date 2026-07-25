@@ -49,7 +49,7 @@ namespace AlphaX.Sheets.Data
         public object GetValue(int row, int column)
         {
             var cell = ((Cells)_workSheet.Cells).GetCell(row, column, false);
-            var colData = ((Cells)_workSheet.Cells).GetColumnData(column, false);
+            var colData = _workSheet.GetColumnData(column, false);
 
             if (colData != null && colData.GetValue(row) != null)
             {
@@ -87,7 +87,7 @@ namespace AlphaX.Sheets.Data
             }
             else if (IsValid && ActualDataSource != null && row <= _collection.Count - 1)
             {
-                var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, false);
+                var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column);
                 var dataMap = cell?.DataMap != null ? cell.DataMap : sheetColumn?.DataMap;
                 if (dataMap != null && dataMap is PropertyDataMap propertyDataMap
                     && !string.IsNullOrEmpty(propertyDataMap.PropertyName))
@@ -124,7 +124,7 @@ namespace AlphaX.Sheets.Data
             if (cell.Formula != null)
                 cell.Formula = null;
 
-            var sheetColumn = ((Columns)_workSheet.Columns).GetItem(column, true);
+            var sheetColumn = _workSheet.Columns[column];
             var dataMap = cell.DataMap != null ? cell.DataMap : sheetColumn?.DataMap;
 
             if (_collection != null && row >= _collection.Count)
@@ -160,7 +160,7 @@ namespace AlphaX.Sheets.Data
         /// <param name="value"></param>
         private void SetUnboundCellValue(int row, int column, object value)
         {
-            var colData = ((Cells)_workSheet.Cells).GetColumnData(column, true);
+            var colData = _workSheet.GetColumnData(column, true);
             colData.SetValue(row, value);
         }
 

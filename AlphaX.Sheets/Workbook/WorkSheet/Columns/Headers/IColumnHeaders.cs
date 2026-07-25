@@ -1,6 +1,6 @@
 ﻿namespace AlphaX.Sheets
 {
-    public interface IColumnHeaders : IHeaders
+    public interface IColumnHeaders
     {
         /// <summary>
         /// Gets or sets the header row count.
@@ -14,5 +14,13 @@
         /// Gets the column headers height.
         /// </summary>
         double Height { get; }
+        /// <summary>
+        /// Gets the column header cells.
+        /// </summary>
+        IRange Cells { get; }
+        /// <summary>
+        /// Gets the column header rows.
+        /// </summary>
+        IRows Rows { get; }
     }
 }
