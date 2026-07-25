@@ -4,10 +4,8 @@ using System.Linq;
 
 namespace AlphaX.Sheets
 {
-    internal class Columns : CollectionBase<IColumn>, IColumns, IDisposable
+    internal class Columns : SheetDimensionCollection<IColumn>, IColumns, IDisposable
     {
-        private Dictionary<int, double> _locationMap;
-        
         public IColumn this[string address]
         {
             get
@@ -17,71 +15,17 @@ namespace AlphaX.Sheets
         }
 
         public WorkSheet WorkSheet { get; }
+        protected override LocationCache<IColumn> LocationCache { get; }
 
         internal Columns(WorkSheet parent) : base()
         {
             WorkSheet = parent;
-            _locationMap = new Dictionary<int, double>();
-        }
 
-        /// <summary>
-        /// Gets the location of the column.
-        /// </summary>
-        /// <param name="index">
-        /// Column index.
-        /// </param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        internal override double GetLocation(int column, bool recalculate = false)
-        {
-            if (_locationMap.ContainsKey(column) && !recalculate)
-                return _locationMap[column];
-
-            if (InternalCollection.Count == 0)
-            {
-                double defWidth = WorkSheet.DefaultColumnWidth;
-                double loc = column * defWidth;
-                _locationMap[column] = loc;
-                return loc;
-            }
-
-            double xLocation = 0;
-            double deltaWidth = 0;
-            int count = 0;
-
-            for (int index = column - 1; index >= 0; index--)
-            {
-                InternalCollection.TryGetValue(index, out var sheetColumn);
-
-                if (sheetColumn != null)
-                    deltaWidth += sheetColumn.Width;
-                else
-                    count++;
-
-                if (_locationMap.ContainsKey(index))
-                {
-                    xLocation = _locationMap[index];
-                    break;
-                }
-            }
-
-            var location = xLocation + (count * WorkSheet.DefaultColumnWidth) + deltaWidth;
-
-            if (!_locationMap.ContainsKey(column))
-                _locationMap.Add(column, location);
-            else
-                _locationMap[column] = location;
-
-            return location;
-        }
-
-        internal void UpdateColumnsLocation(int fromColumn, double offset)
-        {
-            for (int index = fromColumn; index < WorkSheet.ColumnCount; index++)
-            {
-                if (_locationMap.ContainsKey(index))
-                    _locationMap[index] += offset;
-            }
+            LocationCache = new LocationCache<IColumn>(
+                () => WorkSheet.ColumnCount,
+                () => WorkSheet.DefaultColumnWidth,
+                InternalCollection,
+                c => c.Width);
         }
 
         protected override IColumn CreateItem(int index)
@@ -109,10 +53,8 @@ namespace AlphaX.Sheets
 
         public void Dispose()
         {
-            _locationMap.Clear();
             InternalCollection.Clear();
             InternalCollection = null;
-            _locationMap = null;
         }
 
         public override void Insert(int index, int count)
