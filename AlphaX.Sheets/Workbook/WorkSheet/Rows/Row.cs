@@ -34,8 +34,8 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                _parent.UpdateRowsLocation(Index + 1, value - Height);
                 _height = value;
+                _parent.UpdateLocation(Index + 1, value - oldHeight);
 
                 _parent.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
                     SheetRegion.Cells,

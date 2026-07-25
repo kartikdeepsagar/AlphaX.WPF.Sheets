@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Formatters;
+using AlphaX.Sheets.Formatters;
 using System;
 
 namespace AlphaX.Sheets
@@ -25,13 +25,14 @@ namespace AlphaX.Sheets
                 if (value < 0)
                     throw new ArgumentException("Row height can't be negative.");
 
-                if (value == _height)
+                int oldHeight = Height;
+                if (value == oldHeight)
                 {
                     return;
                 }
 
-                _parent.UpdateRowsLocation(Index + 1, value - Height);
                 _height = value;
+                _parent.UpdateLocation(Index + 1, value - oldHeight);
 
                 _parent.ColumnHeaders.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
                     SheetRegion.ColumnHeader,

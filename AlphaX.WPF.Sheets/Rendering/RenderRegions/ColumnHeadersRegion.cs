@@ -42,7 +42,7 @@ namespace AlphaX.WPF.Sheets.Rendering
 
             double x = 0, y = 0;
 
-            for (int row = viewRange.TopRow; row <= viewRange.BottomRow; row++)
+            for (int row = 0; row < _workSheet.ColumnHeaders.RowCount; row++)
             {
                 var rowLocation = rows.GetLocation(row);
                 var sheetRow = rows.GetItem(row);

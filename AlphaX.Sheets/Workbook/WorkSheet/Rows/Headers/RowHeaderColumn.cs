@@ -1,4 +1,4 @@
-﻿using AlphaX.Sheets.Data;
+using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Formatters;
 using System;
 
@@ -26,13 +26,14 @@ namespace AlphaX.Sheets
                 if (value < 0)
                     throw new ArgumentException("Column width can't be negative.");
 
-                if (_width == value)
+                int oldWidth = Width;
+                if (oldWidth == value)
                 {
                     return;
                 }
 
-                _parent.UpdateColumnsLocation(Index + 1, value - Width);
                 _width = value;
+                _parent.UpdateLocation(Index + 1, value - oldWidth);
 
                 _parent.RowHeaders.WorkSheet.OnColumnsChanged(new ColumnChangedEventArgs(
                     SheetRegion.RowHeader,

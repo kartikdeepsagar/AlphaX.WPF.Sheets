@@ -123,7 +123,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                 }
             }
 
-            for (int col = viewRange.LeftColumn; col <= viewRange.RightColumn; col++)
+            for (int col = 0; col < _workSheet.RowHeaders.ColumnCount; col++)
             {
                 var colLocation = columns.GetLocation(col);
                 var sheetColumn = columns.GetItem(col);
