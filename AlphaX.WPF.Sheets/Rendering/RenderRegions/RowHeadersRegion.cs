@@ -34,7 +34,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             var hitTestInfo = new SpreadHitTestResult() { Element = VisualElement.RowHeader, Sheet = sheetView };
             hitTestInfo.ActualHitTestPoint = hitPoint;
             var rows = _workSheet.Rows.As<Rows>();
-            var columns = _workSheet.RowHeaders.Columns.As<Columns>();
+            var columns = _workSheet.RowHeaders.Columns.As<RowHeaderColumns>();
             var viewRange = sheetView.ViewPort.ViewRange;
 
             var point = new Point(hitPoint.X + _viewPort.LeftColumnLocation,
@@ -126,7 +126,7 @@ namespace AlphaX.WPF.Sheets.Rendering
             for (int col = viewRange.LeftColumn; col <= viewRange.RightColumn; col++)
             {
                 var colLocation = columns.GetLocation(col);
-                var sheetColumn = columns.GetItem(col, false);
+                var sheetColumn = columns.GetItem(col);
                 double columnWidth = sheetColumn == null ? _workSheet.DefaultColumnWidth : sheetColumn.Width;
 
                 if (point.X >= colLocation && point.X < colLocation + columnWidth)

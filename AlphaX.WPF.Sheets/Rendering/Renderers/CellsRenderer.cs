@@ -32,7 +32,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                 if (workSheet.FilterProvider.FilteredRows.ContainsKey(row))
                     continue;
 
-                var sheetRow = rows.GetItem(row, false);
+                var sheetRow = rows.GetItem(row);
                 var rowLocation = rows.GetLocation(row);
                 var y = rowLocation - viewport.TopRowLocation;
 
@@ -56,7 +56,7 @@ namespace AlphaX.WPF.Sheets.Rendering
                     }
 
                     var cell = cells.GetCell(row, col, false);
-                    var sheetColumn = columns.GetItem(col, false);
+                    var sheetColumn = columns.GetItem(col);
 
                     var cellType = RenderingExtensions.GetCellType(cell, sheetColumn);
 

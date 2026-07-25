@@ -11,7 +11,7 @@ namespace AlphaX.Sheets
     /// 2. Data type hierarchy: Numbers &lt; Text &lt; Booleans.
     /// 3. Natural alphanumeric string comparison (StrCmpLogicalW).
     /// </summary>
-    internal class NaturalSortComparer : IComparer<object>, IComparer<Cells.RowSnapshot>, IComparer
+    internal class NaturalSortComparer : IComparer<object>, IComparer<WorkSheet.RowSnapshot>, IComparer
     {
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int StrCmpLogicalW(string psz1, string psz2);
@@ -27,14 +27,14 @@ namespace AlphaX.Sheets
             _ascending = ascending;
         }
 
-        public int Compare(Cells.RowSnapshot snapX, Cells.RowSnapshot snapY)
+        public int Compare(WorkSheet.RowSnapshot snapX, WorkSheet.RowSnapshot snapY)
         {
             return Compare(snapX.KeyValue, snapY.KeyValue);
         }
 
         public int Compare(object x, object y)
         {
-            if (x is Cells.RowSnapshot snapX && y is Cells.RowSnapshot snapY)
+            if (x is WorkSheet.RowSnapshot snapX && y is WorkSheet.RowSnapshot snapY)
             {
                 x = snapX.KeyValue;
                 y = snapY.KeyValue;

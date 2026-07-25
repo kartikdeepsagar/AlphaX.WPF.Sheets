@@ -112,10 +112,6 @@ namespace AlphaX.Sheets
         /// <param name="startCol">The starting column index (default 0).</param>
         void Load(object[,] data, int startRow = 0, int startCol = 0);
         /// <summary>
-        /// Reevaluates all formulas for this sheet.
-        /// </summary>
-        void CalculateAll();
-        /// <summary>
         /// Sorts the provided cell range.
         /// </summary>
         /// <param name="range"></param>
@@ -139,5 +135,14 @@ namespace AlphaX.Sheets
         /// </summary>
         /// <param name="row">The row index.</param>
         void AutoSizeRow(int row);
+
+        /// <summary>
+        /// Sorts the complete worksheet.
+        /// </summary>
+        /// <param name="ascending"></param>
+        /// <param name="keyColumn"></param>
+        /// <param name="hasHeader"></param>
+        /// <param name="sortColumnOnly"></param>
+        void Sort(bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false);
     }
 }

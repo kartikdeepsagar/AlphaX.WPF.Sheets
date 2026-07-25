@@ -29,7 +29,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             var sheetView = Spread.SheetViews.ActiveSheetView;
             var workSheet = sheetView.WorkSheet;
 
-            var sheetColumn = ((Columns)workSheet.Columns).GetItem(column, false);
+            var sheetColumn = ((Columns)workSheet.Columns).GetItem(column);
 
             if (sheetColumn != null && sheetColumn.Locked)
                 return;
@@ -43,7 +43,7 @@ namespace AlphaX.WPF.Sheets.UI.Managers
             if (cell != null && cell.Locked)
                 return;
 
-            var sheetRow = ((Rows)workSheet.Rows).GetItem(row, false);
+            var sheetRow = ((Rows)workSheet.Rows).GetItem(row);
             var cellType = RenderingExtensions.GetCellType(cell, sheetColumn);
 
             var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);

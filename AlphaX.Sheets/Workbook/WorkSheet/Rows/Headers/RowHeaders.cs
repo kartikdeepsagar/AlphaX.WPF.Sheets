@@ -2,13 +2,16 @@
 {
     internal class RowHeaders : HeadersBase, IRowHeaders
     {
+        private RowHeaderCells _cells;
+        private RowHeaderColumns _columns;
+
         public int ColumnCount { get; set; }
         public int DefaultColumnWidth { get; set; }
         public double Width
         {
             get
             {
-                var column = _columns.GetItem(ColumnCount - 1, false);
+                var column = _columns.GetItem(ColumnCount - 1);
                 var columnLocation = _columns.GetLocation(ColumnCount - 1);
 
                 if (column == null)
@@ -18,13 +21,22 @@
             }
         }
 
+        public IRange Cells => _cells;
+        public IColumns Columns => _columns;
+
         internal RowHeaders(WorkSheet workSheet) : base(workSheet)
         {
             DefaultColumnWidth = 30;
             ColumnCount = 1;
-            _cells = new Cells(this);
-            _rows = new Rows(this);
-            _columns = new Columns(this);
+            _cells = new RowHeaderCells(this);
+            _columns = new RowHeaderColumns(this);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            _cells.Dispose();
+            _columns.Dispose();
         }
     }
 }

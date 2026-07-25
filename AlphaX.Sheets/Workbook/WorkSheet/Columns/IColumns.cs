@@ -2,7 +2,7 @@
 
 namespace AlphaX.Sheets
 {
-    public interface IColumns : IEnumerableEx<IColumn>, IDisposable
+    public interface IColumns
     {
         /// <summary>
         /// Gets the column present at the provided index.
@@ -24,7 +24,6 @@ namespace AlphaX.Sheets
         /// <param name="column"></param>
         /// <returns></returns>
         int GetColumnWidth(int column);
-
         /// <summary>
         /// Gets the column index of the provided column.
         /// </summary>

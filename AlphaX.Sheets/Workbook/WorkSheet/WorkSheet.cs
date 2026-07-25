@@ -1,7 +1,10 @@
+using AlphaX.Sheets.Core;
 using AlphaX.Sheets.Data;
 using AlphaX.Sheets.Filtering;
 using AlphaX.Sheets.Utils;
 using System;
+using System.Collections.Generic;
+using static AlphaX.Sheets.Cells;
 
 namespace AlphaX.Sheets
 {
@@ -21,6 +24,7 @@ namespace AlphaX.Sheets
         private TopLeft _topLeft;
         private FilterProvider _filterProvider;
         private WorkSheetDataStore _dataStore;
+        private Dictionary<int, ColumnData> _columnStore;
 
         public string Name
         {
@@ -83,12 +87,24 @@ namespace AlphaX.Sheets
             RowCount = ColumnCount = 500;
             _dataStore = new WorkSheetDataStore(this);
             _filterProvider = new FilterProvider(this);
+            _columnStore = new Dictionary<int, ColumnData>();
         }
 
         public void SortRange(CellRange range, bool ascending)
         {
-            ((Cells)_cells[range.TopRow, range.LeftColumn, range.RowCount, range.ColumnCount]).Sort(ascending);
+            SortImpl(range, ascending, range.LeftColumn);
         }
+
+        public void Sort(bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false)
+        {
+            SortImpl(new CellRange(
+                _cells.Row, 
+                _cells.Column, 
+                _cells.RowCount, 
+                _cells.ColumnCount), 
+                ascending, keyColumn, hasHeader, sortColumnOnly);
+        }
+
 
         public object[,] GetData(CellRange range)
         {
@@ -110,12 +126,138 @@ namespace AlphaX.Sheets
 
         public void Load(object[,] data, int startRow = 0, int startCol = 0)
         {
-            ((Cells)Cells).LoadData(data, startRow, startCol);
+            if (data == null)
+                return;
+
+            int rows = data.GetLength(0);
+            int cols = data.GetLength(1);
+
+            if (rows == 0 || cols == 0)
+                return;
+
+            for (int c = 0; c < cols; c++)
+            {
+                int colIndex = startCol + c;
+                var colData = GetColumnData(colIndex, true);
+
+                for (int r = 0; r < rows; r++)
+                {
+                    int rowIndex = startRow + r;
+                    object val = data[r, c];
+                    colData.SetValue(rowIndex, val);
+
+                    DataStore.SetValue(rowIndex, colIndex, val);
+                }
+            }
+
+            OnRangeChanged(new RangeChangedEventArgs(
+                     SheetRegion.Cells,
+                     new CellRange(startRow, startCol, rows, cols),
+                      RangeChangeType.Value));
         }
 
-        public void CalculateAll()
+        internal ColumnData GetColumnData(int column, bool createIfNotExists = true)
         {
+            if (_columnStore.TryGetValue(column, out var colData))
+                return colData;
 
+            if (createIfNotExists)
+            {
+                colData = new ColumnData(column);
+                _columnStore[column] = colData;
+                return colData;
+            }
+
+            return null;
+        }
+
+        internal void ClearColumnCells(int column)
+        {
+            var colData = GetColumnData(column, false);
+            colData?.Clear();
+            _cells.ClearColumnCells(column);
+        }
+
+        private void SortImpl(CellRange range, bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false)
+        {
+            int startRow = range.TopRow;
+            int totalRows = RowCount;
+            int startCol = range.LeftColumn;
+
+            if(keyColumn < range.LeftColumn || keyColumn > range.RightColumn)
+            {
+                keyColumn = range.LeftColumn;
+            }
+
+            int totalCols = ColumnCount;
+
+            if (totalRows <= 1)
+                return;
+
+            int sortStartRow = hasHeader ? startRow + 1 : startRow;
+            int sortRowCount = hasHeader ? totalRows - 1 : totalRows;
+
+            if (sortRowCount <= 1)
+                return;
+
+            int targetStartCol = sortColumnOnly ? keyColumn : startCol;
+            int targetEndCol = sortColumnOnly ? keyColumn : (startCol + totalCols - 1);
+
+            List<RowSnapshot> snapshots = new List<RowSnapshot>(sortRowCount);
+
+            for (int r = sortStartRow; r < sortStartRow + sortRowCount; r++)
+            {
+                object keyVal = DataStore.GetValue(r, keyColumn);
+
+                if (keyVal == null)
+                    keyVal = _cells.GetCell(r, keyColumn, false)?.Value;
+
+                var snapshot = new RowSnapshot(r, keyVal);
+
+                for (int c = targetStartCol; c <= targetEndCol; c++)
+                {
+                    var colData = GetColumnData(c, false);
+                    if (colData != null)
+                    {
+                        var cellData = colData.GetCellData(r);
+                        snapshot.Data[c] = cellData;
+                    }
+                }
+
+                snapshots.Add(snapshot);
+            }
+
+            snapshots.Sort(new NaturalSortComparer(ascending));
+
+            for (int i = 0; i < snapshots.Count; i++)
+            {
+                int targetRow = sortStartRow + i;
+                var snapshot = snapshots[i];
+
+                for (int c = targetStartCol; c <= targetEndCol; c++)
+                {
+                    var colData = GetColumnData(c, true);
+                    if (snapshot.Data.TryGetValue(c, out var cellData))
+                    {
+                        colData.SetCellData(targetRow, cellData);
+
+                        if (DataSource != null)
+                            DataStore.SetValue(targetRow, c, cellData.Value);
+                    }
+                    else
+                    {
+                        colData.ClearRow(targetRow);
+                        if (DataSource != null)
+                            DataStore.SetValue(targetRow, c, null);
+                    }
+                }
+            }
+
+            OnRangeChanged(new RangeChangedEventArgs(
+                 SheetRegion.Cells,
+                new CellRange(sortStartRow, targetStartCol, sortRowCount, targetEndCol - targetStartCol + 1),
+                RangeChangeType.Sort
+            ));
         }
 
         private void InitializeDataStore(object dataSource)
@@ -198,6 +340,11 @@ namespace AlphaX.Sheets
             switch(mode)
             {
                 case WorkSheetClearMode.Data:
+                    foreach (var col in _columnStore.Values)
+                    {
+                        col.Clear();
+                    }
+                    _columnStore.Clear();
                     _cells.ClearCellStore();
                     break;
             }
@@ -234,8 +381,8 @@ namespace AlphaX.Sheets
                     if (lines.Length > 1)
                     {
                         var cell = _cells.GetCell(row, col, false);
-                        var sheetColumn = _columns.GetItem(col, false);
-                        var sheetRow = _rows.GetItem(row, false);
+                        var sheetColumn = _columns.GetItem(col);
+                        var sheetRow = _rows.GetItem(row);
 
                         double fontSize = 14;
                         string styleName = cell?.StyleName ?? sheetColumn?.StyleName ?? sheetRow?.StyleName;
@@ -262,5 +409,21 @@ namespace AlphaX.Sheets
                 Rows[row].Height = maxRequiredHeight;
             }
         }
+
+        #region private
+        internal struct RowSnapshot
+        {
+            public int OriginalRow { get; }
+            public object KeyValue { get; }
+            public Dictionary<int, CellData> Data { get; }
+
+            public RowSnapshot(int originalRow, object keyValue)
+            {
+                OriginalRow = originalRow;
+                KeyValue = keyValue;
+                Data = new Dictionary<int, CellData>();
+            }
+        }
+        #endregion
     }
 }

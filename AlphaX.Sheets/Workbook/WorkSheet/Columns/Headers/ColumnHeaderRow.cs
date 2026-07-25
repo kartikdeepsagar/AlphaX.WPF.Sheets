@@ -3,13 +3,11 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    internal class Row : IRow, IDisposable
+    internal class ColumnHeaderRow : IRow, IDisposable
     {
         private int _height;
         private string _styleName;
-        private Rows _parent;
-
-        public IFormatter Formatter { get; set; }
+        private ColumnHeaderRows _parent;
 
         public int Height
         {
@@ -17,7 +15,7 @@ namespace AlphaX.Sheets
             {
                 if (_height < 0)
                 {
-                    return _parent.WorkSheet.DefaultRowHeight;
+                    return _parent.ColumnHeaders.DefaultRowHeight;
                 }
 
                 return _height;
@@ -27,9 +25,7 @@ namespace AlphaX.Sheets
                 if (value < 0)
                     throw new ArgumentException("Row height can't be negative.");
 
-                double oldHeight = Height;
-
-                if (oldHeight == value)
+                if (value == _height)
                 {
                     return;
                 }
@@ -37,8 +33,8 @@ namespace AlphaX.Sheets
                 _parent.UpdateRowsLocation(Index + 1, value - Height);
                 _height = value;
 
-                _parent.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
-                    SheetRegion.Cells,
+                _parent.ColumnHeaders.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
+                    SheetRegion.ColumnHeader,
                     Index,
                     1, RowChangeType.Height));
             }
@@ -54,24 +50,26 @@ namespace AlphaX.Sheets
             }
             set
             {
-                if (_styleName == value)
+                if(_styleName == value)
                 {
                     return;
                 }
 
                 _styleName = value;
 
-                _parent.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
-                        SheetRegion.Cells,
+                _parent.ColumnHeaders.WorkSheet.OnRowsChanged(new RowChangedEventArgs(
+                        SheetRegion.ColumnHeader,
                         Index,
                         1, RowChangeType.Style));
             }
         }
 
+        public IFormatter Formatter { get; set; }
+
         public bool Visible => Height > 0;
         internal int Index { get; set; }
 
-        internal Row(Rows parent)
+        internal ColumnHeaderRow(ColumnHeaderRows parent)
         {
             _parent = parent;
             _height = -1;
@@ -79,7 +77,6 @@ namespace AlphaX.Sheets
 
         public void Dispose()
         {
-            Formatter = null;
             StyleName = null;
             _parent = null;
         }

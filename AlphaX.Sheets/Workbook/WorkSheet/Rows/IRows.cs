@@ -2,7 +2,7 @@
 
 namespace AlphaX.Sheets
 {
-    public interface IRows : IEnumerableEx<IRow>, IDisposable
+    public interface IRows
     {
         /// <summary>
         /// Gets the row present at the provided index.

@@ -4,14 +4,11 @@ using System;
 
 namespace AlphaX.Sheets
 {
-    internal class Column : IColumn, IDisposable
+    internal class RowHeaderColumn : IColumn, IDisposable
     {
         private int _width;
-        private DataMap _dataMap;
-        private Columns _parent;
+        private RowHeaderColumns _parent;
         private string _styleName;
-
-        public IFormatter Formatter { get; set; }
 
         public int Width
         {
@@ -19,7 +16,7 @@ namespace AlphaX.Sheets
             {
                 if (_width < 0)
                 {
-                    return _parent.WorkSheet.DefaultColumnWidth;
+                    return _parent.RowHeaders.DefaultColumnWidth;
                 }
 
                 return _width;
@@ -29,7 +26,7 @@ namespace AlphaX.Sheets
                 if (value < 0)
                     throw new ArgumentException("Column width can't be negative.");
 
-                if(value == _width)
+                if (_width == value)
                 {
                     return;
                 }
@@ -37,8 +34,8 @@ namespace AlphaX.Sheets
                 _parent.UpdateColumnsLocation(Index + 1, value - Width);
                 _width = value;
 
-                _parent.WorkSheet?.OnColumnsChanged(new ColumnChangedEventArgs(
-                    SheetRegion.Cells,
+                _parent.RowHeaders.WorkSheet.OnColumnsChanged(new ColumnChangedEventArgs(
+                    SheetRegion.RowHeader,
                     Index,
                     1,
                     ColumnChangeType.Width));
@@ -58,51 +55,38 @@ namespace AlphaX.Sheets
                     return;
                 }
 
-                _styleName = value;
+                if (_styleName != value)
+                {
+                    _parent.RowHeaders.WorkSheet.OnColumnsChanged(new ColumnChangedEventArgs(
+                       SheetRegion.RowHeader,
+                       Index,
+                        1,
+                        ColumnChangeType.Style));
+                }
 
-                _parent.WorkSheet?.OnColumnsChanged(new ColumnChangedEventArgs(
-                    SheetRegion.Cells,
-                    Index,
-                    1,
-                    ColumnChangeType.Style));
+                _styleName = value;
             }
         }
 
         public IColumns Parent => _parent;
-        public DataMap DataMap
-        {
-            get
-            {
-                return _dataMap;
-            }
-            set
-            {
-                _dataMap = value;
-                OnDataMapChanged();
-            }
-        }
-        public ICellType CellType { get; set; }
-        public bool Locked { get; set; }
+
         public bool Visible => Width > 0;
-        internal Column(Columns parent)
+        public bool Locked { get; set; }
+        public DataMap DataMap { get; set; }
+        public ICellType CellType { get; set; }
+        public IFormatter Formatter { get; set; }
+
+        internal int Index { get; set; }
+
+        internal RowHeaderColumn(RowHeaderColumns parent)
         {
             _parent = parent;
             _width = -1;
-            Locked = false;
-        }
-        internal int Index { get; set; }
-
-        private void OnDataMapChanged()
-        {
-            _parent.WorkSheet.ClearColumnCells(Parent.GetColumnIndex(this));
         }
 
         public void Dispose()
         {
             StyleName = null;
-            CellType = null;
-            DataMap = null;
-            Formatter = null;
             _parent = null;
         }
     }
