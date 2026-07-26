@@ -1,0 +1,46 @@
+using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.Spreadsheet.Formatters;
+using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
+
+namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
+{
+    public class TextCellType : BaseCellType
+    {
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        {
+            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
+
+            if (value != null && !string.IsNullOrEmpty(value.ToString()))
+            {
+                if (value is string)
+                {
+                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
+                }
+                else
+                {
+                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+
+                    value = formatter.Format(value);
+                }
+
+                context.DrawText((string)value, cellRect, style, pixelPerDip, false, allowMultiLineText);
+            }
+        }
+
+        public override EditorBase GetEditor(WPFStyle style)
+        {
+            var editor = new TextEditor();
+            editor.FontFamily = style.WpfFontFamily;
+            editor.Foreground = style.Foreground;
+            editor.Background = style.Background;
+            editor.FontSize = style.FontSize;
+            return editor;
+        }
+    }
+}
