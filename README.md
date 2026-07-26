@@ -7,7 +7,7 @@
 
 **DevBrewLabs.Spreadsheet** is a modular, high-performance, Excel-like spreadsheet component for WPF applications. It combines a platform-agnostic core spreadsheet data engine, a multi-sheet calculation engine (`DevBrewLabs.Spreadsheet.CalcEngine`), and a modern WPF view control (`Spread`) featuring an Excel-inspired Material 3 aesthetic and multi-target support for **.NET 10.0** and **.NET Framework 4.7.2**.
 
-![Spread Explorer Preview](docs/spread_preview.jpg)
+![Spread Explorer Preview](src/docs/spread_preview.jpg)
 
 ---
 
