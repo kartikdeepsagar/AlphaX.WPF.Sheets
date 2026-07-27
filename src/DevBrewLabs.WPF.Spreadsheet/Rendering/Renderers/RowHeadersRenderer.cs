@@ -55,11 +55,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     }
 
                     var cellRect = new Rect(colLocation, y, columnWidth, rowHeight);
-                    var style = workBook.PickStyle(cell, sheetColumn, sheetRow);
-
-                    if (style == null)
-                        style = workBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey);
-
+                    var style = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
                     DrawRowHeaderCell(context, row, cell, style, cellRect, SheetView.Spread.PixelPerDip);
                 }
             }
@@ -134,9 +130,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col);
                     var sheetRow = rows.GetItem(row);
-                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow).GetWpfStyle();
-                    if (style == null)
-                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader).GetWpfStyle();
                     var textWidth = TextRenderingExtensions
                         .ComputeTextWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, style.GlyphTypeface);
                     textWidth += 10;

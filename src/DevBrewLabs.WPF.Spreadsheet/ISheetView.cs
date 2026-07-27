@@ -62,27 +62,6 @@ namespace DevBrewLabs.WPF.Spreadsheet
         /// </summary>
         WorkSheet WorkSheet { get; }
         /// <summary>
-        /// Invalidates the view.
-        /// </summary>
-        /// <param name="rowHeaders"></param>
-        /// <param name="columnHeaders"></param>
-        /// <param name="cells"></param>
-        /// <param name="topLeft"></param>
-        void Invalidate(bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool topLeft = true);
-        /// <summary>
-        /// Invalidates provided cell range
-        /// </summary>
-        /// <param name="range"></param>
-        void InvalidateCellRange(CellRange range);
-        /// <summary>
-        /// Invalidates provided cell range.
-        /// </summary>
-        /// <param name="topRow"></param>
-        /// <param name="leftCol"></param>
-        /// <param name="bottomRow"></param>
-        /// <param name="rightCol"></param>
-        void InvalidateCellRange(int topRow, int leftCol, int bottomRow, int rightCol);
-        /// <summary>
         /// Copies current selection to clipboard.
         /// </summary>
         void CopyToClipboard();

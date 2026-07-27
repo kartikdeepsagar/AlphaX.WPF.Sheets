@@ -112,7 +112,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             }
 
             sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
-            Spread.SheetViews.ActiveSheetView.Invalidate(false, true, false, false);
+            Spread.Invalidate(false, true, false, false);
         }
 
         public void EndResizeColumn()

@@ -7,13 +7,6 @@ namespace DevBrewLabs.WPF.Spreadsheet
 {
     internal static class InternalExtensions
     {
-        public static IFormatter DefaultFormatter { get; }
-
-        static InternalExtensions()
-        {
-            DefaultFormatter = new GeneralFormatter();
-        }
-
         public static T As<T>(this object obj)
         {
             return (T)obj;
@@ -30,8 +23,9 @@ namespace DevBrewLabs.WPF.Spreadsheet
         /// <param name="cell"></param>
         /// <param name="column"></param>
         /// <param name="row"></param>
+        /// <param name="region"></param>
         /// <returns></returns>
-        internal static IStyle PickStyle(this WorkBook workBook, IRange cell, IColumn column, IRow row)
+        internal static IStyle PickStyle(this WorkBook workBook, IRange cell, IColumn column, IRow row, SheetRegion region)
         {
             if (cell != null && cell.Style != null)
             {
@@ -53,7 +47,20 @@ namespace DevBrewLabs.WPF.Spreadsheet
                 return workBook.GetNamedStyle(row.StyleName);
             }
 
-            return null;
+            switch (region)
+            {
+                case SheetRegion.CornerHeader:
+                    return workBook.GetNamedStyle(StyleKeys.DefaultTopLeftStyleKey);
+
+                case SheetRegion.RowHeader:
+                    return workBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey);
+
+                case SheetRegion.ColumnHeader:
+                    return workBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey);
+
+                default:
+                    return workBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
+            }
         }
 
         /// <summary>
@@ -80,7 +87,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
                 return row.Formatter;
             }
 
-            return DefaultFormatter;
+            return GeneralFormatter.Default;
         }
 
         internal static void EnsureFree(this InteractionLayer layer)

@@ -31,7 +31,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             SheetView.ActiveRow = state.Row;
             SheetView.ActiveColumn = state.Column;
             SheetView.Spread.SelectionManager.SelectRange(selection.TopRow, selection.LeftColumn, selection.RowCount, selection.ColumnCount);
-            SheetView.Invalidate();
+            SheetView.Spread.Invalidate();
         }
     }
 }

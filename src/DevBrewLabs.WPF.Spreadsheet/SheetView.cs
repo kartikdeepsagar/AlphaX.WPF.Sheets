@@ -51,7 +51,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
                         Spread.SheetViewPane?.UpdateZoomTransform();
                         _viewPort?.CalculateVisibleRange();
                         Spread.SheetTabControl?.UpdateScrollbars();
-                        Invalidate();
+                        Spread.Invalidate();
                     }
                 }
             }
@@ -101,57 +101,13 @@ namespace DevBrewLabs.WPF.Spreadsheet
             Spread.ClipboardManager.Copy(this, range);
         }
 
-        public void Invalidate(bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool topLeft = true)
-        {
-            var pane = Spread.SheetViewPane;
-
-            pane.Draw(rowHeaders, columnHeaders, cells, cells, topLeft);
-
-            if (cells)
-            {
-                var interactionLayer = pane.CellsRegion.GetInteractionLayer();
-                if (interactionLayer != null)
-                    interactionLayer.InvalidateVisual();
-            }
-
-            if (rowHeaders)
-            {
-                var interactionLayer = pane.RowHeadersRegion.GetInteractionLayer();
-                if (interactionLayer != null)
-                    interactionLayer.InvalidateVisual();
-            }
-
-            if (columnHeaders)
-            {
-                var interactionLayer = pane.ColumnHeadersRegion.GetInteractionLayer();
-                if (interactionLayer != null)
-                    interactionLayer.InvalidateVisual();
-            }
-
-            if (topLeft)
-                pane.TopLeftRegion.InvalidateVisual();
-        }
-
-        public void InvalidateCellRange(CellRange range)
-        {
-            range = _viewPort.ShrinkRangeToViewPort(range);
-            if (range.IsValid)
-                InvalidateCellRange(range.TopRow, range.LeftColumn, range.BottomRow, range.RightColumn);
-        }
-
-        public void InvalidateCellRange(int topRow, int leftCol, int bottomRow, int rightCol)
-        {
-            var pane = Spread.SheetViewPane;
-            pane.DrawRange(topRow, leftCol, bottomRow, rightCol);
-        }
-
         public void ScrollToHorizontalOffset(double offset)
         {
             double delta = offset - ScrollPosition.X;
             ScrollPosition = new Point(offset, ScrollPosition.Y);
             _viewPort.CalculateLeftColumn(delta);
             _viewPort.CalculateVisibleRange();
-            Invalidate(false, true, true);
+            Spread.Invalidate(false, true, true);
         }
 
         public void ScrollToVerticalOffset(double offset)
@@ -160,7 +116,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             ScrollPosition = new Point(ScrollPosition.X, offset);
             _viewPort.CalculateTopRow(delta);
             _viewPort.CalculateVisibleRange();
-            Invalidate(true, false, true);
+            Spread.Invalidate(true, false, true);
         }
         #endregion
 
@@ -203,9 +159,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             {
                 if(cellValue.Value != null)
                 {
-                    var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key));
-                    if (style == null)
-                        style = _workBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
+                    var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key), SheetRegion.RowHeader);
                     var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.GetWpfStyle()?.GlyphTypeface);
                     width = Math.Max(width, textWidth + 11);
                 }
@@ -223,7 +177,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
 
             _viewPort.CalculateVisibleRange();
             Spread.SheetTabControl.UpdateScrollbars();
-            Invalidate();
+            Spread.Invalidate();
         }
 
         public void Dispose()

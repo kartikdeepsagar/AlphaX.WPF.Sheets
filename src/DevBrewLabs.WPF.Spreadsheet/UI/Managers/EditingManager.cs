@@ -46,10 +46,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             var sheetRow = ((Rows)workSheet.Rows).GetItem(row);
             var cellType = RenderingExtensions.GetCellType(cell, sheetColumn);
 
-            var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);
-            if (style == null)
-                style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
-
+            var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
             var editor = cellType.GetEditor(style.GetWpfStyle());
             editor.SheetView = sheetView;
             ActiveEditor = editor;

@@ -22,7 +22,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Interaction
                 {
                     SheetView.WorkSheet.AutoSizeRow(hitTest.Row);
                     SheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
-                    SheetView.Invalidate();
+                    SheetView.Spread.Invalidate();
                     return;
                 }
 

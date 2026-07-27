@@ -24,16 +24,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             {
                 _suspendUpdates = value;
 
-                if(!_suspendUpdates && _spread.IsLoaded)
+                if (!_suspendUpdates && _spread.IsLoaded)
                 {
-                    _spread.SheetViews.ActiveSheetView.Invalidate();
+                    _spread.Invalidate();
                 }
             }
         }
 
         void IUpdateProvider.CellChanged(WorkSheet worksheet, int row, int column, object oldValue, object newValue, SheetRegion region, CellChangeType changeType)
         {
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => {
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+            {
 
                 if (!_spread.IsLoaded)
                     return;
@@ -42,22 +43,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
 
                 if (!sheetView.ViewPort.ViewRange.ContainsCell(row, column))
                     return;
-      
-                if (sheetView.ViewPort.ViewRange.ContainsCell(row, column))
-                {
-                    switch (changeType)
-                    {
-                        case CellChangeType.Value:
-                        case CellChangeType.Formula:
-                            worksheet.AutoSizeRow(row);
-                            sheetView.Invalidate();
-                            break;
 
-                        case CellChangeType.Style:
-                            sheetView.InvalidateCellRange(row, column, row, column);
-                            break;
-                    }
+                switch (changeType)
+                {
+                    case CellChangeType.Value:
+                    case CellChangeType.Formula:
+                        worksheet.AutoSizeRow(row);
+                        break;
                 }
+
+                _spread.Invalidate();
             }));
         }
 
@@ -70,11 +65,14 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
 
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
                 sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
-                if (sheetView.ViewPort.ViewRange.ContainsColumn(index))
+
+                if (!sheetView.ViewPort.ViewRange.ContainsColumn(index))
                 {
-                    _spread.SheetTabControl.UpdateScrollbars();
-                    sheetView.Invalidate(false, true, true, false);
+                    return;
                 }
+
+                _spread.SheetTabControl.UpdateScrollbars();
+                _spread.Invalidate(false, true, true, false);
             }));
         }
 
@@ -86,10 +84,13 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                     return;
 
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
-                if (range == null || !range.IsValid || sheetView.ViewPort.ViewRange.Intersects(range))
+
+                if (!sheetView.ViewPort.ViewRange.Intersects(range))
                 {
-                    sheetView.Invalidate(true, false, true, false);
+                    return;
                 }
+
+                _spread.Invalidate(true, false, true, false);
             }));
         }
 
@@ -102,11 +103,13 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
 
                 var sheetView = _spread.SheetViews.GetSheetView(worksheet);
                 sheetView.ViewPort.As<ViewPort>().CalculateVisibleRange();
-                if (sheetView.ViewPort.ViewRange.ContainsRow(index))
+                if (!sheetView.ViewPort.ViewRange.ContainsRow(index))
                 {
-                    _spread.SheetTabControl.UpdateScrollbars();
-                    sheetView.Invalidate(true, false, true, false);
+                    return;
                 }
+
+                _spread.SheetTabControl.UpdateScrollbars();
+                _spread.Invalidate(true, false, true, false);
             }));
         }
     }

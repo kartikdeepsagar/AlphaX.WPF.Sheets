@@ -57,12 +57,12 @@ namespace SpreadsheetSampleExplorer
             );
 
             _samplesSideBar.RegisterSample(
-                "ScrollModes",
-                "Scrolling Performance",
-                "Compare Item, Pixel, and Deferred scroll modes for smooth navigation.",
+                "Performance",
+                "Performance",
+                "Benchmark dataset load times, rendering speed, and compare scroll modes.",
                 "ESSENTIALS",
                 "M9 3L5 7h3v7h2V7h3L9 3zm6 18l4-4h-3V10h-2v7h-3l4 4z",
-                typeof(ScrollModes)
+                typeof(Performance)
             );
 
             _samplesSideBar.RegisterSample(
@@ -91,6 +91,15 @@ namespace SpreadsheetSampleExplorer
                 "DATA & CALCULATIONS",
                 "M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 5c-3.87 0-7-1.34-7-3s3.13-3 7-3 7 1.34 7 3-3.13 3-7 3z",
                 typeof(DataBinding)
+            );
+
+            _samplesSideBar.RegisterSample(
+                "RealTimeFeed",
+                "Real-Time Data & Portfolio",
+                "Streaming live market prices, dynamic formulas, and conditional cell styling.",
+                "DATA & CALCULATIONS",
+                "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z",
+                typeof(RealTimeFeed)
             );
 
             // Category: APPEARANCE & STYLING

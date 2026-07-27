@@ -7,22 +7,22 @@
              xmlns:sheets="http://schemas.devbrewlabs.com/2026/wpf/spreadsheet"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
-    <Grid Margin="4">
+    <Grid Margin="2">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Formula Bar Header Container -->
-        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="8" Padding="8,6" Margin="0,0,0,10">
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6,4" Margin="0,0,0,6">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="#107C41" CornerRadius="4" Padding="7,3" Margin="0,0,8,0" VerticalAlignment="Center">
-                    <TextBlock Text="fx" Foreground="White" FontWeight="Bold" FontSize="12" FontFamily="Consolas, Segoe UI"/>
+                <Border Grid.Column="0" Background="#107C41" CornerRadius="4" Padding="6,2" Margin="0,0,8,0" VerticalAlignment="Center">
+                    <TextBlock Text="fx" Foreground="White" FontWeight="Bold" FontSize="11" FontFamily="Consolas, Segoe UI"/>
                 </Border>
 
                 <sheets:FormulaTextBox Grid.Column="1" Spread="{Binding ElementName=spread}" VerticalAlignment="Center"/>
