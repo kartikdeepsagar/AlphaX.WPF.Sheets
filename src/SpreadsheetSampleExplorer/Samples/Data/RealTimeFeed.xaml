@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
 
         <!-- Compact Real-time Control Toolbar -->
-        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="10,6" Margin="0,0,0,6">
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="10,6" Margin="0,0,0,6">
             <DockPanel LastChildFill="False">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
@@ -37,7 +37,7 @@
         </Border>
 
         <!-- Main Spread Control -->
-        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6">
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" >
             <sheets:Spread x:Name="spread"/>
         </Border>
     </Grid>

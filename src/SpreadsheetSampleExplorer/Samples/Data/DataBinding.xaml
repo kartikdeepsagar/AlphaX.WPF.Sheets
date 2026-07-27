@@ -14,7 +14,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Column 1: POCO List Binding -->
-        <Border Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="0,0,3,0">
+        <Border Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="0,0,3,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -35,7 +35,7 @@
         </Border>
 
         <!-- Column 2: DataTable Binding -->
-        <Border Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="3,0,0,0">
+        <Border Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="3,0,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

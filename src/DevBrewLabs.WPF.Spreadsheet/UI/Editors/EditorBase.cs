@@ -11,8 +11,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Editors
 
         public EditorBase()
         {
-            TextOptions.SetTextFormattingMode(this, System.Windows.Media.TextFormattingMode.Ideal);
-            TextOptions.SetTextRenderingMode(this, System.Windows.Media.TextRenderingMode.Auto);
+            
         }
 
         public virtual void SetValue(object value)
