@@ -108,6 +108,7 @@ Run `SpreadsheetSampleExplorer.csproj` to explore interactive feature demonstrat
 
 - **Formula Bar & Editor**: Real-time formula editing linked to spreadsheet cell selection.
 - **Multi-Sheet Formulas**: Cross-sheet formula evaluation with real-time dependency recalculations.
+- **Real-Time Data & Portfolio**: Live stock market feed simulation with automatic formula recalculations and dynamic cell styling.
 - **Data Binding**: Compare POCO `List<T>` vs. ADO.NET `DataTable` two-way bindings.
 - **Grid Styling & Themes**: Live theme switcher (Slate, Excel Classic Green, Emerald, Indigo, Corporate) and 4-quadrant grid showcase.
 - **Performance**: Benchmark dataset load times (100k, 500k, 1M+ rows) and compare Item, Pixel, and Deferred scroll modes.

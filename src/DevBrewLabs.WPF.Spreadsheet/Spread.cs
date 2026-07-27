@@ -224,7 +224,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             SnapsToDevicePixels = true;
             TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
             TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
-            BorderThickness = new Thickness(1);
+            BorderThickness = new Thickness(0.5);
             GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             var workSheet = WorkBook.WorkSheets.AddSheet("Sheet1");

@@ -11,6 +11,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
+            var workBook = (WorkBook)workSheet.WorkBook;
             var rows = (ColumnHeaderRows)workSheet.ColumnHeaders.Rows;
             var columns = (Columns)workSheet.Columns;
             var cells = (ColumnHeaderCells)workSheet.ColumnHeaders.Cells;
@@ -50,11 +51,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
                     var cellRect = new Rect(colLocation - viewport.LeftColumnLocation, rowLocation, columnWidth, rowHeight);
 
-                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow);
-
-                    if (style == null)
-                        style = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey);
-
+                    var style = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.ColumnHeader);
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip);
                 }
 

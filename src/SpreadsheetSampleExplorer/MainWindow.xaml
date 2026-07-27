@@ -14,31 +14,30 @@
         </Grid.RowDefinitions>
 
         <!-- Top Header Bar (Excel Minimal Light Surface) -->
-        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="20,12" Effect="{StaticResource HeaderShadow}">
+        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="16,8" Effect="{StaticResource HeaderShadow}">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Brand Icon (Excel Green) -->
-                    <Border Background="#107C41" CornerRadius="8" Width="34" Height="34" Margin="0,0,14,0">
+                    <Border Background="#107C41" CornerRadius="6" Width="28" Height="28" Margin="0,0,10,0">
                         <Path Data="M3 3h18v18H3V3zm2 2v4h6V5H5zm8 0v4h6V5h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6zm-8 6v4h6v-4H5zm8 0v4h6v-4h-6z"
-                              Fill="White" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              Fill="White" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 
                     <StackPanel VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Spread" FontSize="17" FontWeight="Bold" Foreground="#18181B"/>
-                            <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="v2.5 Showcase" FontSize="10.5" FontWeight="SemiBold" Foreground="#107C41"/>
+                            <TextBlock Text="Spread" FontSize="15" FontWeight="Bold" Foreground="#18181B"/>
+                            <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="v2.5 Showcase" FontSize="10" FontWeight="SemiBold" Foreground="#107C41"/>
                             </Border>
                         </StackPanel>
-                        <TextBlock Text="Spreadsheet &amp; Calculation Engine Explorer" FontSize="11.5" Foreground="#71717A" Margin="0,1,0,0"/>
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Top Right Runtime Status Indicator -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border Background="#F0FDF4" CornerRadius="6" Padding="10,5" BorderBrush="#BBF7D0" BorderThickness="1">
+                    <Border Background="#F0FDF4" CornerRadius="6" Padding="8,4" BorderBrush="#BBF7D0" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="7" Height="7" Fill="#107C41" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <Ellipse Width="6" Height="6" Fill="#107C41" VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBlock x:Name="_txtRuntimeInfo" Text="Engine Status: Ready" Foreground="#107C41" FontSize="11" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
@@ -47,9 +46,9 @@
         </Border>
 
         <!-- Main Content Split View -->
-        <Grid Grid.Row="1" Margin="12">
+        <Grid Grid.Row="1" Margin="8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" MinWidth="220" MaxWidth="400"/>
+                <ColumnDefinition Width="260" MinWidth="200" MaxWidth="380"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -62,43 +61,45 @@
             <GridSplitter Grid.Column="1" Style="{StaticResource ModernGridSplitter}" ShowsPreview="True" ResizeDirection="Columns"/>
 
             <!-- Main Sample Workspace Card -->
-            <Border Grid.Column="2" Style="{StaticResource ModernCard}" Margin="6,0,0,0">
+            <Border Grid.Column="2" Style="{StaticResource ModernCard}" Margin="4,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Sample Header Control Bar -->
-                    <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="16,12" CornerRadius="8,8,0,0">
+                    <!-- Sample Header Control Bar (Compact Single-Row Design) -->
+                    <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="0,0,0,1" Padding="12,8" CornerRadius="8,8,0,0">
                         <Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <!-- Sample Icon Container -->
-                                <Border x:Name="_sampleIconBox" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="6" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Path x:Name="_sampleIconPath" Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                                          Fill="#107C41" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-
-                                <StackPanel VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock x:Name="_txtSampleTitle" Text="Sample View" FontSize="15" FontWeight="SemiBold" Foreground="#18181B"/>
-                                        <Border x:Name="_bdrCategory" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="7,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock x:Name="_txtCategory" Text="CATEGORY" FontSize="9.5" FontWeight="Bold" Foreground="#107C41"/>
-                                        </Border>
-                                    </StackPanel>
-                                    <TextBlock x:Name="_txtSampleDesc" Text="Interactive demonstration of spreadsheet capability." FontSize="11.5" Foreground="#71717A" Margin="0,2,0,0"/>
+                            <DockPanel LastChildFill="True">
+                                <!-- Actions (Right) -->
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <Button Content="↻ Reload" Style="{StaticResource ModernOutlineButton}" Click="OnReloadSampleClicked" Padding="10,4" FontSize="11"/>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <!-- Actions -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <Button Content="Reload Sample" Style="{StaticResource ModernOutlineButton}" Click="OnReloadSampleClicked"/>
-                            </StackPanel>
+                                <!-- Title, Category & Sub-Text (Left) -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border x:Name="_sampleIconBox" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="6" Width="28" Height="28" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <Path x:Name="_sampleIconPath" Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                                              Fill="#107C41" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock x:Name="_txtSampleTitle" Text="Sample View" FontSize="14" FontWeight="SemiBold" Foreground="#18181B"/>
+                                            <Border x:Name="_bdrCategory" Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="_txtCategory" Text="CATEGORY" FontSize="9" FontWeight="Bold" Foreground="#107C41"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock x:Name="_txtSampleDesc" Text="Interactive demonstration of spreadsheet capability." FontSize="11" Foreground="#71717A" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DockPanel>
                         </Grid>
                     </Border>
 
                     <!-- Active Sample Host -->
-                    <Border x:Name="_samplesViewerBdr" Grid.Row="1" Background="White" Padding="10" CornerRadius="0,0,8,8">
+                    <Border x:Name="_samplesViewerBdr" Grid.Row="1" Background="White" Padding="4" CornerRadius="0,0,8,8">
                     </Border>
                 </Grid>
             </Border>

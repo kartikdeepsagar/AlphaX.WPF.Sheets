@@ -121,9 +121,6 @@ namespace SpreadsheetSampleExplorer.Samples
                     double totalMs = swTotal.Elapsed.TotalMilliseconds;
 
                     _txtTotalTime.Text = $"{totalMs:N0} ms";
-                    _txtPrepTime.Text = $"{prepMs:N0} ms";
-                    _txtLoadTime.Text = $"{loadMs:N0} ms";
-                    _txtRenderTime.Text = $"{renderMs:N0} ms";
                     _txtCellCount.Text = $"{rowCount:N0} rows × {colCount} cols ({rowCount * colCount:N0} cells)";
                 }));
             }));

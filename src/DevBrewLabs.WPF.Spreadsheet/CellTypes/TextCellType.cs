@@ -39,6 +39,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             editor.FontFamily = style.WpfFontFamily;
             editor.Foreground = style.Foreground;
             editor.Background = style.Background;
+            editor.FontWeight = style.WpfFontWeight;
+            editor.FontStyle = style.WpfFontStyle;
             editor.FontSize = style.FontSize;
             return editor;
         }

@@ -93,6 +93,15 @@ namespace SpreadsheetSampleExplorer
                 typeof(DataBinding)
             );
 
+            _samplesSideBar.RegisterSample(
+                "RealTimeFeed",
+                "Real-Time Data & Portfolio",
+                "Streaming live market prices, dynamic formulas, and conditional cell styling.",
+                "DATA & CALCULATIONS",
+                "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z",
+                typeof(RealTimeFeed)
+            );
+
             // Category: APPEARANCE & STYLING
             _samplesSideBar.RegisterSample(
                 "Styling",
