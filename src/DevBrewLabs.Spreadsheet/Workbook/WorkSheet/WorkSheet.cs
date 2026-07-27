@@ -145,8 +145,6 @@ namespace DevBrewLabs.Spreadsheet
                     int rowIndex = startRow + r;
                     object val = data[r, c];
                     colData.SetValue(rowIndex, val);
-
-                    DataStore.SetValue(rowIndex, colIndex, val);
                 }
             }
 

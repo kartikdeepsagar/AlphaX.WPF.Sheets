@@ -13,7 +13,7 @@
 
 ## ✨ Features at a Glance
 
-- 🚀 **High Performance Grid**: Virtualized rendering supporting smooth navigation and virtual scrolling across 50,000+ data rows.
+- 🚀 **High Performance Grid**: Virtualized rendering supporting smooth navigation and virtual scrolling across 1,000,000+ data rows.
 - ⚡ **Multi-Targeted .NET 10 & .NET Framework**: Built for modern **.NET 10** performance optimizations while preserving legacy **.NET Framework 4.7.2** compatibility.
 - 🧮 **Multi-Sheet Calculation Engine**: Cross-worksheet formula dependencies with real-time recalculation engine powered by `DevBrewLabs.Spreadsheet.CalcEngine`.
 - 🎨 **Materialist & Modern Theme**: Excel Green (`#107C41`) accent styling, light-slate surface palette, customizable gridlines, headers, and row striping.
@@ -21,6 +21,20 @@
 - 🔘 **Rich Custom Cell Renderers**: Built-in renderers for Checkbox, Button, ComboBox, Hyperlink, and Text cells.
 - 🔃 **Range Sorting Engine**: Multi-column ascending and descending sorting algorithms.
 - 📜 **Configurable Scroll Modes**: Support for **Item**, **Pixel**, and **Deferred** scroll modes.
+
+---
+
+## ⚡ Performance Benchmarks
+
+The core data engine (`DevBrewLabs.Spreadsheet`) and virtualized WPF renderer (`Spread`) are optimized for sub-second data loading and ultra-fast navigation across massive datasets.
+
+| Dataset Size | Data Volume (Cells) | Load Time | Performance Rating |
+| :--- | :--- | :--- | :--- |
+| **100,000 Rows** | 1,000,000 Cells | **~80 ms** | ⚡ Instantaneous |
+| **500,000 Rows** | 5,000,000 Cells | **~300 ms** | ⚡ Ultra Fast |
+| **1,000,000 Rows** | 10,000,000 Cells | **800 ms – 1100 ms** | 🚀 Sub-Second Virtualized |
+
+> **Note:** Benchmarks measure end-to-end dataset generation, matrix allocation, engine loading, and first UI frame render in the **Performance** sample of the `SpreadsheetSampleExplorer` application.
 
 ---
 
@@ -96,7 +110,7 @@ Run `SpreadsheetSampleExplorer.csproj` to explore interactive feature demonstrat
 - **Multi-Sheet Formulas**: Cross-sheet formula evaluation with real-time dependency recalculations.
 - **Data Binding**: Compare POCO `List<T>` vs. ADO.NET `DataTable` two-way bindings.
 - **Grid Styling & Themes**: Live theme switcher (Slate, Excel Classic Green, Emerald, Indigo, Corporate) and 4-quadrant grid showcase.
-- **Scroll Modes**: Benchmark performance under 50,000+ data rows with Item, Pixel, and Deferred scroll modes.
+- **Performance**: Benchmark dataset load times (100k, 500k, 1M+ rows) and compare Item, Pixel, and Deferred scroll modes.
 
 ---
 

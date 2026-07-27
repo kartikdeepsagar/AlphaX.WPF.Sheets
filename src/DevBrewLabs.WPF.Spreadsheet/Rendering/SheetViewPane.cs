@@ -247,7 +247,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             if (_sheetView != null)
             {
                 _sheetView.ViewPort?.As<UI.ViewPort>()?.CalculateVisibleRange();
-                _sheetView.Invalidate();
+                _spread.Invalidate();
             }
         }
 

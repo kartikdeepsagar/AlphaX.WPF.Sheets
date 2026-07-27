@@ -295,7 +295,39 @@ namespace DevBrewLabs.WPF.Spreadsheet
             var workSheet = sheetView.WorkSheet;
             SheetTabControl.HScrollBar.Value = ((Columns)workSheet.Columns).GetLocation(column);
         }
-      
+
+        public void Invalidate(bool rowHeaders = true, bool columnHeaders = true, bool cells = true, bool topLeft = true)
+        {
+            var pane = SheetViewPane;
+
+            pane.Draw(rowHeaders, columnHeaders, cells, cells, topLeft);
+
+            if (cells)
+            {
+                var interactionLayer = pane.CellsRegion.GetInteractionLayer();
+                if (interactionLayer != null)
+                    interactionLayer.InvalidateVisual();
+            }
+
+            if (rowHeaders)
+            {
+                var interactionLayer = pane.RowHeadersRegion.GetInteractionLayer();
+                if (interactionLayer != null)
+                    interactionLayer.InvalidateVisual();
+            }
+
+            if (columnHeaders)
+            {
+                var interactionLayer = pane.ColumnHeadersRegion.GetInteractionLayer();
+                if (interactionLayer != null)
+                    interactionLayer.InvalidateVisual();
+            }
+
+            if (topLeft)
+                pane.TopLeftRegion.InvalidateVisual();
+        }
+
+
         #endregion
 
         #region Private Methods
@@ -359,7 +391,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            SheetViews?.ActiveSheetView?.Invalidate();
+            Invalidate();
         }
         #endregion
 
@@ -437,14 +469,14 @@ namespace DevBrewLabs.WPF.Spreadsheet
                     if (_tabControl.VScrollBar == null)
                         return;
                     _tabControl.VScrollBar.Value += -e.Delta / 2;
-                    activeSheetView.Invalidate(true, false, true, false);
+                    Invalidate(true, false, true, false);
                     break;
 
                 case MouseWheelScrollDirection.Horizontal:
                     if (_tabControl.HScrollBar == null)
                         return;
                     _tabControl.HScrollBar.Value += -e.Delta / 2;
-                    activeSheetView.Invalidate(false, true, true, false);
+                    Invalidate(false, true, true, false);
                     break;
             }
         }
@@ -466,7 +498,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         {
             base.OnDpiChanged(oldDpi, newDpi);
             PixelPerDip = newDpi.PixelsPerDip;
-            SheetViews?.ActiveSheetView?.Invalidate(true);
+            Invalidate();
         }
 
         public override void OnApplyTemplate()

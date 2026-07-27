@@ -55,7 +55,7 @@ namespace SpreadsheetSampleExplorer.Samples
                 dataStore.SetValue(r, 5, rev >= tgt ? "Met Target" : "Under Target");
             }
 
-            spread.SheetViews.ActiveSheetView.Invalidate();
+            spread.Invalidate();
         }
 
         private void OnZoomChanged(object sender, ZoomChangedEventArgs e)

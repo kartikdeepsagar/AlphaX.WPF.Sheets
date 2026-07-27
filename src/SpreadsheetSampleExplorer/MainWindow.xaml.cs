@@ -57,12 +57,12 @@ namespace SpreadsheetSampleExplorer
             );
 
             _samplesSideBar.RegisterSample(
-                "ScrollModes",
-                "Scrolling Performance",
-                "Compare Item, Pixel, and Deferred scroll modes for smooth navigation.",
+                "Performance",
+                "Performance",
+                "Benchmark dataset load times, rendering speed, and compare scroll modes.",
                 "ESSENTIALS",
                 "M9 3L5 7h3v7h2V7h3L9 3zm6 18l4-4h-3V10h-2v7h-3l4 4z",
-                typeof(ScrollModes)
+                typeof(Performance)
             );
 
             _samplesSideBar.RegisterSample(
