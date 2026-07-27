@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <!-- Top Interactive Styling Toolbar -->
-        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="10,6" Margin="0,0,0,6">
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="10,6" Margin="0,0,0,6">
             <DockPanel LastChildFill="False">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Palette:" VerticalAlignment="Center" FontSize="11.5" FontWeight="Medium" Foreground="#3F3F46" Margin="0,0,6,0"/>
@@ -51,7 +51,7 @@
         <!-- Main Workspace Area -->
         <Grid Grid.Row="1">
             <!-- Single Full Sheet View -->
-            <Border x:Name="_bdrSingleView" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6" Background="White" Visibility="Visible">
+            <Border x:Name="_bdrSingleView" BorderThickness="1" BorderBrush="#E4E4E7"  Background="White" Visibility="Visible">
                 <sheets:Spread x:Name="spreadMain"/>
             </Border>
 
@@ -67,7 +67,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Quadrant 1 -->
-                <Border Grid.Row="0" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="2">
+                <Border Grid.Row="0" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -81,7 +81,7 @@
                 </Border>
 
                 <!-- Quadrant 2 -->
-                <Border Grid.Row="0" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="2">
+                <Border Grid.Row="0" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -95,7 +95,7 @@
                 </Border>
 
                 <!-- Quadrant 3 -->
-                <Border Grid.Row="1" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="2">
+                <Border Grid.Row="1" Grid.Column="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -109,7 +109,7 @@
                 </Border>
 
                 <!-- Quadrant 4 -->
-                <Border Grid.Row="1" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="6" Margin="2">
+                <Border Grid.Row="1" Grid.Column="1" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="6" Margin="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

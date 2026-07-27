@@ -222,9 +222,6 @@ namespace DevBrewLabs.WPF.Spreadsheet
             BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(209, 213, 219));
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
-            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
-            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
-            BorderThickness = new Thickness(0.5);
             GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             var workSheet = WorkBook.WorkSheets.AddSheet("Sheet1");

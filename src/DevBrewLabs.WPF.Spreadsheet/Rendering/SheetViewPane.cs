@@ -26,8 +26,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public SheetViewPane(Spread spread)
         {
             _spread = spread;
-            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
-            TextOptions.SetTextRenderingMode(this, TextRenderingMode.Auto);
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
             InitPaneLayout();
             InitRegions();
             InitInteractionLayers();

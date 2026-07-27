@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <!-- Compact Control & Benchmark Toolbar -->
-        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="6" Padding="10,6" Margin="0,0,0,6">
+        <Border Grid.Row="0" Background="#FAFAFA" BorderBrush="#E4E4E7" BorderThickness="1"  Padding="10,6" Margin="0,0,0,6">
             <DockPanel LastChildFill="False">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Scroll Mode:" VerticalAlignment="Center" FontSize="11.5" FontWeight="Medium" Foreground="#3F3F46" Margin="0,0,6,0"/>
@@ -50,7 +50,7 @@
         </Border>
 
         <!-- Main Spreadsheet View -->
-        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" CornerRadius="6">
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="#E4E4E7" >
             <sheets:Spread x:Name="spread" ScrollMode="{Binding ElementName=_cmbScrollMode, Path=SelectedItem.Tag, Mode=TwoWay}"/>
         </Border>
     </Grid>
