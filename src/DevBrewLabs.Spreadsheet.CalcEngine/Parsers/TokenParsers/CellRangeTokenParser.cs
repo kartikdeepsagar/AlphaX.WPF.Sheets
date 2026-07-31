@@ -1,25 +1,25 @@
 using DevBrewLabs.Parserly;
+using System;
 using System.Text.RegularExpressions;
 
 namespace DevBrewLabs.Spreadsheet.CalcEngine.Parsers.TokenParsers
 {
-    internal class CellRangeTokenParser : RegexParser<StringResult>
+    internal class CellRangeTokenParser : Parser<StringResult>
     {
-        private static readonly Regex RangeRegex = new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+:[a-zA-Z]+[0-9]+", RegexOptions.Compiled);
+        private static readonly Regex _rangeRegex = new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+:[a-zA-Z]+[0-9]+", RegexOptions.Compiled);
 
-        public CellRangeTokenParser() 
-            : base(RangeRegex, true) 
-        { 
-        }
-
-        protected override StringResult ConvertResult(Match value)
+        protected override IParserState ParseInput(IParserState inputState)
         {
-            return new StringResult(value.Value);
-        }
+           var match = _rangeRegex.Match(inputState.ActualInput.Substring(inputState.Index));
 
-        protected override IParserError CreateError(int index, string value)
-        {
-            return new ParserError(index, "Invalid cell range token.");
+            if (match.Success)
+            {
+                return ParserStates.Result(inputState, new StringResult(match.Value), inputState.Index + match.Length);
+            }
+            else
+            {
+                return ParserStates.Error(inputState, new ParserError(inputState.Index, "Invalid cell range value"));
+            }
         }
     }
 }

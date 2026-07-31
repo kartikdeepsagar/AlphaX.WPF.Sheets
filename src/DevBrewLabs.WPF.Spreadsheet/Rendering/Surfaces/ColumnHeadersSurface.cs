@@ -37,8 +37,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var columns = _workSheet.Columns.As<Columns>();
             var viewRange = sheetView.ViewPort.ViewRange;
 
-            var point = new Point(hitPoint.X + _viewPort.LeftColumnLocation,
-                hitPoint.Y + _viewPort.TopRowLocation);
+            double zoom = sheetView != null && sheetView.ZoomFactor > 0 ? sheetView.ZoomFactor : 1.0;
+            var point = new Point(hitPoint.X / zoom + _viewPort.LeftColumnLocation,
+                hitPoint.Y / zoom + _viewPort.TopRowLocation);
 
             double x = 0, y = 0;
 

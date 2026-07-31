@@ -21,6 +21,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var rows = (Rows)workSheet.Rows;
             var columns = (Columns)workSheet.Columns;
             var viewport = (ViewPort)SheetView.ViewPort;
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             GuidelineSet guidelines = new GuidelineSet();
@@ -33,10 +34,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     continue;
 
                 var rowLocation = rows.GetLocation(row);
-                double y = rowLocation - viewport.TopRowLocation + rowHeight;
+                double y = (rowLocation - viewport.TopRowLocation + rowHeight) * zoom;
                 guidelines.GuidelinesY.Add(y + halfPenWidth);
+                double rightX = (columns.GetLocation(rightColumn) - viewport.LeftColumnLocation + columns.GetColumnWidth(rightColumn)) * zoom;
                 context.DrawLine(SheetView.Spread.GridLinePen, new Point(0, y),
-                            new Point(columns.GetLocation(rightColumn) - viewport.LeftColumnLocation + columns.GetColumnWidth(rightColumn), y));
+                            new Point(rightX, y));
             }
 
             context.Pop();
@@ -54,6 +56,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var rows = (Rows)workSheet.Rows;
             var columns = (Columns)workSheet.Columns;
             var viewport = (ViewPort)SheetView.ViewPort;
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             GuidelineSet guidelines = new GuidelineSet();
@@ -66,10 +69,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     continue;
 
                 var colLocation = columns.GetLocation(col);
-                double x = colLocation - viewport.LeftColumnLocation + columnWidth;
+                double x = (colLocation - viewport.LeftColumnLocation + columnWidth) * zoom;
                 guidelines.GuidelinesX.Add(x + halfPenWidth);
+                double bottomY = (rows.GetLocation(bottomRow) - viewport.TopRowLocation + rows.GetRowHeight(bottomRow)) * zoom;
                 context.DrawLine(SheetView.Spread.GridLinePen, new Point(x, 0),
-                    new Point(x, rows.GetLocation(bottomRow) - viewport.TopRowLocation + rows.GetRowHeight(bottomRow)));
+                    new Point(x, bottomY));
             }
 
             context.Pop();

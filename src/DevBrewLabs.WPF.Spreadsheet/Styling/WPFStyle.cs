@@ -143,6 +143,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         {
             return new WPFStyle()
             {
+                _glyphTypeface = this._glyphTypeface,
                 BackColor = base.BackColor,
                 FontFamily = base.FontFamily,
                 FontWeight = base.FontWeight,

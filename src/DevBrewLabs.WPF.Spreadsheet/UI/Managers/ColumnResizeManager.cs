@@ -41,21 +41,24 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             var sheetView = Spread.SheetViews.ActiveSheetView.As<SheetView>();
             var workSheet = sheetView.WorkSheet;
 
+            double zoom = sheetView.ZoomFactor > 0 ? sheetView.ZoomFactor : 1.0;
+            double logicalCurrentLocation = currentLocation / zoom;
+
             ResizeLine.X1 = ResizeLine.X2 = Math.Max(0, currentLocation);
-            ResizeLine.Y1 = workSheet.ColumnHeaders.Height;
+            ResizeLine.Y1 = workSheet.ColumnHeaders.Height * zoom;
             ResizeLine.Y2 = sheetView.Spread.SheetViewPane.ActualHeight;
 
             if (_initialWidths == null || _resizingColumn < 0 || _resizingColumn >= workSheet.ColumnCount)
                 return;
 
-            if (currentLocation >= _columnLocation)
+            if (logicalCurrentLocation >= _columnLocation)
             {
                 for (int c = 0; c < _resizingColumn; c++)
                 {
                     workSheet.Columns[c].Width = _initialWidths[c];
                 }
 
-                var newWidth = currentLocation - _columnLocation;
+                var newWidth = (int)(logicalCurrentLocation - _columnLocation);
                 workSheet.Columns[_resizingColumn].Width = newWidth;
 
                 for (int c = _resizingColumn + 1; c < workSheet.ColumnCount; c++)
@@ -79,7 +82,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                 for (int c = _resizingColumn - 1; c >= 0; c--)
                 {
                     double colLeft = currentLeft - _initialWidths[c];
-                    if (currentLocation >= colLeft)
+                    if (logicalCurrentLocation >= colLeft)
                     {
                         activeCol = c;
                         activeColLeft = colLeft;
@@ -95,7 +98,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                         workSheet.Columns[c].Width = 0;
                     }
 
-                    workSheet.Columns[activeCol].Width = Math.Max(0, (int)(currentLocation - activeColLeft));
+                    workSheet.Columns[activeCol].Width = Math.Max(0, (int)(logicalCurrentLocation - activeColLeft));
 
                     for (int c = 0; c < activeCol; c++)
                     {

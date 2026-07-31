@@ -11,7 +11,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
     {
         public string Format { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true, double zoomFactor = 1.0)
         {
             if (value == null)
                 return;
@@ -20,9 +20,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                 style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
             if (!string.IsNullOrEmpty(Format))
-                base.DrawCell(context, ((DateTime)value).ToString(Format), style, formatter, cellRect, pixelPerDip, allowMultiLineText);
+                base.DrawCell(context, ((DateTime)value).ToString(Format), style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
             else
-                base.DrawCell(context, formatter.Format(value), style, formatter, cellRect, pixelPerDip, allowMultiLineText);
+                base.DrawCell(context, formatter.Format(value), style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
         }
 
         public override EditorBase GetEditor(WPFStyle style)

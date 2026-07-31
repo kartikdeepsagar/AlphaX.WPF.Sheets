@@ -73,22 +73,47 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             editor.Row = row;
             editor.Column = column;
             editor.KeyDown += OnEditorKeyDown;
-            editor.CaretIndex = editor.Text.Length;
-            editor.MinWidth = cellRect.Width - 3;
-            int initialLineCount = TextUtils.GetLineCount(editor.Text);
-            if (workSheet.AllowMultiLineText && initialLineCount > 1)
-            {
-                double initialLineHeight = editor.FontSize * 1.3;
-                editor.Height = System.Math.Max(cellRect.Height - 3, initialLineCount * initialLineHeight + 6);
-            }
-            else
-            {
-                editor.Height = cellRect.Height - 3;
-            }
             cellsInteractionLayer.Children.Add(ActiveEditor);
-            Canvas.SetLeft(ActiveEditor, cellRect.X + 1);
-            Canvas.SetTop(ActiveEditor, cellRect.Y + 1);
+            UpdateEditorLayout();
             editor.Focus();
+        }
+
+        public void UpdateEditorLayout()
+        {
+            if (ActiveEditor is EditorBase editor && Spread?.SheetViews?.ActiveSheetView != null)
+            {
+                var sheetView = Spread.SheetViews.ActiveSheetView.As<SheetView>();
+                var workSheet = sheetView.WorkSheet;
+                double zoom = sheetView.ZoomFactor > 0 ? sheetView.ZoomFactor : 1.0;
+                var viewPort = sheetView.ViewPort.As<ViewPort>();
+
+                var cellRect = sheetView.ViewPort.GetCellRect(editor.Row, editor.Column);
+                cellRect.X -= viewPort.LeftColumnLocation;
+                cellRect.Y -= viewPort.TopRowLocation;
+
+                var cell = ((Cells)workSheet.Cells).GetCell(editor.Row, editor.Column, false);
+                var sheetColumn = ((Columns)workSheet.Columns).GetItem(editor.Column);
+                var sheetRow = ((Rows)workSheet.Rows).GetItem(editor.Row);
+                var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
+
+                var wpfStyle = style.GetWpfStyle();
+                editor.FontSize = (wpfStyle?.FontSize ?? 14) * zoom;
+                editor.MinWidth = System.Math.Max(0, cellRect.Width * zoom - 3);
+
+                int initialLineCount = TextUtils.GetLineCount(editor.Text);
+                if (workSheet.AllowMultiLineText && initialLineCount > 1)
+                {
+                    double initialLineHeight = editor.FontSize * 1.3;
+                    editor.Height = System.Math.Max(cellRect.Height * zoom - 3, initialLineCount * initialLineHeight + 6);
+                }
+                else
+                {
+                    editor.Height = System.Math.Max(0, cellRect.Height * zoom - 3);
+                }
+
+                Canvas.SetLeft(ActiveEditor, cellRect.X * zoom + 1);
+                Canvas.SetTop(ActiveEditor, cellRect.Y * zoom + 1);
+            }
         }
 
         private void OnEditorKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

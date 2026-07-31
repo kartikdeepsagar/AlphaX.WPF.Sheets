@@ -6,6 +6,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>GcSpreadSamplesExplorer</RootNamespace>
     <AssemblyName>GcSpreadSamplesExplorer</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>

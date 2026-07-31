@@ -1,4 +1,4 @@
-﻿using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.Spreadsheet;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -52,8 +52,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private void InitRender()
         {
             _dispatcherDisabled = Dispatcher.CurrentDispatcher.DisableProcessing();
-            var viewRangeRect = _sheetView.ViewPort.GetViewRangeRect();
-            RenderInfo.ViewPortGeometry = new RectangleGeometry(new Rect(0, 0, viewRangeRect.Width, viewRangeRect.Height));
+            RenderInfo.ViewPortGeometry = null;
         }
 
         public void EndRender()

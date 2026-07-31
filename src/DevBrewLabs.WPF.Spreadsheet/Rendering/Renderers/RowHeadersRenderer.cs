@@ -17,6 +17,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var viewport = (ViewPort)SheetView.ViewPort;
             var workBook = (WorkBook)workSheet.WorkBook;
             
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
             AdjustHeaderWidth(workSheet, rows, columns, cells, topRow, leftColumn, bottomRow, rightColumn);
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
@@ -32,10 +33,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
                 var sheetRow = rows.GetItem(row);
                 var rowLocation = rows.GetLocation(row);
-                var y = rowLocation - viewport.TopRowLocation;
+                var y = (rowLocation - viewport.TopRowLocation) * zoom;
+                var scaledRowHeight = rowHeight * zoom;
 
                 guidelines.GuidelinesY.Add(y + halfPenWidth);
-                guidelines.GuidelinesY.Add(y + rowHeight + halfPenWidth);
+                guidelines.GuidelinesY.Add(y + scaledRowHeight + halfPenWidth);
 
                 for (int col = leftColumn; col <= rightColumn; col++)
                 {
@@ -47,15 +49,20 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col);
                     var colLocation = columns.GetLocation(col);
+                    var x = colLocation * zoom;
+                    var scaledColumnWidth = columnWidth * zoom;
 
                     if (row == topRow)
                     {
-                        guidelines.GuidelinesX.Add(colLocation + halfPenWidth);
-                        guidelines.GuidelinesX.Add(colLocation + columnWidth + halfPenWidth);
+                        guidelines.GuidelinesX.Add(x + halfPenWidth);
+                        guidelines.GuidelinesX.Add(x + scaledColumnWidth + halfPenWidth);
                     }
 
-                    var cellRect = new Rect(colLocation, y, columnWidth, rowHeight);
-                    var style = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
+                    var cellRect = new Rect(x, y, scaledColumnWidth, scaledRowHeight);
+                    var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
+                    var style = baseStyle.GetWpfStyle().Clone() as WPFStyle;
+                    style.FontSize = baseStyle.FontSize * zoom;
+
                     DrawRowHeaderCell(context, row, cell, style, cellRect, SheetView.Spread.PixelPerDip);
                 }
             }
@@ -71,8 +78,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     if (row == 0 || rows.GetRowHeight(row - 1) > 0)
                     {
                         var rowLocation = rows.GetLocation(row);
-                        var y = rowLocation - viewport.TopRowLocation;
-                        DrawHiddenRowIndicator(context, y, leftColumn, rightColumn, columns, workSheet);
+                        var y = (rowLocation - viewport.TopRowLocation) * zoom;
+                        DrawHiddenRowIndicator(context, y, leftColumn, rightColumn, columns, workSheet, zoom);
                     }
                 }
             }
@@ -80,7 +87,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             context.Pop();
         }
 
-        private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, RowHeaderColumns columns, WorkSheet workSheet)
+        private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, RowHeaderColumns columns, WorkSheet workSheet, double zoom)
         {
             var pen = SheetView.Spread.GridLinePen;
             var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
@@ -105,16 +112,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                 var columnWidth = columns.GetColumnWidth(col);
                 if (columnWidth == 0)
                     continue;
-                var colLocation = columns.GetLocation(col);
-                var gapRect = new Rect(colLocation, rectTop, columnWidth, rectHeight);
+                var colLocation = columns.GetLocation(col) * zoom;
+                var scaledColumnWidth = columnWidth * zoom;
+                var gapRect = new Rect(colLocation, rectTop, scaledColumnWidth, rectHeight);
 
                 if (defaultStyle != null && defaultStyle.Background != null)
                 {
                     context.DrawRectangle(defaultStyle.Background, null, gapRect);
                 }
 
-                context.DrawLine(pen, new Point(colLocation, line1Y), new Point(colLocation + columnWidth, line1Y));
-                context.DrawLine(pen, new Point(colLocation, line2Y), new Point(colLocation + columnWidth, line2Y));
+                context.DrawLine(pen, new Point(colLocation, line1Y), new Point(colLocation + scaledColumnWidth, line1Y));
+                context.DrawLine(pen, new Point(colLocation, line2Y), new Point(colLocation + scaledColumnWidth, line2Y));
             }
         }
 
@@ -147,9 +155,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
-        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, IStyle baseStyle, Rect cellRect, double pixelPerDip)
+        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, double pixelPerDip)
         {
-            var style = baseStyle.GetWpfStyle();
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
 
             if (cell != null && cell.Value != null)

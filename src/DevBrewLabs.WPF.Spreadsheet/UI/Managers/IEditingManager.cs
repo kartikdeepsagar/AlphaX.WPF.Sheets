@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 
 namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
@@ -16,6 +16,10 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
         /// <param name="row"></param>
         /// <param name="column"></param>
         void BeginEdit(int row, int column);
+        /// <summary>
+        /// Updates the active editor position, size, and font size based on ZoomFactor.
+        /// </summary>
+        void UpdateEditorLayout();
         /// <summary>
         /// Ends active editing.
         /// </summary>
