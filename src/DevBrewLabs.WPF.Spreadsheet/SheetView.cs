@@ -1,10 +1,11 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
-using System.Collections.Generic;
 
 namespace DevBrewLabs.WPF.Spreadsheet
 {
@@ -51,6 +52,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
                         Spread.SheetViewPane?.UpdateZoomTransform();
                         _viewPort?.CalculateVisibleRange();
                         Spread.SheetTabControl?.UpdateScrollbars();
+                        TextLayoutCache.Clear();
                         Spread.Invalidate();
                     }
                 }

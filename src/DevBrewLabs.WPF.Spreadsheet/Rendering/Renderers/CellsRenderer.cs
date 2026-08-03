@@ -25,9 +25,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             
             var renderContext = new RenderContext(zoom, SheetView.Spread.PixelPerDip, 5.0, true);
             
-            GuidelineSet guidelines = new GuidelineSet();
-            context.PushGuidelineSet(guidelines);
-
             for (int row = topRow; row <= bottomRow; row++)
             {
                 var rowHeight = rows.GetRowHeight(row);
@@ -43,9 +40,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                 var y = (rowLocation - viewport.TopRowLocation) * zoom;
                 var scaledRowHeight = rowHeight * zoom;
 
-                guidelines.GuidelinesY.Add(y + halfPenWidth);
-                guidelines.GuidelinesY.Add(y + scaledRowHeight - penThickness + halfPenWidth);
-
                 for (int col = leftColumn; col <= rightColumn; col++)
                 {
                     var columnWidth = columns.GetColumnWidth(col);
@@ -56,12 +50,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var columnLocation = columns.GetLocation(col);
                     var x = (columnLocation - viewport.LeftColumnLocation) * zoom;
                     var scaledColumnWidth = columnWidth * zoom;
-
-                    if (row == topRow)
-                    {
-                        guidelines.GuidelinesX.Add(x + halfPenWidth);
-                        guidelines.GuidelinesX.Add(x + scaledColumnWidth - penThickness + halfPenWidth);
-                    }
 
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col);
@@ -89,8 +77,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     cellType.DrawCell(context, value, style, formatter, cellRect, renderContext);
                 }
             }
-
-            context.Pop();
         }
     }
 }

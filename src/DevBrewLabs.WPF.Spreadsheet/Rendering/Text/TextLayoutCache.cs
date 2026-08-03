@@ -10,14 +10,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
         public double Zoom { get; }
         public double AvailableWidth { get; }
         public bool CharacterEllipses { get; }
+        public double PixelsPerDip { get; }
 
-        public TextLayoutCacheKey(string text, WPFStyle style, double zoom, double availableWidth, bool characterEllipses)
+        public TextLayoutCacheKey(string text, WPFStyle style, double zoom, double availableWidth, bool characterEllipses, double pixelsPerDip)
         {
             Text = text;
             Style = style;
             Zoom = zoom;
             AvailableWidth = availableWidth;
             CharacterEllipses = characterEllipses;
+            PixelsPerDip = pixelsPerDip;
         }
 
         public bool Equals(TextLayoutCacheKey other)
@@ -26,7 +28,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
                    Style == other.Style &&
                    Zoom == other.Zoom &&
                    AvailableWidth == other.AvailableWidth &&
-                   CharacterEllipses == other.CharacterEllipses;
+                   CharacterEllipses == other.CharacterEllipses &&
+                   PixelsPerDip == other.PixelsPerDip;
         }
 
         public override bool Equals(object obj)
@@ -44,6 +47,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
                 hash = hash * 31 + Zoom.GetHashCode();
                 hash = hash * 31 + AvailableWidth.GetHashCode();
                 hash = hash * 31 + CharacterEllipses.GetHashCode();
+                hash = hash * 31 + PixelsPerDip.GetHashCode();
                 return hash;
             }
         }
@@ -61,7 +65,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             RenderContext context,
             bool characterEllipses)
         {
-            var key = new TextLayoutCacheKey(text, style, context.Zoom, availableWidth, characterEllipses);
+            var key = new TextLayoutCacheKey(text, style, context.Zoom, availableWidth, characterEllipses, context.PixelsPerDip);
 
             if (_cache.TryGetValue(key, out var cachedLayout))
             {

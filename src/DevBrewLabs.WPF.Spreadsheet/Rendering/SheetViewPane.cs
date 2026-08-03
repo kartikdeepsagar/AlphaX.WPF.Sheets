@@ -60,7 +60,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         {
             Width = double.NaN;
             Height = double.NaN;
-            LayoutTransform = null;
 
             if (_sheetView != null)
             {

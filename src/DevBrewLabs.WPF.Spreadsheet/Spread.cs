@@ -1,6 +1,7 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.Components;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Managers;
 using System;
 using System.Windows;
@@ -499,6 +500,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         {
             base.OnDpiChanged(oldDpi, newDpi);
             PixelPerDip = newDpi.PixelsPerDip;
+            TextLayoutCache.Clear();
             Invalidate();
         }
 
