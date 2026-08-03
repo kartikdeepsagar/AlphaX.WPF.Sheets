@@ -3,23 +3,22 @@ using System.Text.RegularExpressions;
 
 namespace DevBrewLabs.Spreadsheet.CalcEngine.Parsers.TokenParsers
 {
-    internal class CellRefTokenParser : RegexParser<StringResult>
+    internal class CellRefTokenParser : Parser<StringResult>
     {
-        private static readonly Regex RefRegex = new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+", RegexOptions.Compiled);
+        private static readonly Regex _refRegex = new Regex(@"^([A-Za-z0-9_ ]+!)?[a-zA-Z]+[0-9]+", RegexOptions.Compiled);
 
-        public CellRefTokenParser() 
-            : base(RefRegex, true) 
-        { 
-        }
-
-        protected override StringResult ConvertResult(Match value)
+        protected override IParserState ParseInput(IParserState inputState)
         {
-            return new StringResult(value.Value);
-        }
+            var match = _refRegex.Match(inputState.ActualInput.Substring(inputState.Index));
 
-        protected override IParserError CreateError(int index, string value)
-        {
-            return new ParserError(index, "Invalid cell reference token.");
+            if (match.Success)
+            {
+                return ParserStates.Result(inputState, new StringResult(match.Value), inputState.Index + match.Length);
+            }
+            else
+            {
+                return ParserStates.Error(inputState, new ParserError(inputState.Index, "Invalid cell ref value"));
+            }
         }
     }
 }

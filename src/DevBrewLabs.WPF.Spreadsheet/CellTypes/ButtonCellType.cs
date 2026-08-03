@@ -1,10 +1,9 @@
-using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
-using DevBrewLabs.WPF.Spreadsheet.Rendering;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
@@ -13,19 +12,20 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
         public ICellTypeCommand Command { get; set; }
         public string Text { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
-            cellRect.Inflate(-3, -3);
+            cellRect.Inflate(-3 * renderContext.Zoom, -3 * renderContext.Zoom);
             context.DrawRectangle(Brushes.LightGray, null, cellRect);
 
             if(!string.IsNullOrEmpty(Text))
             {
-                if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                    style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
+                var align = style.HorizontalAlignment;
+                if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                    align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
 
-                context.DrawText(Text, cellRect, style, pixelPerDip);
+                TextRenderer.DrawText(context, Text, cellRect, style, renderContext, align);
             }
         }
 

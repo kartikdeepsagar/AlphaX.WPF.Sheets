@@ -1,6 +1,7 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System.Globalization;
 using System.Windows;
@@ -10,26 +11,27 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
     public class TextCellType : BaseCellType
     {
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText);
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
             if (value != null && !string.IsNullOrEmpty(value.ToString()))
             {
+                var align = style.HorizontalAlignment;
                 if (value is string)
                 {
-                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
+                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
                 }
                 else
                 {
-                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
                     value = formatter.Format(value);
                 }
 
-                context.DrawText((string)value, cellRect, style, pixelPerDip, false, allowMultiLineText);
+                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext, align);
             }
         }
 

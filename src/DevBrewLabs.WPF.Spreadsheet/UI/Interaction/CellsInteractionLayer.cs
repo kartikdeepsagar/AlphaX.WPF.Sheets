@@ -235,7 +235,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Interaction
                     {
                         if (editingManager.IsEditing && editingManager.ActiveEditor is TextEditor textBox)
                         {
-                            if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                            if (!textBox.AcceptsReturn)
                                 return;
 
                             e.Handled = true;
@@ -457,13 +457,25 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Interaction
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
+            if (SheetView == null)
+                return;
+
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
             var workSheet = SheetView.WorkSheet;
-            var selectionRangeRect = ToSheetViewRect(SheetView.ViewPort.GetRangeRect(SheetView.Selection));
-            selectionRangeRect.Width += 1;
-            selectionRangeRect.X -= 1;
-            selectionRangeRect.Y -= 0.5;
-            selectionRangeRect.Height += 1;
-            var activeCellRect = ToSheetViewRect(SheetView.ViewPort.GetCellRect(SheetView.ActiveRow, SheetView.ActiveColumn));
+
+            var unscaledSelection = ToSheetViewRect(SheetView.ViewPort.GetRangeRect(SheetView.Selection));
+            var selectionRangeRect = new Rect(
+                unscaledSelection.X * zoom - 1,
+                unscaledSelection.Y * zoom - 0.5,
+                unscaledSelection.Width * zoom + 1,
+                unscaledSelection.Height * zoom + 1);
+
+            var unscaledActive = ToSheetViewRect(SheetView.ViewPort.GetCellRect(SheetView.ActiveRow, SheetView.ActiveColumn));
+            var activeCellRect = new Rect(
+                unscaledActive.X * zoom,
+                unscaledActive.Y * zoom,
+                unscaledActive.Width * zoom,
+                unscaledActive.Height * zoom);
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness / 2;
             GuidelineSet guidelines = new GuidelineSet();

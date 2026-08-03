@@ -106,11 +106,15 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Interaction
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
+            if (SheetView == null)
+                return;
+
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
             var selectionRangeRect = ToSheetViewRect(SheetView.ViewPort.GetRangeRect(SheetView.Selection));
             dc.PushClip(new RectangleGeometry(new Rect(0, 0, ActualWidth + 0.5, ActualHeight)));
             dc.DrawLine(SheetView.Spread.SelectionBorderPen,
-                new Point(ActualWidth, selectionRangeRect.Top),
-                new Point(ActualWidth, selectionRangeRect.Bottom));
+                new Point(ActualWidth, selectionRangeRect.Top * zoom),
+                new Point(ActualWidth, selectionRangeRect.Bottom * zoom));
             dc.Pop();
         }
 

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media;
+using DevBrewLabs.Spreadsheet;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -8,8 +9,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
             var workSheet = SheetView.WorkSheet;
-            var width = workSheet.RowHeaders.Width;
-            var height = workSheet.ColumnHeaders.Height;
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
+            var width = workSheet.RowHeaders.Width * zoom;
+            var height = workSheet.ColumnHeaders.Height * zoom;
             var topLeft = workSheet.TopLeft;
             var style = workSheet.WorkBook.GetNamedStyle(string.IsNullOrEmpty(topLeft.StyleName) ? 
                 StyleKeys.DefaultTopLeftStyleKey : topLeft.StyleName);
@@ -18,25 +20,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             var rect = new Rect(-SheetView.Spread.GridLinePen.Thickness, -SheetView.Spread.GridLinePen.Thickness, width, height);
 
-            //GuidelineSet guidelines = new GuidelineSet();
-            //guidelines.GuidelinesX.Add(rect.Left + halfPenWidth);
-            //guidelines.GuidelinesX.Add(rect.Right + halfPenWidth);
-            //guidelines.GuidelinesY.Add(rect.Top + halfPenWidth);
-            //guidelines.GuidelinesY.Add(rect.Bottom - halfPenWidth);
-
-            //context.PushGuidelineSet(guidelines);
             context.DrawRectangle(wpfStyle.Background, SheetView.Spread.GridLinePen, rect);
        
             var pathGeometry = new PathGeometry();
-            pathGeometry.Figures.Add(new PathFigure(new Point(5, height - 5), new PathSegment[]
+            pathGeometry.Figures.Add(new PathFigure(new Point(5 * zoom, height - 5 * zoom), new PathSegment[]
             {
-                new LineSegment(new Point(width - 5, 5), false),
-                new LineSegment(new Point(width - 5, height - 5), false),
-                new LineSegment(new Point(5,height - 5), false)
+                new LineSegment(new Point(width - 5 * zoom, 5 * zoom), false),
+                new LineSegment(new Point(width - 5 * zoom, height - 5 * zoom), false),
+                new LineSegment(new Point(5 * zoom, height - 5 * zoom), false)
             }, true));
 
             context.DrawGeometry(wpfStyle.Foreground, null, pathGeometry);
-            //context.Pop();
         }
     }
 }

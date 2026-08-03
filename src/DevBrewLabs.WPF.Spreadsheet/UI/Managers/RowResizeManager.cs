@@ -41,21 +41,24 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             var sheetView = Spread.SheetViews.ActiveSheetView.As<SheetView>();
             var workSheet = sheetView.WorkSheet;
 
+            double zoom = sheetView.ZoomFactor > 0 ? sheetView.ZoomFactor : 1.0;
+            double logicalCurrentLocation = currentLocation / zoom;
+
             ResizeLine.Y1 = ResizeLine.Y2 = Math.Max(0, currentLocation);
-            ResizeLine.X1 = workSheet.RowHeaders.Width;
+            ResizeLine.X1 = workSheet.RowHeaders.Width * zoom;
             ResizeLine.X2 = sheetView.Spread.SheetViewPane.ActualWidth;
 
             if (_initialHeights == null || _resizingRow < 0 || _resizingRow >= workSheet.RowCount)
                 return;
 
-            if (currentLocation >= _rowLocation)
+            if (logicalCurrentLocation >= _rowLocation)
             {
                 for (int r = 0; r < _resizingRow; r++)
                 {
                     workSheet.Rows[r].Height = _initialHeights[r];
                 }
 
-                var newHeight = currentLocation - _rowLocation;
+                var newHeight = (int)(logicalCurrentLocation - _rowLocation);
                 workSheet.Rows[_resizingRow].Height = newHeight;
 
                 for (int r = _resizingRow + 1; r < workSheet.RowCount; r++)
@@ -79,7 +82,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                 for (int r = _resizingRow - 1; r >= 0; r--)
                 {
                     double rowTop = currentTop - _initialHeights[r];
-                    if (currentLocation >= rowTop)
+                    if (logicalCurrentLocation >= rowTop)
                     {
                         activeRow = r;
                         activeRowTop = rowTop;
@@ -95,7 +98,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                         workSheet.Rows[r].Height = 0;
                     }
 
-                    workSheet.Rows[activeRow].Height = Math.Max(0, (int)(currentLocation - activeRowTop));
+                    workSheet.Rows[activeRow].Height = Math.Max(0, (int)(logicalCurrentLocation - activeRowTop));
 
                     for (int r = 0; r < activeRow; r++)
                     {

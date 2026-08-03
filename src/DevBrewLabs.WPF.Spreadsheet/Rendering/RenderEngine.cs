@@ -1,4 +1,4 @@
-﻿using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.Spreadsheet;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -20,11 +20,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         internal Renderer TopLeftRenderer { get; }
         #endregion
 
-        public RenderInfo RenderInfo { get; }
-
         public RenderEngine()
         {
-            RenderInfo = new RenderInfo();
             CellsRenderer = new CellsRenderer();
             GridLinesRenderer = new GridLinesRenderer();
             RowHeadersRenderer = new RowHeadersRenderer();
@@ -52,8 +49,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private void InitRender()
         {
             _dispatcherDisabled = Dispatcher.CurrentDispatcher.DisableProcessing();
-            var viewRangeRect = _sheetView.ViewPort.GetViewRangeRect();
-            RenderInfo.ViewPortGeometry = new RectangleGeometry(new Rect(0, 0, viewRangeRect.Width, viewRangeRect.Height));
         }
 
         public void EndRender()

@@ -26,8 +26,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public SheetViewPane(Spread spread)
         {
             _spread = spread;
-            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
-            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
             InitPaneLayout();
             InitRegions();
             InitInteractionLayers();
@@ -60,28 +58,18 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
         public void UpdateZoomTransform()
         {
-            if (_sheetView != null && _spread != null)
-            {
-                var zoom = _sheetView.ZoomFactor > 0 ? _sheetView.ZoomFactor : 1.0;
-                var parentBorder = _spread.SheetTabControl?.SheetViewPaneBorder;
-                if (parentBorder != null && parentBorder.ActualWidth > 0 && parentBorder.ActualHeight > 0)
-                {
-                    Width = parentBorder.ActualWidth / zoom;
-                    Height = parentBorder.ActualHeight / zoom;
-                }
-                else
-                {
-                    Width = double.NaN;
-                    Height = double.NaN;
-                }
+            Width = double.NaN;
+            Height = double.NaN;
 
-                LayoutTransform = new ScaleTransform(zoom, zoom);
-            }
-            else
+            if (_sheetView != null)
             {
-                Width = double.NaN;
-                Height = double.NaN;
-                LayoutTransform = null;
+                UpdateHeadersSize();
+                _sheetView.ViewPort?.As<UI.ViewPort>()?.RefreshBounds();
+                if (_spread?.EditingManager?.IsEditing == true)
+                {
+                    _spread.EditingManager.UpdateEditorLayout();
+                }
+                _spread.Invalidate();
             }
         }
 
@@ -214,20 +202,22 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             if (_sheetView == null)
                 return;
 
+            double zoom = _sheetView.ZoomFactor > 0 ? _sheetView.ZoomFactor : 1.0;
+
             switch (_sheetView.HeadersVisibility)
             {
                 case HeadersVisibility.Both:
-                    ColumnDefinitions[0].Width = new GridLength(_workSheet.RowHeaders.Width);
-                    RowDefinitions[0].Height = new GridLength(_workSheet.ColumnHeaders.Height);
+                    ColumnDefinitions[0].Width = new GridLength(_workSheet.RowHeaders.Width * zoom);
+                    RowDefinitions[0].Height = new GridLength(_workSheet.ColumnHeaders.Height * zoom);
                     break;
 
                 case HeadersVisibility.Column:
                     ColumnDefinitions[0].Width = new GridLength(0);
-                    RowDefinitions[0].Height = new GridLength(_workSheet.ColumnHeaders.Height);
+                    RowDefinitions[0].Height = new GridLength(_workSheet.ColumnHeaders.Height * zoom);
                     break;
 
                 case HeadersVisibility.Row:
-                    ColumnDefinitions[0].Width = new GridLength(_workSheet.RowHeaders.Width);
+                    ColumnDefinitions[0].Width = new GridLength(_workSheet.RowHeaders.Width * zoom);
                     RowDefinitions[0].Height = new GridLength(0);
                     break;
 

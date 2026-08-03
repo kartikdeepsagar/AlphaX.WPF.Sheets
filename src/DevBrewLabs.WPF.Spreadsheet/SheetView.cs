@@ -1,10 +1,11 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
-using System.Collections.Generic;
 
 namespace DevBrewLabs.WPF.Spreadsheet
 {
@@ -51,6 +52,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
                         Spread.SheetViewPane?.UpdateZoomTransform();
                         _viewPort?.CalculateVisibleRange();
                         Spread.SheetTabControl?.UpdateScrollbars();
+                        TextLayoutCache.Clear();
                         Spread.Invalidate();
                     }
                 }
@@ -160,8 +162,9 @@ namespace DevBrewLabs.WPF.Spreadsheet
                 if(cellValue.Value != null)
                 {
                     var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key), SheetRegion.RowHeader);
-                    var textWidth = TextRenderingExtensions.ComputeTextWidth(cellValue.Value.ToString(), style.FontSize, style.GetWpfStyle()?.GlyphTypeface);
-                    width = Math.Max(width, textWidth + 11);
+                    var wpfStyle = style.GetWpfStyle();
+                    var textWidth = DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextMeasurer.MeasureWidth(cellValue.Value.ToString(), style.FontSize, wpfStyle?.GlyphMetrics);
+                    width = Math.Max(width, (int)Math.Ceiling(textWidth) + 11);
                 }
             }
 

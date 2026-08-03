@@ -45,7 +45,6 @@ namespace DevBrewLabs.Spreadsheet
         public int ColumnCount { get; set; }
         public int DefaultRowHeight { get; set; }
         public int DefaultColumnWidth { get; set; }
-        public bool AllowMultiLineText { get; set; }
         public object DataSource
         {
             get
@@ -77,7 +76,6 @@ namespace DevBrewLabs.Spreadsheet
             Name = name;
             DefaultRowHeight = 22;
             DefaultColumnWidth = 70;
-            AllowMultiLineText = true;
             _rows = new Rows(this);
             _columns = new Columns(this);
             _topLeft = new TopLeft(this);
@@ -363,40 +361,33 @@ namespace DevBrewLabs.Spreadsheet
 
             int maxRequiredHeight = DefaultRowHeight;
 
-            if (AllowMultiLineText)
+            for (int col = 0; col < ColumnCount; col++)
             {
-                for (int col = 0; col < ColumnCount; col++)
+                var value = DataStore.GetValue(row, col);
+                if (value == null)
+                    continue;
+
+                string text = value.ToString();
+                if (string.IsNullOrEmpty(text))
+                    continue;
+
+                string[] lines = TextUtils.GetLines(text);
+                if (lines.Length > 1)
                 {
-                    var value = DataStore.GetValue(row, col);
-                    if (value == null)
+                    var cell = _cells.GetCell(row, col, false);
+                    var sheetColumn = _columns.GetItem(col);
+                    var sheetRow = _rows.GetItem(row);
+
+                    var style = _workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
+                    if (!style.AllowMultiLineText)
                         continue;
 
-                    string text = value.ToString();
-                    if (string.IsNullOrEmpty(text))
-                        continue;
-
-                    string[] lines = TextUtils.GetLines(text);
-                    if (lines.Length > 1)
+                    double fontSize = style.FontSize;
+                    double fontLineHeight = Math.Max(fontSize + 2, Math.Round(fontSize * 1.3));
+                    int cellRequiredHeight = (int)Math.Ceiling(DefaultRowHeight + (lines.Length - 1) * fontLineHeight);
+                    if (cellRequiredHeight > maxRequiredHeight)
                     {
-                        var cell = _cells.GetCell(row, col, false);
-                        var sheetColumn = _columns.GetItem(col);
-                        var sheetRow = _rows.GetItem(row);
-
-                        double fontSize = 14;
-                        string styleName = cell?.StyleName ?? sheetColumn?.StyleName ?? sheetRow?.StyleName;
-                        if (!string.IsNullOrEmpty(styleName))
-                        {
-                            var namedStyle = _workBook?.GetNamedStyle(styleName);
-                            if (namedStyle != null)
-                                fontSize = namedStyle.FontSize;
-                        }
-
-                        double fontLineHeight = Math.Max(fontSize + 2, Math.Round(fontSize * 1.3));
-                        int cellRequiredHeight = (int)Math.Ceiling(DefaultRowHeight + (lines.Length - 1) * fontLineHeight);
-                        if (cellRequiredHeight > maxRequiredHeight)
-                        {
-                            maxRequiredHeight = cellRequiredHeight;
-                        }
+                        maxRequiredHeight = cellRequiredHeight;
                     }
                 }
             }

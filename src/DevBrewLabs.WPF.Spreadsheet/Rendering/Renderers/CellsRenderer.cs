@@ -1,5 +1,6 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.CellTypes;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,11 +19,12 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var cells = (Cells)workSheet.Cells;
             var viewport = (ViewPort)SheetView.ViewPort;
 
+            double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
             double penThickness = SheetView.Spread.GridLinePen.Thickness;
             double halfPenWidth = (penThickness * SheetView.Spread.PixelPerDip) / 2;
-            GuidelineSet guidelines = new GuidelineSet();
-            context.PushGuidelineSet(guidelines);
-
+            
+            var renderContext = new RenderContext(zoom, SheetView.Spread.PixelPerDip, 5.0, true);
+            
             for (int row = topRow; row <= bottomRow; row++)
             {
                 var rowHeight = rows.GetRowHeight(row);
@@ -35,10 +37,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
                 var sheetRow = rows.GetItem(row);
                 var rowLocation = rows.GetLocation(row);
-                var y = rowLocation - viewport.TopRowLocation;
-
-                guidelines.GuidelinesY.Add(y + halfPenWidth);
-                guidelines.GuidelinesY.Add(y + rowHeight - penThickness + halfPenWidth);
+                var y = (rowLocation - viewport.TopRowLocation) * zoom;
+                var scaledRowHeight = rowHeight * zoom;
 
                 for (int col = leftColumn; col <= rightColumn; col++)
                 {
@@ -48,13 +48,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                         continue;
 
                     var columnLocation = columns.GetLocation(col);
-                    var x = columnLocation - viewport.LeftColumnLocation;
-
-                    if (row == topRow)
-                    {
-                        guidelines.GuidelinesX.Add(x + halfPenWidth);
-                        guidelines.GuidelinesX.Add(x + columnWidth - penThickness + halfPenWidth);
-                    }
+                    var x = (columnLocation - viewport.LeftColumnLocation) * zoom;
+                    var scaledColumnWidth = columnWidth * zoom;
 
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col);
@@ -73,15 +68,15 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                             continue;
                     }
 
-                    var cellRect = new Rect(x, y, columnWidth - penThickness, rowHeight - penThickness);
+                    var cellRect = new Rect(x, y, scaledColumnWidth - penThickness, scaledRowHeight - penThickness);
 
-                    var style = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
+                    var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
+                    var style = baseStyle.GetWpfStyle();
+
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
-                    cellType.DrawCell(context, value, style.GetWpfStyle(), formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText);
+                    cellType.DrawCell(context, value, style, formatter, cellRect, renderContext);
                 }
             }
-
-            context.Pop();
         }
     }
 }

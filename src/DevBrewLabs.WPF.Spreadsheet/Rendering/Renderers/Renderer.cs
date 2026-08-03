@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+using System;
+using System.Windows.Media;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -40,7 +41,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                 return;
             }
 
-            Drawing.ClipGeometry = Engine.RenderInfo.ViewPortGeometry;
+            Drawing.ClipGeometry = null;
             if (_context != null)
                 _context.Close();
             _context = Drawing.Open();

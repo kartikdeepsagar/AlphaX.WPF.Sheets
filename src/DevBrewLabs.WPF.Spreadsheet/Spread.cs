@@ -1,6 +1,7 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.Components;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Managers;
 using System;
 using System.Windows;
@@ -211,6 +212,9 @@ namespace DevBrewLabs.WPF.Spreadsheet
         #region ctor
         public Spread()
         {
+            UseLayoutRounding = true;
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(this, TextRenderingMode.ClearType);
             _workBook = new WorkBook("Book1", new UIUpdateProvider(this));
             UndoRedoManager = new UndoRedoManager(this);
             AddDefaultStyles(_workBook);
@@ -245,8 +249,9 @@ namespace DevBrewLabs.WPF.Spreadsheet
             if (SheetViews.ActiveSheetView != null)
             {
                 var activeSheetView = SheetViews.ActiveSheetView.As<SheetView>();
-                var columnHeaderHeight = activeSheetView.GetColumnHeaderHeight();
-                var rowHeaderWidth = activeSheetView.GetRowHeaderWidth();
+                double zoom = activeSheetView.ZoomFactor > 0 ? activeSheetView.ZoomFactor : 1.0;
+                var columnHeaderHeight = activeSheetView.GetColumnHeaderHeight() * zoom;
+                var rowHeaderWidth = activeSheetView.GetRowHeaderWidth() * zoom;
 
                 var panePoint = TranslatePoint(point, SheetViewPane);
 
@@ -495,6 +500,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         {
             base.OnDpiChanged(oldDpi, newDpi);
             PixelPerDip = newDpi.PixelsPerDip;
+            TextLayoutCache.Clear();
             Invalidate();
         }
 

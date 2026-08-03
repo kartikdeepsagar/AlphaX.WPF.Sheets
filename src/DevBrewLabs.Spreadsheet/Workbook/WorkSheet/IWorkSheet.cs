@@ -52,10 +52,7 @@ namespace DevBrewLabs.Spreadsheet
         /// Gets or sets the default column width for this sheet.
         /// </summary>
         int DefaultColumnWidth { get; set; }
-        /// <summary>
-        /// Gets or sets whether multiline text in cells is enabled.
-        /// </summary>
-        bool AllowMultiLineText { get; set; }
+
         /// <summary>
         /// Gets row collection of this sheet.
         /// </summary>

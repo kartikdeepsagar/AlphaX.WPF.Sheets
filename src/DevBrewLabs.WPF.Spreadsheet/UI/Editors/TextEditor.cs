@@ -79,7 +79,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Editors
             Key key = e.Key == Key.System ? e.SystemKey : e.Key;
             if (key == Key.Enter && (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Alt) || Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)))
             {
-                if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                if (!AcceptsReturn)
                     return;
 
                 e.Handled = true;
@@ -95,10 +95,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Editors
 
                 if (SheetView != null)
                 {
+                    double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
                     var cellRect = SheetView.ViewPort.GetCellRect(Row, Column);
                     int lineCount = TextUtils.GetLineCount(Text);
                     double fontLineHeight = FontSize * 1.3;
-                    double requiredHeight = Math.Max(cellRect.Height - 3, lineCount * fontLineHeight + 6);
+                    double requiredHeight = Math.Max(cellRect.Height * zoom - 3, lineCount * fontLineHeight + 6);
                     Height = requiredHeight;
                 }
                 return;

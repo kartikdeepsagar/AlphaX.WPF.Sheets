@@ -1,9 +1,9 @@
-﻿using DevBrewLabs.Spreadsheet.Drawing;
+using DevBrewLabs.Spreadsheet.Drawing;
 using System;
 
 namespace DevBrewLabs.Spreadsheet
 {
-    public interface IStyle : ICloneable<IStyle>
+    public interface IStyle
     {
         /// <summary>
         /// Gets or sets the foreground color.
@@ -41,5 +41,17 @@ namespace DevBrewLabs.Spreadsheet
         /// Gets or sets the horizontal aligment.
         /// </summary>
         HorizontalAlignment HorizontalAlignment { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether to allow multi-line text.
+        /// </summary>
+        bool AllowMultiLineText { get; set; }
+        /// <summary>
+        /// Gets or sets the text trimming mode.
+        /// </summary>
+        TextTrimming TextTrimming { get; set; }
+        /// <summary>
+        /// Gets or sets the text wrapping mode.
+        /// </summary>
+        TextWrapping TextWrapping { get; set; }
     }
 }
