@@ -1,4 +1,5 @@
 using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using System.Windows;
 using System.Windows.Media;
 
@@ -8,6 +9,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
     {
         private Typeface _typeFace;
         private GlyphTypeface _glyphTypeface;
+        private GlyphMetrics _glyphMetrics;
 
         internal Brush Background { get; private set; }
         internal Brush Foreground { get; private set; }
@@ -24,6 +26,17 @@ namespace DevBrewLabs.WPF.Spreadsheet
                     CreateTypeFace();
 
                 return _glyphTypeface;
+            }
+        }
+
+        internal Rendering.Text.GlyphMetrics GlyphMetrics
+        {
+            get
+            {
+                if (_glyphMetrics == null)
+                    CreateTypeFace();
+
+                return _glyphMetrics;
             }
         }
 
@@ -104,7 +117,11 @@ namespace DevBrewLabs.WPF.Spreadsheet
             _typeFace = new Typeface(WpfFontFamily, WpfFontStyle, WpfFontWeight, FontStretches.Normal, new FontFamily("Arial"));
             
             if(createGlyph)
+            {
                 _typeFace.TryGetGlyphTypeface(out _glyphTypeface);
+                if (_glyphTypeface != null)
+                    _glyphMetrics = new Rendering.Text.GlyphMetrics(_glyphTypeface);
+            }
         }
 
         public override void OnPropertyChanged(string propertyName)
@@ -144,6 +161,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             return new WPFStyle()
             {
                 _glyphTypeface = this._glyphTypeface,
+                _glyphMetrics = this._glyphMetrics,
                 BackColor = base.BackColor,
                 FontFamily = base.FontFamily,
                 FontWeight = base.FontWeight,

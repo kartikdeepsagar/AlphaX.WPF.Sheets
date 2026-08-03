@@ -1,6 +1,7 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
 using DevBrewLabs.WPF.Spreadsheet.Rendering;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System.Globalization;
 using System.Windows;
@@ -29,7 +30,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                     value = formatter.Format(value);
                 }
 
-                context.DrawText((string)value, cellRect, style, pixelPerDip, false, allowMultiLineText, zoomFactor);
+                var renderContext = new RenderContext(zoomFactor, pixelPerDip, 5.0, true);
+                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext, false, allowMultiLineText);
             }
         }
 

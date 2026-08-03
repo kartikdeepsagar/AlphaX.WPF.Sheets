@@ -56,8 +56,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cellRect = new Rect(x, y, scaledColumnWidth, scaledRowHeight);
 
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.ColumnHeader);
-                    var style = baseStyle.GetWpfStyle().Clone() as WPFStyle;
-                    style.FontSize = baseStyle.FontSize * zoom;
+                    var style = baseStyle.GetWpfStyle();
 
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, SheetView.Spread.PixelPerDip, zoom);
                 }
@@ -116,14 +115,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
         private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, WPFStyle style, Rect cellRect, double pixelPerDip, double zoom)
         {
+            var renderContext = new DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext(zoom, pixelPerDip, 5.0, true);
+            
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
             if (cell != null && cell.Value != null)
             {
-                context.DrawText(cell.Value.ToString(), cellRect, style, pixelPerDip, true, true, zoom);
+                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext, true, true);
             }
             else
             {
-                context.DrawText(RenderingExtensions.GetColumnHeader(column), cellRect, style, pixelPerDip, false, true, zoom);
+                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, RenderingExtensions.GetColumnHeader(column), cellRect, style, renderContext, false, true);
             }
         }      
     }

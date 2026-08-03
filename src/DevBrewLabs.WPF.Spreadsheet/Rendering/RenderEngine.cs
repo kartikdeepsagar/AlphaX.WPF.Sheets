@@ -20,11 +20,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         internal Renderer TopLeftRenderer { get; }
         #endregion
 
-        public RenderInfo RenderInfo { get; }
-
         public RenderEngine()
         {
-            RenderInfo = new RenderInfo();
             CellsRenderer = new CellsRenderer();
             GridLinesRenderer = new GridLinesRenderer();
             RowHeadersRenderer = new RowHeadersRenderer();
@@ -52,7 +49,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private void InitRender()
         {
             _dispatcherDisabled = Dispatcher.CurrentDispatcher.DisableProcessing();
-            RenderInfo.ViewPortGeometry = null;
         }
 
         public void EndRender()

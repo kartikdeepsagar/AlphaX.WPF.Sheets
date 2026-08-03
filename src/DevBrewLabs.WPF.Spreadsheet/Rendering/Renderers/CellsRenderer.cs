@@ -79,8 +79,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cellRect = new Rect(x, y, scaledColumnWidth - penThickness, scaledRowHeight - penThickness);
 
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
-                    var style = baseStyle.GetWpfStyle().Clone() as WPFStyle;
-                    style.FontSize = baseStyle.FontSize * zoom;
+                    var style = baseStyle.GetWpfStyle();
 
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
                     cellType.DrawCell(context, value, style, formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText, zoom);

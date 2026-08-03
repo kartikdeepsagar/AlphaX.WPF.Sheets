@@ -25,7 +25,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                 if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
                     style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
 
-                context.DrawText(Text, cellRect, style, pixelPerDip, false, allowMultiLineText, zoomFactor);
+                var renderContext = new DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext(zoomFactor, pixelPerDip, 5.0, true);
+                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, Text, cellRect, style, renderContext, false, allowMultiLineText);
             }
         }
 
