@@ -67,7 +67,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
 
             if (editor is TextEditor gcTextBox)
             {
-                gcTextBox.AcceptsReturn = workSheet.AllowMultiLineText;
+                gcTextBox.AcceptsReturn = style.AllowMultiLineText;
             }
 
             editor.Row = row;
@@ -101,7 +101,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                 editor.MinWidth = System.Math.Max(0, cellRect.Width * zoom - 3);
 
                 int initialLineCount = TextUtils.GetLineCount(editor.Text);
-                if (workSheet.AllowMultiLineText && initialLineCount > 1)
+                if (style.AllowMultiLineText && initialLineCount > 1)
                 {
                     double initialLineHeight = editor.FontSize * 1.3;
                     editor.Height = System.Math.Max(cellRect.Height * zoom - 3, initialLineCount * initialLineHeight + 6);

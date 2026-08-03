@@ -155,23 +155,5 @@ namespace DevBrewLabs.WPF.Spreadsheet
                     break;
             }
         }
-
-        public override IStyle Clone()
-        {
-            return new WPFStyle()
-            {
-                _glyphTypeface = this._glyphTypeface,
-                _glyphMetrics = this._glyphMetrics,
-                BackColor = base.BackColor,
-                FontFamily = base.FontFamily,
-                FontWeight = base.FontWeight,
-                FontStyle = base.FontStyle,
-                Padding = base.Padding,
-                FontSize = base.FontSize,
-                ForeColor = base.ForeColor,
-                VerticalAlignment = base.VerticalAlignment,
-                HorizontalAlignment = base.HorizontalAlignment,
-            };
-        }
     }
 }

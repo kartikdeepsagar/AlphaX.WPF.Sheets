@@ -1,4 +1,4 @@
-﻿namespace DevBrewLabs.WPF.Spreadsheet
+namespace DevBrewLabs.Spreadsheet
 {
     internal static class StyleKeys
     {

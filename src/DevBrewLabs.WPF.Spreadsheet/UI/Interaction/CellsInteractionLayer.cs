@@ -235,7 +235,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Interaction
                     {
                         if (editingManager.IsEditing && editingManager.ActiveEditor is TextEditor textBox)
                         {
-                            if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                            if (!textBox.AcceptsReturn)
                                 return;
 
                             e.Handled = true;

@@ -79,7 +79,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Editors
             Key key = e.Key == Key.System ? e.SystemKey : e.Key;
             if (key == Key.Enter && (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Alt) || Keyboard.Modifiers.HasFlag(ModifierKeys.Alt)))
             {
-                if (SheetView != null && !SheetView.WorkSheet.AllowMultiLineText)
+                if (!AcceptsReturn)
                     return;
 
                 e.Handled = true;

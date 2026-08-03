@@ -3,6 +3,7 @@ using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System.Windows;
 using System.Windows.Media;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -21,6 +22,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             AdjustHeaderWidth(workSheet, rows, columns, cells, topRow, leftColumn, bottomRow, rightColumn);
 
             double halfPenWidth = SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip / 2;
+            var renderContext = new RenderContext(zoom, SheetView.Spread.PixelPerDip, 5.0, true);
+
             GuidelineSet guidelines = new GuidelineSet();
             context.PushGuidelineSet(guidelines);
 
@@ -62,7 +65,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
                     var style = baseStyle.GetWpfStyle();
 
-                    DrawRowHeaderCell(context, row, cell, style, cellRect, SheetView.Spread.PixelPerDip, zoom);
+                    DrawRowHeaderCell(context, row, cell, style, cellRect, renderContext);
                 }
             }
 
@@ -154,18 +157,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
-        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, double pixelPerDip, double zoom)
+        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext renderContext)
         {
-            var renderContext = new DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext(zoom, pixelPerDip, 5.0, true);
             context.DrawRectangle(style.Background, SheetView.Spread.GridLinePen, cellRect);
 
             if (cell != null && cell.Value != null)
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext, false, true);
+                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
             }
             else
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, (row + 1).ToString(), cellRect, style, renderContext, false, true);
+                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, (row + 1).ToString(), cellRect, style, renderContext);
             }
         }
     }

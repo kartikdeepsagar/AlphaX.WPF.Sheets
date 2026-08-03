@@ -4,14 +4,15 @@ using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
     public class DateTimeCellType : TextCellType
     {
-        public string Format { get; set; }
+        public string Format { get; set; } = "d";
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true, double zoomFactor = 1.0)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
             if (value == null)
                 return;
@@ -19,10 +20,22 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
                 style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
-            if (!string.IsNullOrEmpty(Format))
-                base.DrawCell(context, ((DateTime)value).ToString(Format), style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
+            DateTime? date = null;
+            if (value is DateTime)
+                date = (DateTime)value;
+            else if (value is string s && DateTime.TryParse(s, out var parsed))
+                date = parsed;
+            else if (value is double d)
+                date = DateTime.FromOADate(d);
+
+            if (date.HasValue)
+            {
+                base.DrawCell(context, date.Value.ToString(Format), style, formatter, cellRect, renderContext);
+            }
             else
-                base.DrawCell(context, formatter.Format(value), style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
+            {
+                base.DrawCell(context, value.ToString(), style, formatter, cellRect, renderContext);
+            }
         }
 
         public override EditorBase GetEditor(WPFStyle style)

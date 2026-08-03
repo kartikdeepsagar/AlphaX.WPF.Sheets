@@ -15,7 +15,6 @@ namespace SpreadsheetSampleExplorer
             InitializeComponent();
             spread.MouseDoubleClick += Spread_MouseDoubleClick;
             var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
-            worksheet.AllowMultiLineText = true;
             spread.ScrollMode = DevBrewLabs.WPF.Spreadsheet.SheetScrollMode.Pixel;
         }
 

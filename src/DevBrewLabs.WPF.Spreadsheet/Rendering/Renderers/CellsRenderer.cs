@@ -1,5 +1,6 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.CellTypes;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             double zoom = SheetView.ZoomFactor > 0 ? SheetView.ZoomFactor : 1.0;
             double penThickness = SheetView.Spread.GridLinePen.Thickness;
             double halfPenWidth = (penThickness * SheetView.Spread.PixelPerDip) / 2;
+            
+            var renderContext = new RenderContext(zoom, SheetView.Spread.PixelPerDip, 5.0, true);
+            
             GuidelineSet guidelines = new GuidelineSet();
             context.PushGuidelineSet(guidelines);
 
@@ -82,7 +86,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var style = baseStyle.GetWpfStyle();
 
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
-                    cellType.DrawCell(context, value, style, formatter, cellRect, SheetView.Spread.PixelPerDip, workSheet.AllowMultiLineText, zoom);
+                    cellType.DrawCell(context, value, style, formatter, cellRect, renderContext);
                 }
             }
 

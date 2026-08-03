@@ -12,14 +12,12 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             string text,
             Rect bounds,
             WPFStyle style,
-            RenderContext renderContext,
-            bool characterEllipses = false,
-            bool allowMultiLineText = true)
+            RenderContext renderContext)
         {
             if (string.IsNullOrEmpty(text))
                 return;
 
-            if (!allowMultiLineText)
+            if (!style.AllowMultiLineText)
             {
                 text = TextUtils.NormalizeToSingleLine(text);
             }
@@ -45,7 +43,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
 
             double scaledFontSize = style.FontSize * renderContext.Zoom;
 
-            string[] lines = allowMultiLineText && text.IndexOf('\n') >= 0 
+            string[] lines = style.AllowMultiLineText && text.IndexOf('\n') >= 0 
                 ? text.Split('\n') 
                 : new[] { text };
 
@@ -57,7 +55,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             {
                 // Remove \r if present
                 string line = lines[i].TrimEnd('\r');
-                layouts[i] = TextLayoutCache.GetOrCreate(line, availableWidth, scaledFontSize, style, renderContext, characterEllipses);
+                layouts[i] = TextLayoutCache.GetOrCreate(line, availableWidth, scaledFontSize, style, renderContext, style.TextTrimming == DevBrewLabs.Spreadsheet.TextTrimming.Character);
                 totalHeight += layouts[i].Height;
             }
 

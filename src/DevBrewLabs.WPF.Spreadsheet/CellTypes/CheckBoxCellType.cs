@@ -5,6 +5,8 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
+
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
     public class CheckBoxCellType : BaseCellType
@@ -28,9 +30,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             IsThreeState = false;
         }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true, double zoomFactor = 1.0)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
-            var scaledCheckBoxSize = new Size(CheckBoxSize.Width * zoomFactor, CheckBoxSize.Height * zoomFactor);
+            var scaledCheckBoxSize = new Size(CheckBoxSize.Width * renderContext.Zoom, CheckBoxSize.Height * renderContext.Zoom);
             var checkBoxRect = cellRect.ToCellCheckBoxRect(scaledCheckBoxSize);
             var halfPenWidth = _pen.Thickness / 2;
             GuidelineSet guidelines = new GuidelineSet();
@@ -40,7 +42,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             guidelines.GuidelinesY.Add(checkBoxRect.Bottom + halfPenWidth);
             context.PushGuidelineSet(guidelines);
 
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
             context.DrawRectangle(null, _pen, checkBoxRect);
             DrawMark(context, checkBoxRect, value);

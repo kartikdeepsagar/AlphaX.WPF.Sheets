@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media;
+using DevBrewLabs.Spreadsheet;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {

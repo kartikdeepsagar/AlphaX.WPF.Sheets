@@ -11,9 +11,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
     public class TextCellType : BaseCellType
     {
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, double pixelPerDip, bool allowMultiLineText = true, double zoomFactor = 1.0)
+        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
-            base.DrawCell(context, value, style, formatter, cellRect, pixelPerDip, allowMultiLineText, zoomFactor);
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
             if (value != null && !string.IsNullOrEmpty(value.ToString()))
             {
@@ -30,8 +30,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                     value = formatter.Format(value);
                 }
 
-                var renderContext = new RenderContext(zoomFactor, pixelPerDip, 5.0, true);
-                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext, false, allowMultiLineText);
+                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext);
             }
         }
 

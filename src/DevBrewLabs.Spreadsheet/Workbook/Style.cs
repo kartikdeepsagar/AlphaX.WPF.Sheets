@@ -1,4 +1,4 @@
-﻿using DevBrewLabs.Spreadsheet.Drawing;
+using DevBrewLabs.Spreadsheet.Drawing;
 using System.ComponentModel;
 
 namespace DevBrewLabs.Spreadsheet
@@ -14,6 +14,9 @@ namespace DevBrewLabs.Spreadsheet
         private Thickness? _padding;
         private HorizontalAlignment? _hAligment;
         private VerticalAlignment? _vAligment;
+        private bool? _allowMultiLineText;
+        private TextTrimming? _textTrimming;
+        private TextWrapping? _textWrapping;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -137,6 +140,45 @@ namespace DevBrewLabs.Spreadsheet
             }
         }
 
+        public bool AllowMultiLineText
+        {
+            get
+            {
+                return _allowMultiLineText.Value;
+            }
+            set
+            {
+                _allowMultiLineText = value;
+                OnPropertyChanged(nameof(AllowMultiLineText));
+            }
+        }
+
+        public TextTrimming TextTrimming
+        {
+            get
+            {
+                return _textTrimming.Value;
+            }
+            set
+            {
+                _textTrimming = value;
+                OnPropertyChanged(nameof(TextTrimming));
+            }
+        }
+
+        public TextWrapping TextWrapping
+        {
+            get
+            {
+                return _textWrapping.Value;
+            }
+            set
+            {
+                _textWrapping = value;
+                OnPropertyChanged(nameof(TextWrapping));
+            }
+        }
+
         public Style()
         {
             ForeColor = Color.Black;
@@ -148,22 +190,9 @@ namespace DevBrewLabs.Spreadsheet
             Padding = new Thickness(5, 5);
             HorizontalAlignment = HorizontalAlignment.Auto;
             VerticalAlignment = VerticalAlignment.Auto;
-        }
-
-        public virtual IStyle Clone()
-        {
-            return new Style()
-            {
-                BackColor = _backColor.Value,
-                FontFamily = _fontFamily,
-                FontSize = _fontSize.Value,
-                FontWeight = _fontWeight.Value,
-                FontStyle = _fontStyle.Value,
-                ForeColor = _foreColor.Value,
-                HorizontalAlignment = _hAligment.Value,
-                VerticalAlignment = _vAligment.Value,
-                Padding = _padding.Value,
-            };
+            AllowMultiLineText = true;
+            TextTrimming = TextTrimming.None;
+            TextWrapping = TextWrapping.NoWrap;
         }
 
         public virtual void OnPropertyChanged(string propertyName)
