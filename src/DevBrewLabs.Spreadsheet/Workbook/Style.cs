@@ -190,7 +190,7 @@ namespace DevBrewLabs.Spreadsheet
             Padding = new Thickness(5, 5);
             HorizontalAlignment = HorizontalAlignment.Auto;
             VerticalAlignment = VerticalAlignment.Auto;
-            AllowMultiLineText = true;
+            AllowMultiLineText = false;
             TextTrimming = TextTrimming.None;
             TextWrapping = TextWrapping.NoWrap;
         }

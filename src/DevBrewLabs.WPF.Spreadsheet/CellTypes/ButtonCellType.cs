@@ -21,10 +21,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 
             if(!string.IsNullOrEmpty(Text))
             {
-                if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                    style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
+                var align = style.HorizontalAlignment;
+                if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                    align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
 
-                TextRenderer.DrawText(context, Text, cellRect, style, renderContext);
+                TextRenderer.DrawText(context, Text, cellRect, style, renderContext, align);
             }
         }
 

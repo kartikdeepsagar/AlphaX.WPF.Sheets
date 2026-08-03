@@ -8,17 +8,20 @@ using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
-    public class DateTimeCellType : TextCellType
+    public class DateTimeCellType : BaseCellType
     {
         public string Format { get; set; } = "d";
 
         internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
+
             if (value == null)
                 return;
 
-            if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+            var align = style.HorizontalAlignment;
+            if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
             DateTime? date = null;
             if (value is DateTime)
@@ -28,14 +31,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             else if (value is double d)
                 date = DateTime.FromOADate(d);
 
+            string textToDraw;
             if (date.HasValue)
             {
-                base.DrawCell(context, date.Value.ToString(Format), style, formatter, cellRect, renderContext);
+                textToDraw = date.Value.ToString(Format);
             }
             else
             {
-                base.DrawCell(context, value.ToString(), style, formatter, cellRect, renderContext);
+                textToDraw = value.ToString();
             }
+            
+            TextRenderer.DrawText(context, textToDraw, cellRect, style, renderContext, align);
         }
 
         public override EditorBase GetEditor(WPFStyle style)

@@ -65,6 +65,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             if (!UseCellValue)
                 editor.Text = "";
 
+            editor.CaretIndex = editor.Text.Length;
+
             if (editor is TextEditor gcTextBox)
             {
                 gcTextBox.AcceptsReturn = style.AllowMultiLineText;

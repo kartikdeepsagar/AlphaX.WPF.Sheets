@@ -8,22 +8,28 @@ using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
-    public class NumberCellType : TextCellType
+    public class NumberCellType : BaseCellType
     {
         public string Format { get; set; }
 
         internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
+            base.DrawCell(context, value, style, formatter, cellRect, renderContext);
+
             if (value == null)
                 return;
 
-            if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+            var align = style.HorizontalAlignment;
+            if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
+            string textToDraw;
             if (!string.IsNullOrEmpty(Format))
-                base.DrawCell(context, string.Format($"{{0:{Format}}}", value), style, formatter, cellRect, renderContext);
+                textToDraw = string.Format($"{{0:{Format}}}", value);
             else
-                base.DrawCell(context, formatter.Format(value), style, formatter, cellRect, renderContext);
+                textToDraw = formatter.Format(value);
+
+            TextRenderer.DrawText(context, textToDraw, cellRect, style, renderContext, align);
         }
 
         /// <inheritdoc/>

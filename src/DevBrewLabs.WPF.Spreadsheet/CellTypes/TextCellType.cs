@@ -17,20 +17,21 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 
             if (value != null && !string.IsNullOrEmpty(value.ToString()))
             {
+                var align = style.HorizontalAlignment;
                 if (value is string)
                 {
-                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
+                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
                 }
                 else
                 {
-                    if (style.HorizontalAlignment == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        style.HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
+                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
 
                     value = formatter.Format(value);
                 }
 
-                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext);
+                TextRenderer.DrawText(context, (string)value, cellRect, style, renderContext, align);
             }
         }
 

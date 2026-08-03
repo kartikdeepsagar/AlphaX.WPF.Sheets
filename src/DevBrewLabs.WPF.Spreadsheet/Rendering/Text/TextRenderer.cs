@@ -12,7 +12,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             string text,
             Rect bounds,
             WPFStyle style,
-            RenderContext renderContext)
+            RenderContext renderContext,
+            DevBrewLabs.Spreadsheet.HorizontalAlignment? alignment = null)
         {
             if (string.IsNullOrEmpty(text))
                 return;
@@ -87,7 +88,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
                 if (layout.GlyphCount > 0)
                 {
                     double x;
-                    switch (style.HorizontalAlignment)
+                    var effectiveAlignment = alignment ?? style.HorizontalAlignment;
+                    switch (effectiveAlignment)
                     {
                         case DevBrewLabs.Spreadsheet.HorizontalAlignment.Center:
                             x = bounds.Left + (bounds.Width - layout.Width) / 2;
