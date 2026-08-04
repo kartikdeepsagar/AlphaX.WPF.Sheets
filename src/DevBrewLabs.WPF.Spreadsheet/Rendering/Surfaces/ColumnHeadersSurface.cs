@@ -11,10 +11,12 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private WorkSheet _workSheet;
         private ViewPort _viewPort;
         private readonly int _resizeDelta;
+        private DrawingGroup _drawing;
 
         public ColumnHeadersSurface()
         {
             _resizeDelta = 5;
+            _drawing = new DrawingGroup();
         }
 
         public override void AttachSheet(SheetView sheetView)
@@ -22,11 +24,15 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             base.AttachSheet(sheetView);
             _workSheet = sheetView.WorkSheet;
             _viewPort = sheetView.ViewPort.As<ViewPort>();
+
+            _drawing.Children.Clear();
+            _drawing.Children.Add(sheetView.Spread.RenderEngine.ColumnHeadersRenderer.Drawing);
+            _drawing.Children.Add(sheetView.Spread.RenderEngine.ColumnHeaderGridLinesRenderer.Drawing);
         }
 
         protected override Drawing GetDrawing()
         {
-            return SheetView.Spread.RenderEngine.ColumnHeadersRenderer.Drawing;
+            return _drawing;
         }
 
         protected override SpreadHitTestResult HitTestCore(SheetView sheetView, Point hitPoint)

@@ -17,6 +17,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         internal Renderer CellsRenderer { get; }
         internal Renderer RowHeadersRenderer { get; }
         internal Renderer ColumnHeadersRenderer { get; }
+        internal Renderer RowHeaderGridLinesRenderer { get; }
+        internal Renderer ColumnHeaderGridLinesRenderer { get; }
         internal Renderer TopLeftRenderer { get; }
         #endregion
 
@@ -26,6 +28,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             GridLinesRenderer = new GridLinesRenderer();
             RowHeadersRenderer = new RowHeadersRenderer();
             ColumnHeadersRenderer = new ColumnHeadersRenderer();
+            RowHeaderGridLinesRenderer = new RowHeaderGridLinesRenderer();
+            ColumnHeaderGridLinesRenderer = new ColumnHeaderGridLinesRenderer();
             TopLeftRenderer = new TopLeftRenderer();
         }
 
@@ -37,6 +41,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             GridLinesRenderer.SetRenderSheet(sheetView);
             RowHeadersRenderer.SetRenderSheet(sheetView);
             ColumnHeadersRenderer.SetRenderSheet(sheetView);
+            RowHeaderGridLinesRenderer.SetRenderSheet(sheetView);
+            ColumnHeaderGridLinesRenderer.SetRenderSheet(sheetView);
             TopLeftRenderer.SetRenderSheet(sheetView);
         }
 
@@ -57,6 +63,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             GridLinesRenderer.EndRender();
             RowHeadersRenderer.EndRender();
             ColumnHeadersRenderer.EndRender();
+            RowHeaderGridLinesRenderer.EndRender();
+            ColumnHeaderGridLinesRenderer.EndRender();
             TopLeftRenderer.EndRender();
             _dispatcherDisabled.Dispose();
         }
@@ -80,11 +88,27 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
+        public void DrawRowHeaderGridLines(int topRow, int bottomRow)
+        {
+            if (_sheetView.HeadersVisibility == HeadersVisibility.Row || _sheetView.HeadersVisibility == HeadersVisibility.Both)
+            {
+                RowHeaderGridLinesRenderer.Render(topRow, 0, bottomRow, _workSheet.RowHeaders.ColumnCount - 1);
+            }
+        }
+
         public void DrawColumnHeaderCells(int leftCol, int rightCol)
         {
             if (_sheetView.HeadersVisibility == HeadersVisibility.Column || _sheetView.HeadersVisibility == HeadersVisibility.Both)
             {
                 ColumnHeadersRenderer.Render(0, leftCol, _workSheet.ColumnHeaders.RowCount - 1, rightCol);
+            }
+        }
+
+        public void DrawColumnHeaderGridLines(int leftCol, int rightCol)
+        {
+            if (_sheetView.HeadersVisibility == HeadersVisibility.Column || _sheetView.HeadersVisibility == HeadersVisibility.Both)
+            {
+                ColumnHeaderGridLinesRenderer.Render(0, leftCol, _workSheet.ColumnHeaders.RowCount - 1, rightCol);
             }
         }
 
