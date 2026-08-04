@@ -1,5 +1,6 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Drawing;
+using DevBrewLabs.Spreadsheet.Sorting;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -94,6 +95,7 @@ namespace SpreadsheetSampleExplorer.Samples
             var selection = spread.SheetViews.ActiveSheetView.Selection;
             if (selection != null && selection.RowCount > 1)
             {
+                // Respect the exact selected range
                 return selection;
             }
 
@@ -101,16 +103,76 @@ namespace SpreadsheetSampleExplorer.Samples
             return new CellRange(1, 0, TotalRows, TotalCols);
         }
 
+        private int GetTargetSortColumn()
+        {
+            var selection = spread.SheetViews.ActiveSheetView.Selection;
+            if (selection != null)
+            {
+                // If a range is selected, sort by the first column of that range.
+                // If a single cell is selected (which defaults to sorting the whole table), sort by that cell's column.
+                return selection.LeftColumn;
+            }
+            return 0;
+        }
+
         private void OnSortAscending(object sender, RoutedEventArgs e)
         {
             var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
-            worksheet.SortRange(GetTargetSortRange(), true);
+            var range = GetTargetSortRange();
+            var options = new SortOptions();
+            options.SortLevels.Add(new SortInfo(GetTargetSortColumn(), true));
+            worksheet.SortRange(range, options);
         }
 
         private void OnSortDescending(object sender, RoutedEventArgs e)
         {
             var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
-            worksheet.SortRange(GetTargetSortRange(), false);
+            var range = GetTargetSortRange();
+            var options = new SortOptions();
+            options.SortLevels.Add(new SortInfo(GetTargetSortColumn(), false));
+            worksheet.SortRange(range, options);
+        }
+
+        private void OnMultiLevelSort(object sender, RoutedEventArgs e)
+        {
+            var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
+            var range = GetTargetSortRange();
+            
+            var options = new SortOptions();
+            // Level 1: Category (Column 2), Ascending
+            options.SortLevels.Add(new SortInfo(2, true));
+            // Level 2: Rating (Column 7), Descending
+            options.SortLevels.Add(new SortInfo(7, false));
+            
+            worksheet.SortRange(range, options);
+        }
+
+        private void OnCustomSort(object sender, RoutedEventArgs e)
+        {
+            var worksheet = spread.SheetViews.ActiveSheetView.WorkSheet;
+            var range = GetTargetSortRange();
+            
+            var options = new SortOptions();
+            // Sort by string length ascending
+            options.SortLevels.Add(new SortInfo(GetTargetSortColumn(), true) { CustomComparer = new StringLengthComparer() });
+            
+            worksheet.SortRange(range, options);
+        }
+
+        private class StringLengthComparer : ISortComparer
+        {
+            public int Compare(object x, object y)
+            {
+                string s1 = x?.ToString() ?? string.Empty;
+                string s2 = y?.ToString() ?? string.Empty;
+                
+                int lenCompare = s1.Length.CompareTo(s2.Length);
+                if (lenCompare == 0)
+                {
+                    return string.Compare(s1, s2, StringComparison.OrdinalIgnoreCase);
+                }
+                return lenCompare;
+            }
         }
     }
 }

@@ -163,7 +163,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
                 {
                     var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key), SheetRegion.RowHeader);
                     var wpfStyle = style.GetWpfStyle();
-                    var textWidth = DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextMeasurer.MeasureWidth(cellValue.Value.ToString(), style.FontSize, wpfStyle?.GlyphMetrics);
+                    var textWidth = TextMeasurer.MeasureWidth(cellValue.Value.ToString(), style.FontSize, wpfStyle?.GlyphMetrics);
                     width = Math.Max(width, (int)Math.Ceiling(textWidth) + 11);
                 }
             }

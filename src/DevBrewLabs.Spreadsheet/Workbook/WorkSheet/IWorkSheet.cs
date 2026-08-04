@@ -1,5 +1,6 @@
 using DevBrewLabs.Spreadsheet.Data;
 using DevBrewLabs.Spreadsheet.Filtering;
+using DevBrewLabs.Spreadsheet.Sorting;
 using System;
 
 namespace DevBrewLabs.Spreadsheet
@@ -101,8 +102,7 @@ namespace DevBrewLabs.Spreadsheet
         /// <returns></returns>
         object[,] GetData(int row, int column, int rowCount, int columnCount);
         /// <summary>
-        /// Directly loads a 2D data array into columnar storage starting at the specified position.
-        /// Bypasses Cell instance creation for maximum load performance.
+        /// Loads the provided 2D object array into the worksheet starting from the specified row and column.
         /// </summary>
         /// <param name="data">The 2D object array to load.</param>
         /// <param name="startRow">The starting row index (default 0).</param>
@@ -111,9 +111,9 @@ namespace DevBrewLabs.Spreadsheet
         /// <summary>
         /// Sorts the provided cell range.
         /// </summary>
-        /// <param name="range"></param>
-        /// <param name="ascending"></param>
-        void SortRange(CellRange range, bool ascending);
+        /// <param name="range">The cell range to sort.</param>
+        /// <param name="options">Options for the sort operation.</param>
+        void SortRange(CellRange range, SortOptions options);
         /// <summary>
         /// Clears worksheet.
         /// </summary>
@@ -136,10 +136,7 @@ namespace DevBrewLabs.Spreadsheet
         /// <summary>
         /// Sorts the complete worksheet.
         /// </summary>
-        /// <param name="ascending"></param>
-        /// <param name="keyColumn"></param>
-        /// <param name="hasHeader"></param>
-        /// <param name="sortColumnOnly"></param>
-        void Sort(bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false);
+        /// <param name="options">Options for the sort operation.</param>
+        void Sort(SortOptions options);
     }
 }

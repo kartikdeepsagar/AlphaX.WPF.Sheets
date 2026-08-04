@@ -1,10 +1,10 @@
 using DevBrewLabs.Spreadsheet.Core;
 using DevBrewLabs.Spreadsheet.Data;
 using DevBrewLabs.Spreadsheet.Filtering;
+using DevBrewLabs.Spreadsheet.Sorting;
 using DevBrewLabs.Spreadsheet.Utils;
 using System;
 using System.Collections.Generic;
-using static DevBrewLabs.Spreadsheet.Cells;
 
 namespace DevBrewLabs.Spreadsheet
 {
@@ -88,19 +88,19 @@ namespace DevBrewLabs.Spreadsheet
             _columnStore = new Dictionary<int, ColumnData>();
         }
 
-        public void SortRange(CellRange range, bool ascending)
+        public void SortRange(CellRange range, DevBrewLabs.Spreadsheet.Sorting.SortOptions options)
         {
-            SortImpl(range, ascending, range.LeftColumn);
+            SortImpl(range, options);
         }
 
-        public void Sort(bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false)
+        public void Sort(DevBrewLabs.Spreadsheet.Sorting.SortOptions options)
         {
             SortImpl(new CellRange(
                 _cells.Row, 
                 _cells.Column, 
                 _cells.RowCount, 
                 _cells.ColumnCount), 
-                ascending, keyColumn, hasHeader, sortColumnOnly);
+                options);
         }
 
 
@@ -174,41 +174,47 @@ namespace DevBrewLabs.Spreadsheet
             _cells.ClearColumnCells(column);
         }
 
-        private void SortImpl(CellRange range, bool ascending, int keyColumn, bool hasHeader = false, bool sortColumnOnly = false)
+        private void SortImpl(CellRange range, SortOptions options)
         {
             int startRow = range.TopRow;
-            int totalRows = RowCount;
+            int totalRows = range.RowCount;
             int startCol = range.LeftColumn;
+            int totalCols = range.ColumnCount;
 
-            if(keyColumn < range.LeftColumn || keyColumn > range.RightColumn)
-            {
-                keyColumn = range.LeftColumn;
-            }
-
-            int totalCols = ColumnCount;
+            if (options == null || options.SortLevels == null || options.SortLevels.Count == 0)
+                return;
 
             if (totalRows <= 1)
                 return;
 
-            int sortStartRow = hasHeader ? startRow + 1 : startRow;
-            int sortRowCount = hasHeader ? totalRows - 1 : totalRows;
+            int sortStartRow = options.HasHeader ? startRow + 1 : startRow;
+            int sortRowCount = options.HasHeader ? totalRows - 1 : totalRows;
 
             if (sortRowCount <= 1)
                 return;
 
-            int targetStartCol = sortColumnOnly ? keyColumn : startCol;
-            int targetEndCol = sortColumnOnly ? keyColumn : (startCol + totalCols - 1);
+            int minCol = int.MaxValue;
+            int maxCol = int.MinValue;
+            foreach (var level in options.SortLevels)
+            {
+                if (level.ColumnIndex < minCol) minCol = level.ColumnIndex;
+                if (level.ColumnIndex > maxCol) maxCol = level.ColumnIndex;
+            }
+
+            if (minCol == int.MaxValue)
+            {
+                minCol = startCol;
+                maxCol = startCol;
+            }
+
+            int targetStartCol = options.SortColumnOnly ? minCol : startCol;
+            int targetEndCol = options.SortColumnOnly ? maxCol : (startCol + totalCols - 1);
 
             List<RowSnapshot> snapshots = new List<RowSnapshot>(sortRowCount);
 
             for (int r = sortStartRow; r < sortStartRow + sortRowCount; r++)
             {
-                object keyVal = DataStore.GetValue(r, keyColumn);
-
-                if (keyVal == null)
-                    keyVal = _cells.GetCell(r, keyColumn, false)?.Value;
-
-                var snapshot = new RowSnapshot(r, keyVal);
+                var snapshot = new RowSnapshot(r, null);
 
                 for (int c = targetStartCol; c <= targetEndCol; c++)
                 {
@@ -223,7 +229,7 @@ namespace DevBrewLabs.Spreadsheet
                 snapshots.Add(snapshot);
             }
 
-            snapshots.Sort(new NaturalSortComparer(ascending));
+            snapshots.Sort(new MultiLevelSnapshotComparer(options, this));
 
             for (int i = 0; i < snapshots.Count; i++)
             {
@@ -411,6 +417,58 @@ namespace DevBrewLabs.Spreadsheet
                 OriginalRow = originalRow;
                 KeyValue = keyValue;
                 Data = new Dictionary<int, CellData>();
+            }
+        }
+
+        internal class MultiLevelSnapshotComparer : IComparer<RowSnapshot>
+        {
+            private readonly DevBrewLabs.Spreadsheet.Sorting.SortOptions _options;
+            private readonly NaturalSortComparer _defaultComparer;
+            private readonly WorkSheet _sheet;
+
+            public MultiLevelSnapshotComparer(DevBrewLabs.Spreadsheet.Sorting.SortOptions options, WorkSheet sheet)
+            {
+                _options = options;
+                _sheet = sheet;
+                _defaultComparer = new NaturalSortComparer(options.MatchCase);
+            }
+
+            public int Compare(RowSnapshot x, RowSnapshot y)
+            {
+                foreach (var level in _options.SortLevels)
+                {
+                    object valX = GetValue(x, level.ColumnIndex);
+                    object valY = GetValue(y, level.ColumnIndex);
+
+                    int result;
+                    if (level.CustomComparer != null)
+                    {
+                        result = level.CustomComparer.Compare(valX, valY);
+                    }
+                    else
+                    {
+                        result = _defaultComparer.Compare(valX, valY);
+                    }
+
+                    if (result != 0)
+                    {
+                        return level.Ascending ? result : -result;
+                    }
+                }
+                return 0;
+            }
+
+            private object GetValue(RowSnapshot snapshot, int col)
+            {
+                if (snapshot.Data.TryGetValue(col, out var cellData))
+                {
+                    return cellData.Value;
+                }
+                
+                object val = _sheet.DataStore.GetValue(snapshot.OriginalRow, col);
+                if (val == null)
+                    val = _sheet._cells.GetCell(snapshot.OriginalRow, col, false)?.Value;
+                return val;
             }
         }
         #endregion

@@ -70,7 +70,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var sheetColumn = columns.GetItem(col);
                     var sheetRow = rows.GetItem(row);
                     var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader).GetWpfStyle();
-                    var textWidth = DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextMeasurer
+                    var textWidth = TextMeasurer
                         .MeasureWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, style.GlyphMetrics);
                     textWidth += 10;
 
@@ -86,17 +86,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
-        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext renderContext)
+        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, RenderContext renderContext)
         {
             context.DrawRectangle(style.Background, null, cellRect);
 
             if (cell != null && cell.Value != null)
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
+                TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
             }
             else
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, (row + 1).ToString(), cellRect, style, renderContext);
+                TextRenderer.DrawText(context, (row + 1).ToString(), cellRect, style, renderContext);
             }
         }
     }

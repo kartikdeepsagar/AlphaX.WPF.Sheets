@@ -20,10 +20,10 @@
                     <TextBlock Text="Range Sorting:" VerticalAlignment="Center" FontSize="11.5" FontWeight="Medium" Foreground="#3F3F46" Margin="0,0,10,0"/>
                     <Button Content="Sort Ascending ▲" Style="{StaticResource ModernButton}" Click="OnSortAscending" Padding="10,4" FontSize="11" Margin="0,0,8,0"/>
                     <Button Content="Sort Descending ▼" Style="{StaticResource ModernOutlineButton}" Click="OnSortDescending" Padding="10,4" FontSize="11" Margin="0,0,14,0"/>
-                    <Border Background="#F4F4F5" BorderBrush="#E4E4E7" BorderThickness="1" CornerRadius="4" Padding="8,4" VerticalAlignment="Center">
-                        <TextBlock Text="Select any column range to trigger automated multi-row sorting." 
-                                   Foreground="#52525B" FontSize="11" VerticalAlignment="Center"/>
-                    </Border>
+                    
+                    <TextBlock Text="Advanced:" VerticalAlignment="Center" FontSize="11.5" FontWeight="Medium" Foreground="#3F3F46" Margin="0,0,10,0"/>
+                    <Button Content="Multi-Level Sort" Style="{StaticResource ModernOutlineButton}" Click="OnMultiLevelSort" Padding="10,4" FontSize="11" Margin="0,0,8,0" ToolTip="Sort by Category (Asc) then Rating (Desc)"/>
+                    <Button Content="Custom Sort" Style="{StaticResource ModernOutlineButton}" Click="OnCustomSort" Padding="10,4" FontSize="11" Margin="0,0,14,0" ToolTip="Sort active column by String Length"/>
                 </StackPanel>
             </DockPanel>
         </Border>
