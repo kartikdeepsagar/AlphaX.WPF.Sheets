@@ -1,6 +1,6 @@
 using DevBrewLabs.Evalis;
-using DevBrewLabs.WPF.Spreadsheet.Components;
 using DevBrewLabs.Spreadsheet.Utils;
+using DevBrewLabs.WPF.Spreadsheet.Components;
 using System;
 using System.Linq;
 using System.Windows;

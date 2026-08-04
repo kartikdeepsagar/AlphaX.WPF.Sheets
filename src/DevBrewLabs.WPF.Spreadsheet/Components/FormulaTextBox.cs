@@ -39,7 +39,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         public FormulaTextBox()
         {
             InitializeComponent();
-            HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            HorizontalAlignment = HorizontalAlignment.Stretch;
             UpdateExpandState();
         }
 

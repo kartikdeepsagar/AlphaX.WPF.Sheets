@@ -1,5 +1,5 @@
+using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Utils;
-using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -11,9 +11,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             DrawingContext drawingContext,
             string text,
             Rect bounds,
-            WPFStyle style,
+            IStyle style,
             RenderContext renderContext,
-            DevBrewLabs.Spreadsheet.HorizontalAlignment? alignment = null)
+            CellHorizontalAlignment? alignment = null)
         {
             if (string.IsNullOrEmpty(text))
                 return;
@@ -31,7 +31,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             {
                 // Fallback behavior for unsupported scripts (e.g. Emoji, Arabic).
                 // We convert it to a string of '?' if we have a replacement glyph.
-                if (style.GlyphMetrics.ReplacementGlyph != 0)
+                if (Styling.WpfResourceCache.GetFontResources(style).GlyphMetrics.ReplacementGlyph != 0)
                 {
                     text = new string('?', text.Length);
                 }
@@ -56,17 +56,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             {
                 // Remove \r if present
                 string line = lines[i].TrimEnd('\r');
-                layouts[i] = TextLayoutCache.GetOrCreate(line, availableWidth, scaledFontSize, style, renderContext, style.TextTrimming == DevBrewLabs.Spreadsheet.TextTrimming.Character);
+                layouts[i] = TextLayoutCache.GetOrCreate(line, availableWidth, scaledFontSize, style, renderContext, style.TextTrimming == CellTextTrimming.Character);
                 totalHeight += layouts[i].Height;
             }
 
             double startY;
             switch (style.VerticalAlignment)
             {
-                case DevBrewLabs.Spreadsheet.VerticalAlignment.Top:
+                case CellVerticalAlignment.Top:
                     startY = bounds.Top + renderContext.TextPadding;
                     break;
-                case DevBrewLabs.Spreadsheet.VerticalAlignment.Center:
+                case CellVerticalAlignment.Center:
                     startY = bounds.Top + (bounds.Height - totalHeight) / 2;
                     if (startY < bounds.Top)
                         startY = bounds.Top;
@@ -80,7 +80,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
 
             startY = PixelSnapper.Snap(startY, renderContext.PixelsPerDip);
             double currentY = startY;
-            double ascent = style.GlyphMetrics.Baseline * scaledFontSize;
+            double ascent = Styling.WpfResourceCache.GetFontResources(style).GlyphMetrics.Baseline * scaledFontSize;
 
             for (int i = 0; i < layouts.Length; i++)
             {
@@ -91,10 +91,10 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
                     var effectiveAlignment = alignment ?? style.HorizontalAlignment;
                     switch (effectiveAlignment)
                     {
-                        case DevBrewLabs.Spreadsheet.HorizontalAlignment.Center:
+                        case CellHorizontalAlignment.Center:
                             x = bounds.Left + (bounds.Width - layout.Width) / 2;
                             break;
-                        case DevBrewLabs.Spreadsheet.HorizontalAlignment.Right:
+                        case CellHorizontalAlignment.Right:
                             x = bounds.Right - renderContext.TextPadding - layout.Width;
                             break;
                         default: // Left
@@ -109,11 +109,11 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
 
                     Point baselineOrigin = new Point(x, PixelSnapper.Snap(currentY + ascent, renderContext.PixelsPerDip));
                     
-                    var glyphRun = GlyphRunFactory.Create(layout, style.GlyphMetrics, scaledFontSize, renderContext, baselineOrigin);
+                    var glyphRun = GlyphRunFactory.Create(layout, Styling.WpfResourceCache.GetFontResources(style).GlyphMetrics, scaledFontSize, renderContext, baselineOrigin);
                     
                     if (glyphRun != null)
                     {
-                        drawingContext.DrawGlyphRun(style.Foreground, glyphRun);
+                        drawingContext.DrawGlyphRun(Styling.WpfResourceCache.GetBrush(style.ForeColor), glyphRun);
                     }
                 }
 
@@ -122,3 +122,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
         }
     }
 }
+
+
+

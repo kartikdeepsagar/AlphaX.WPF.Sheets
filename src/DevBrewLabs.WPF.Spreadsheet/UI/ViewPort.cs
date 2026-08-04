@@ -21,7 +21,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI
         internal ViewPort(SheetView sheetView)
         {
             _sheetView = sheetView;
-            _workSheet = sheetView.WorkSheet;
+            _workSheet = (WorkSheet)sheetView.WorkSheet;
             _rows = _workSheet.Rows.As<Rows>();
             _columns = _workSheet.Columns.As<Columns>();
             ViewRange = new CellRange(0, 0, 0, 0);

@@ -1,6 +1,5 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Drawing;
-using DevBrewLabs.WPF.Spreadsheet;
 using System.Windows.Controls;
 
 namespace SpreadsheetSampleExplorer.Samples
@@ -49,19 +48,19 @@ namespace SpreadsheetSampleExplorer.Samples
         private void SetupSalesSheet(IWorkSheet sheet)
         {
             // Section Header Style
-            var titleStyle = new WPFStyle();
+            var titleStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
             titleStyle.FontSize = 14;
-            titleStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            titleStyle.ForeColor = Color.FromArgb(255, 16, 124, 65);
+            titleStyle.FontWeight = CellFontWeight.Bold;
+            titleStyle.ForeColor = CellColor.FromArgb(255, 16, 124, 65);
 
             sheet.Cells[0, 0].Value = "REGIONAL SALES PERFORMANCE (DEPENDENT FORMULAS)";
             sheet.Cells[0, 0].Style = titleStyle;
 
             // Table Header Style
-            var headerStyle = new WPFStyle();
-            headerStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            headerStyle.BackColor = Color.FromArgb(255, 16, 124, 65); // Green Header
-            headerStyle.ForeColor = Color.White;
+            var headerStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            headerStyle.FontWeight = CellFontWeight.Bold;
+            headerStyle.BackColor = CellColor.FromArgb(255, 16, 124, 65); // Green Header
+            headerStyle.ForeColor = CellColor.White;
 
             string[] headers = { "Region", "Units Sold", "Unit Price ($)", "Subtotal ($)", "Tax (8%)", "Net Total ($)", "Avg per Unit ($)" };
             for (int col = 0; col < headers.Length; col++)
@@ -105,8 +104,8 @@ namespace SpreadsheetSampleExplorer.Samples
 
             // Summary Row at Row 9 (0-indexed: 8)
             int summaryRow = 8;
-            var summaryStyle = new WPFStyle();
-            summaryStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
+            var summaryStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            summaryStyle.FontWeight = CellFontWeight.Bold;
 
             sheet.Cells[summaryRow, 0].Value = "Total / Overall";
             sheet.Cells[summaryRow, 0].Style = summaryStyle;
@@ -120,9 +119,9 @@ namespace SpreadsheetSampleExplorer.Samples
             sheet.Cells[summaryRow, 4].Formula = "=SUM(E5:E8)"; // Total Tax (Col E)
             sheet.Cells[summaryRow, 4].Style = summaryStyle;
 
-            var grandTotalStyle = new WPFStyle();
-            grandTotalStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            grandTotalStyle.BackColor = Color.FromArgb(255, 230, 245, 235);
+            var grandTotalStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            grandTotalStyle.FontWeight = CellFontWeight.Bold;
+            grandTotalStyle.BackColor = CellColor.FromArgb(255, 230, 245, 235);
 
             sheet.Cells[summaryRow, 5].Formula = "=SUM(F5:F8)"; // Grand Net Total (Col F)
             sheet.Cells[summaryRow, 5].Style = grandTotalStyle;
@@ -140,19 +139,19 @@ namespace SpreadsheetSampleExplorer.Samples
         private void SetupCostSheet(IWorkSheet sheet)
         {
             // Section Header Style
-            var titleStyle = new WPFStyle();
+            var titleStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
             titleStyle.FontSize = 14;
-            titleStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            titleStyle.ForeColor = Color.FromArgb(255, 31, 78, 121);
+            titleStyle.FontWeight = CellFontWeight.Bold;
+            titleStyle.ForeColor = CellColor.FromArgb(255, 31, 78, 121);
 
             sheet.Cells[0, 0].Value = "OPERATING EXPENSES (COST BREAKDOWN)";
             sheet.Cells[0, 0].Style = titleStyle;
 
             // Table Header Style
-            var headerStyle = new WPFStyle();
-            headerStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            headerStyle.BackColor = Color.FromArgb(255, 31, 78, 121); // Blue Header
-            headerStyle.ForeColor = Color.White;
+            var headerStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            headerStyle.FontWeight = CellFontWeight.Bold;
+            headerStyle.BackColor = CellColor.FromArgb(255, 31, 78, 121); // Blue Header
+            headerStyle.ForeColor = CellColor.White;
 
             string[] headers = { "Expense Category", "Q1 ($)", "Q2 ($)", "Q3 ($)", "Q4 ($)", "Annual Total ($)", "% of OPEX" };
             for (int col = 0; col < headers.Length; col++)
@@ -192,8 +191,8 @@ namespace SpreadsheetSampleExplorer.Samples
 
             // Total OPEX Row at Row 9 in Excel (0-indexed: 8)
             int totalRow = 8;
-            var summaryStyle = new WPFStyle();
-            summaryStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
+            var summaryStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            summaryStyle.FontWeight = CellFontWeight.Bold;
 
             sheet.Cells[totalRow, 0].Value = "Total OPEX";
             sheet.Cells[totalRow, 0].Style = summaryStyle;
@@ -204,9 +203,9 @@ namespace SpreadsheetSampleExplorer.Samples
             sheet.Cells[totalRow, 4].Formula = "=SUM(E4:E8)"; // Q4 Total (Col E)
 
             // Grand Total OPEX (Col F)
-            var grandTotalStyle = new WPFStyle();
-            grandTotalStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            grandTotalStyle.BackColor = Color.FromArgb(255, 220, 230, 245);
+            var grandTotalStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            grandTotalStyle.FontWeight = CellFontWeight.Bold;
+            grandTotalStyle.BackColor = CellColor.FromArgb(255, 220, 230, 245);
 
             sheet.Cells[totalRow, 5].Formula = "=SUM(F4:F8)";
             sheet.Cells[totalRow, 5].Style = grandTotalStyle;
@@ -225,18 +224,18 @@ namespace SpreadsheetSampleExplorer.Samples
         private void SetupSummarySheet(IWorkSheet sheet)
         {
             // Section Header Style
-            var titleStyle = new WPFStyle();
+            var titleStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
             titleStyle.FontSize = 14;
-            titleStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
+            titleStyle.FontWeight = CellFontWeight.Bold;
 
             sheet.Cells[0, 0].Value = "EXECUTIVE SUMMARY (INTERLINKED MULTI-SHEET FORMULAS)";
             sheet.Cells[0, 0].Style = titleStyle;
 
             // Table Header Style
-            var headerStyle = new WPFStyle();
-            headerStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            headerStyle.BackColor = Color.FromArgb(255, 70, 70, 70); // Dark Gray Header
-            headerStyle.ForeColor = Color.White;
+            var headerStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            headerStyle.FontWeight = CellFontWeight.Bold;
+            headerStyle.BackColor = CellColor.FromArgb(255, 70, 70, 70); // Dark Gray Header
+            headerStyle.ForeColor = CellColor.White;
 
             string[] headers = { "Key Metric", "Calculated Value", "Formula", "Source & Dependency Description" };
             for (int col = 0; col < headers.Length; col++)
@@ -260,13 +259,13 @@ namespace SpreadsheetSampleExplorer.Samples
                 new object[] { "Active Region Count",       "=COUNT(RegionalSales!F5:F8)", "=COUNT('RegionalSales'!F5:F8)", "Cross-Sheet Aggregation: COUNT of regions" }
             };
 
-            var boldStyle = new WPFStyle();
-            boldStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            boldStyle.BackColor = Color.FromArgb(255, 220, 245, 230);
+            var boldStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            boldStyle.FontWeight = CellFontWeight.Bold;
+            boldStyle.BackColor = CellColor.FromArgb(255, 220, 245, 230);
 
-            var highlightStyle = new WPFStyle();
-            highlightStyle.FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold;
-            highlightStyle.BackColor = Color.FromArgb(255, 220, 245, 230);
+            var highlightStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle();
+            highlightStyle.FontWeight = CellFontWeight.Bold;
+            highlightStyle.BackColor = CellColor.FromArgb(255, 220, 245, 230);
 
             for (int i = 0; i < summaryRows.Length; i++)
             {
@@ -297,3 +296,5 @@ namespace SpreadsheetSampleExplorer.Samples
         }
     }
 }
+
+

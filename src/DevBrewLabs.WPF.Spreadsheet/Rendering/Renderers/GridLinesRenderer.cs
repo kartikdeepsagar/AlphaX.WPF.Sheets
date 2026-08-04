@@ -1,7 +1,6 @@
 
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.UI;
-using System;
 using System.Windows;
 using System.Windows.Media;
 

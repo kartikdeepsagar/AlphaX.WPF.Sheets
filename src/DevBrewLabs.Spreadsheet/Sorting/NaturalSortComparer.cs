@@ -1,8 +1,6 @@
-using DevBrewLabs.Spreadsheet.Sorting;
 using System;
-using System.Collections.Generic;
 
-namespace DevBrewLabs.Spreadsheet.Core
+namespace DevBrewLabs.Spreadsheet.Sorting
 {
     /// <summary>
     /// Natural sort comparer adhering to Excel sort rules:

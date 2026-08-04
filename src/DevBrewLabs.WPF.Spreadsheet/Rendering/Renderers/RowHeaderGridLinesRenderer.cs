@@ -1,8 +1,8 @@
+using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.WPF.Spreadsheet.UI;
 using System;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.Spreadsheet;
-using DevBrewLabs.WPF.Spreadsheet.UI;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -10,7 +10,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
     {
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
-            var workSheet = SheetView.WorkSheet;
+            var workSheet = (WorkSheet)SheetView.WorkSheet;
             var rows = (Rows)workSheet.Rows;
             var columns = (RowHeaderColumns)workSheet.RowHeaders.Columns;
             var viewport = (ViewPort)SheetView.ViewPort;
@@ -79,7 +79,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private void DrawHiddenRowIndicator(DrawingContext context, double y, int leftColumn, int rightColumn, RowHeaderColumns columns, WorkSheet workSheet, double zoom)
         {
             var pen = SheetView.Spread.GridLinePen;
-            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey).GetWpfStyle();
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultRowHeaderStyleKey);
 
             double line1Y, line2Y;
             if (y <= 0)
@@ -105,9 +105,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                 var scaledColumnWidth = columnWidth * zoom;
                 var gapRect = new Rect(colLocation, rectTop, scaledColumnWidth, rectHeight);
 
-                if (defaultStyle != null && defaultStyle.Background != null)
+                if (defaultStyle != null && defaultStyle.BackColor != DevBrewLabs.Spreadsheet.Drawing.CellColor.Transparent)
                 {
-                    context.DrawRectangle(defaultStyle.Background, null, gapRect);
+                    context.DrawRectangle(Styling.WpfResourceCache.GetBrush(defaultStyle.BackColor), null, gapRect);
                 }
 
                 context.DrawLine(pen, new Point(colLocation, line1Y), new Point(colLocation + scaledColumnWidth, line1Y));
@@ -116,3 +116,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }
     }
 }
+
+
+

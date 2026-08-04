@@ -45,7 +45,7 @@ namespace DevBrewLabs.Spreadsheet
 
         public object GetMetaData(string sheetName, int row, int column)
         {
-            var cell = (Cell)((Cells)_workBook.WorkSheets.GetSheet(sheetName).Cells).GetCell(row, column, false);
+            var cell = ((Cells)_workBook.WorkSheets.GetSheet(sheetName).Cells).GetCell(row, column, false);
 
             if (cell == null)
                 return null;

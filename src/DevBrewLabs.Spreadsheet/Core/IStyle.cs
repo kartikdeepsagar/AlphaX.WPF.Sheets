@@ -1,5 +1,4 @@
 using DevBrewLabs.Spreadsheet.Drawing;
-using System;
 
 namespace DevBrewLabs.Spreadsheet
 {
@@ -8,11 +7,11 @@ namespace DevBrewLabs.Spreadsheet
         /// <summary>
         /// Gets or sets the foreground color.
         /// </summary>
-        Color ForeColor { get; set; }
+        CellColor ForeColor { get; set; }
         /// <summary>
         /// Gets or sets the background color.
         /// </summary>
-        Color BackColor { get; set; }
+        CellColor BackColor { get; set; }
         /// <summary>
         /// Gets or sets the font size.
         /// </summary>
@@ -20,27 +19,27 @@ namespace DevBrewLabs.Spreadsheet
         /// <summary>
         /// Gets or sets the font family.
         /// </summary>
-        FontFamily FontFamily { get; set; }
+        CellFontFamily FontFamily { get; set; }
         /// <summary>
         /// Gets or sets the font weight.
         /// </summary>
-        FontWeight FontWeight { get; set; }
+        CellFontWeight FontWeight { get; set; }
         /// <summary>
         /// Gets or sets the font style.
         /// </summary>
-        FontStyle FontStyle { get; set; }
+        CellFontStyle FontStyle { get; set; }
         /// <summary>
         /// Gets or sets the padding.
         /// </summary>
-        Thickness Padding { get; set; }
+        CellThickness Padding { get; set; }
         /// <summary>
         /// Gets or sets the vertical alignment.
         /// </summary>
-        VerticalAlignment VerticalAlignment { get; set; }
+        CellVerticalAlignment VerticalAlignment { get; set; }
         /// <summary>
         /// Gets or sets the horizontal aligment.
         /// </summary>
-        HorizontalAlignment HorizontalAlignment { get; set; }
+        CellHorizontalAlignment HorizontalAlignment { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether to allow multi-line text.
         /// </summary>
@@ -48,10 +47,10 @@ namespace DevBrewLabs.Spreadsheet
         /// <summary>
         /// Gets or sets the text trimming mode.
         /// </summary>
-        TextTrimming TextTrimming { get; set; }
+        CellTextTrimming TextTrimming { get; set; }
         /// <summary>
         /// Gets or sets the text wrapping mode.
         /// </summary>
-        TextWrapping TextWrapping { get; set; }
+        CellTextWrapping TextWrapping { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DevBrewLabs.Spreadsheet.Drawing
 {
-    public enum FontWeight
+    public enum CellFontWeight
     {
         Normal,
         Regular,

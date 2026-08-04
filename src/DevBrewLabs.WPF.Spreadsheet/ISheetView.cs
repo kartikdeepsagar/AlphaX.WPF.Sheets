@@ -60,7 +60,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         /// <summary>
         /// Gets the underlying worksheet for this view.
         /// </summary>
-        WorkSheet WorkSheet { get; }
+        IWorkSheet WorkSheet { get; }
         /// <summary>
         /// Copies current selection to clipboard.
         /// </summary>

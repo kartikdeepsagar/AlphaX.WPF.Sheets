@@ -1,7 +1,6 @@
-using DevBrewLabs.Spreadsheet.CalcEngine;
 using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.Spreadsheet.CalcEngine;
 using DevBrewLabs.Spreadsheet.Utils;
-using DevBrewLabs.WPF.Spreadsheet.CellTypes;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using DevBrewLabs.WPF.Spreadsheet.UI.Interaction;
 using System.Windows;
@@ -47,7 +46,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             var cellType = RenderingExtensions.GetCellType(cell, sheetColumn);
 
             var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
-            var editor = cellType.GetEditor(style.GetWpfStyle());
+            var editor = cellType.GetEditor(style);
             editor.SheetView = sheetView;
             ActiveEditor = editor;
 
@@ -98,7 +97,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
                 var sheetRow = ((Rows)workSheet.Rows).GetItem(editor.Row);
                 var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
 
-                var wpfStyle = style.GetWpfStyle();
+                var wpfStyle = style;
                 editor.FontSize = (wpfStyle?.FontSize ?? 14) * zoom;
                 editor.MinWidth = System.Math.Max(0, cellRect.Width * zoom - 3);
 
@@ -118,7 +117,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
             }
         }
 
-        private void OnEditorKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnEditorKeyDown(object sender, KeyEventArgs e)
         {
             switch(e.Key)
             {
@@ -238,3 +237,4 @@ namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
         }
     }
 }
+

@@ -1,10 +1,10 @@
 ﻿namespace DevBrewLabs.Spreadsheet
 {
-    public enum HorizontalAlignment
+    public enum CellVerticalAlignment
     {
         Auto,
-        Left,
-        Right,
+        Top,
+        Bottom,
         Center
     }
 }

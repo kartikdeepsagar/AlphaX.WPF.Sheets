@@ -1,10 +1,10 @@
 ﻿namespace DevBrewLabs.Spreadsheet.Drawing
 {
-    public class FontFamily
+    public class CellFontFamily
     {
         public string FamilyName { get; }
 
-        public FontFamily(string familyName)
+        public CellFontFamily(string familyName)
         {
             FamilyName = familyName;
         }

@@ -1,11 +1,10 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System;
 using System.Windows;
 using System.Windows.Media;
-
-using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
@@ -30,7 +29,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             IsThreeState = false;
         }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
+        internal override void DrawCell(DrawingContext context, object value, IStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
             var scaledCheckBoxSize = new Size(CheckBoxSize.Width * renderContext.Zoom, CheckBoxSize.Height * renderContext.Zoom);
             var checkBoxRect = cellRect.ToCellCheckBoxRect(scaledCheckBoxSize);
@@ -71,9 +70,10 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             }
         }
 
-        public override EditorBase GetEditor(WPFStyle style)
+        public override EditorBase GetEditor(IStyle style)
         {
             throw new NotImplementedException();
         }
     }
 }
+

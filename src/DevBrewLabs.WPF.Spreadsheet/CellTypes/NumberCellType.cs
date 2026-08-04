@@ -1,10 +1,9 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
-using System;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
@@ -12,7 +11,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
     {
         public string Format { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
+        internal override void DrawCell(DrawingContext context, object value, IStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
             base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
@@ -20,8 +19,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                 return;
 
             var align = style.HorizontalAlignment;
-            if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+            if (align == CellHorizontalAlignment.Auto)
+                align = CellHorizontalAlignment.Right;
 
             string textToDraw;
             if (!string.IsNullOrEmpty(Format))
@@ -33,14 +32,21 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
         }
 
         /// <inheritdoc/>
-        public override EditorBase GetEditor(WPFStyle style)
+        public override EditorBase GetEditor(IStyle style)
         {
             var editor = new NumericEditor() { TextAlignment = TextAlignment.Right };
-            editor.FontFamily = style.WpfFontFamily;
-            editor.Foreground = style.Foreground;
-            editor.Background = style.Background;
+            editor.FontFamily = Styling.WpfResourceCache.ToWpfFontFamily(style.FontFamily);
+            editor.Foreground = Styling.WpfResourceCache.GetBrush(style.ForeColor);
+            editor.Background = Styling.WpfResourceCache.GetBrush(style.BackColor);
             editor.FontSize = style.FontSize;
             return editor;
         }
     }
 }
+
+
+
+
+
+
+

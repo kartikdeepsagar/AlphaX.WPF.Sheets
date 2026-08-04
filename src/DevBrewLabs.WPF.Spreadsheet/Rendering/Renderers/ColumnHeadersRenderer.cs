@@ -1,9 +1,8 @@
-using System;
-using System.Windows;
-using System.Windows.Media;
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
+using System.Windows;
+using System.Windows.Media;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -46,16 +45,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cellRect = new Rect(x, y, scaledColumnWidth, scaledRowHeight);
 
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.ColumnHeader);
-                    var style = baseStyle.GetWpfStyle();
+                    var style = baseStyle;
 
                     DrawColumnHeaderCell(context, row, col, cell, style, cellRect, renderContext);
                 }
             }
         }
 
-        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, WPFStyle style, Rect cellRect, RenderContext renderContext)
+        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, IStyle style, Rect cellRect, RenderContext renderContext)
         {
-            context.DrawRectangle(style.Background, null, cellRect);
+            context.DrawRectangle(Styling.WpfResourceCache.GetBrush(style.BackColor), null, cellRect);
             if (cell != null && cell.Value != null)
             {
                 TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
@@ -67,3 +66,5 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }      
     }
 }
+
+

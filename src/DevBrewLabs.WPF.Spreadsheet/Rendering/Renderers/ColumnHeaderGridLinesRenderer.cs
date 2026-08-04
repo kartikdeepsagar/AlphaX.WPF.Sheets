@@ -1,8 +1,8 @@
+using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.WPF.Spreadsheet.UI;
 using System;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.Spreadsheet;
-using DevBrewLabs.WPF.Spreadsheet.UI;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -10,7 +10,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
     {
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
-            var workSheet = SheetView.WorkSheet;
+            var workSheet = (WorkSheet)SheetView.WorkSheet;
             var rows = (ColumnHeaderRows)workSheet.ColumnHeaders.Rows;
             var columns = (Columns)workSheet.Columns;
             var viewport = (ViewPort)SheetView.ViewPort;
@@ -80,7 +80,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         private void DrawHiddenColumnIndicator(DrawingContext context, double x, double rowLocation, double rowHeight, WorkSheet workSheet)
         {
             var pen = SheetView.Spread.GridLinePen;
-            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey).GetWpfStyle();
+            var defaultStyle = workSheet.WorkBook.GetNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey);
 
             double line1X, line2X;
             if (x <= 0)
@@ -98,9 +98,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var rectWidth = Math.Abs(line2X - line1X) + 1.0;
             var gapRect = new Rect(rectLeft, rowLocation, rectWidth, rowHeight);
 
-            if (defaultStyle != null && defaultStyle.Background != null)
+            if (defaultStyle != null && defaultStyle.BackColor != DevBrewLabs.Spreadsheet.Drawing.CellColor.Transparent)
             {
-                context.DrawRectangle(defaultStyle.Background, null, gapRect);
+                context.DrawRectangle(Styling.WpfResourceCache.GetBrush(defaultStyle.BackColor), null, gapRect);
             }
 
             context.DrawLine(pen, new Point(line1X, rowLocation), new Point(line1X, rowLocation + rowHeight));
@@ -108,3 +108,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }
     }
 }
+
+
+

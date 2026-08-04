@@ -21,7 +21,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public override void AttachSheet(SheetView sheetView)
         {
             base.AttachSheet(sheetView);
-            _workSheet = sheetView.WorkSheet;
+            _workSheet = (WorkSheet)sheetView.WorkSheet;
             _drawing.Children.Clear();
             _drawing.Children.Add(sheetView.Spread.RenderEngine.CellsRenderer.Drawing);
             _drawing.Children.Add(sheetView.Spread.RenderEngine.GridLinesRenderer.Drawing);

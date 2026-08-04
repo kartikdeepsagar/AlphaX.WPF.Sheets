@@ -1,5 +1,5 @@
-using DevBrewLabs.Spreadsheet.CalcEngine.Parsers;
 using DevBrewLabs.Evalis;
+using DevBrewLabs.Spreadsheet.CalcEngine.Parsers;
 using System.Threading.Tasks;
 
 namespace DevBrewLabs.Spreadsheet.CalcEngine.Evaluator
@@ -49,7 +49,7 @@ namespace DevBrewLabs.Spreadsheet.CalcEngine.Evaluator
                 var cellRef = new CellRef(key);
                 var sheetName = string.IsNullOrEmpty(cellRef.SheetName) ? _currentSheetName : cellRef.SheetName;
                 var value = _dataProvider.GetValue(sheetName, cellRef.Row, cellRef.Column);
-                return Task.FromResult<object>(value);
+                return Task.FromResult(value);
             }
         }
     }

@@ -53,15 +53,15 @@ namespace DevBrewLabs.WPF.Spreadsheet
             DependencyProperty.Register("SheetTabsVisibility", typeof(Visibility), typeof(Spread), new PropertyMetadata(Visibility.Visible));
             ResourceDictionary res = (ResourceDictionary)Application.LoadComponent(new Uri("/DevBrewLabs.WPF.Spreadsheet;component/Themes/ScrollBarStyle.xaml", UriKind.Relative));
             ScrollBarStyleProperty =
-            DependencyProperty.Register("ScrollBarStyle", typeof(System.Windows.Style), typeof(Spread), new PropertyMetadata((System.Windows.Style)res["ScrollBarStyle"]));
+            DependencyProperty.Register("ScrollBarStyle", typeof(Style), typeof(Spread), new PropertyMetadata((Style)res["ScrollBarStyle"]));
         }
 
         /// <summary>
         /// Gets or sets scrollbar style.
         /// </summary>
-        public System.Windows.Style ScrollBarStyle
+        public Style ScrollBarStyle
         {
-            get { return (System.Windows.Style)GetValue(ScrollBarStyleProperty); }
+            get { return (Style)GetValue(ScrollBarStyleProperty); }
             set { SetValue(ScrollBarStyleProperty, value); }
         }
 
@@ -222,11 +222,11 @@ namespace DevBrewLabs.WPF.Spreadsheet
             RenderEngine = new RenderEngine();
             SheetViewPane = new SheetViewPane(this);
             ScrollMode = SheetScrollMode.Item;
-            SelectionBorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 124, 65));
-            BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(209, 213, 219));
+            SelectionBorderBrush = new SolidColorBrush(Color.FromRgb(16, 124, 65));
+            BorderBrush = new SolidColorBrush(Color.FromRgb(209, 213, 219));
             Background = Brushes.Transparent;
             SnapsToDevicePixels = true;
-            GridLineBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 165, 175));
+            GridLineBrush = new SolidColorBrush(Color.FromRgb(160, 165, 175));
             PixelPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             var workSheet = WorkBook.WorkSheets.AddSheet("Sheet1");
             WorkBook.WorkSheets.ActiveSheet = workSheet;
@@ -357,38 +357,38 @@ namespace DevBrewLabs.WPF.Spreadsheet
 
         private void AddDefaultStyles(WorkBook workBook)
         {
-            var rowHeaderStyle = new WPFStyle
+            var rowHeaderStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
             {
                 FontSize = 14,
-                HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center,
-                BackColor = DevBrewLabs.Spreadsheet.Drawing.Color.Gray
+                HorizontalAlignment = CellHorizontalAlignment.Center,
+                BackColor = DevBrewLabs.Spreadsheet.Drawing.CellColor.Gray
             };
 
             workBook.AddNamedStyle(StyleKeys.DefaultRowHeaderStyleKey, rowHeaderStyle);
 
-            var columnHeaderStyle = new WPFStyle
+            var columnHeaderStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
             {
                 FontSize = 14,
-                HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center,
-                BackColor = DevBrewLabs.Spreadsheet.Drawing.Color.Gray
+                HorizontalAlignment = CellHorizontalAlignment.Center,
+                BackColor = DevBrewLabs.Spreadsheet.Drawing.CellColor.Gray
             };
 
             workBook.AddNamedStyle(StyleKeys.DefaultColumnHeaderStyleKey, columnHeaderStyle);
 
-            var sheetStyle = new WPFStyle
+            var sheetStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
             {
-                BackColor = DevBrewLabs.Spreadsheet.Drawing.Color.White
+                BackColor = DevBrewLabs.Spreadsheet.Drawing.CellColor.White
             };
 
             workBook.AddNamedStyle(StyleKeys.DefaultSheetStyleKey, sheetStyle);
 
-            var topLeftStyle = new WPFStyle
+            var topLeftStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
             {
-                ForeColor = DevBrewLabs.Spreadsheet.Drawing.Color.LightGray
+                ForeColor = DevBrewLabs.Spreadsheet.Drawing.CellColor.LightGray
             };
             workBook.AddNamedStyle(StyleKeys.DefaultTopLeftStyleKey, topLeftStyle);
 
-            rowHeaderStyle.BackColor = topLeftStyle.BackColor = columnHeaderStyle.BackColor = DevBrewLabs.Spreadsheet.Drawing.Color.FromArgb(255, 240, 240, 240);
+            rowHeaderStyle.BackColor = topLeftStyle.BackColor = columnHeaderStyle.BackColor = DevBrewLabs.Spreadsheet.Drawing.CellColor.FromArgb(255, 240, 240, 240);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -569,3 +569,5 @@ namespace DevBrewLabs.WPF.Spreadsheet
         }
     }
 }
+
+

@@ -1,5 +1,5 @@
-using System;
 using DevBrewLabs.Evalis;
+using System;
 
 namespace DevBrewLabs.Spreadsheet.CalcEngine.Utils
 {

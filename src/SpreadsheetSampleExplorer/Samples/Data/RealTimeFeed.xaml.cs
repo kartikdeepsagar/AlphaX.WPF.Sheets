@@ -1,6 +1,4 @@
-using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Drawing;
-using DevBrewLabs.WPF.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -57,11 +55,11 @@ namespace SpreadsheetSampleExplorer.Samples
             // Title Style
             if (workBook.GetNamedStyle("TitleStyle") == null)
             {
-                var titleStyle = new WPFStyle
+                var titleStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
                     FontSize = 14,
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    ForeColor = Color.FromArgb(255, 15, 118, 110)
+                    FontWeight = CellFontWeight.Bold,
+                    ForeColor = CellColor.FromArgb(255, 15, 118, 110)
                 };
                 workBook.AddNamedStyle("TitleStyle", titleStyle);
             }
@@ -69,11 +67,11 @@ namespace SpreadsheetSampleExplorer.Samples
             // Table Header Style (Teal Header)
             if (workBook.GetNamedStyle("HeaderStyle") == null)
             {
-                var headerStyle = new WPFStyle
+                var headerStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    BackColor = Color.FromArgb(255, 15, 118, 110),
-                    ForeColor = Color.White
+                    FontWeight = CellFontWeight.Bold,
+                    BackColor = CellColor.FromArgb(255, 15, 118, 110),
+                    ForeColor = CellColor.White
                 };
                 workBook.AddNamedStyle("HeaderStyle", headerStyle);
             }
@@ -81,9 +79,9 @@ namespace SpreadsheetSampleExplorer.Samples
             // Total Label Style
             if (workBook.GetNamedStyle("TotalLabelStyle") == null)
             {
-                var totalLabelStyle = new WPFStyle
+                var totalLabelStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold
+                    FontWeight = CellFontWeight.Bold
                 };
                 workBook.AddNamedStyle("TotalLabelStyle", totalLabelStyle);
             }
@@ -91,11 +89,11 @@ namespace SpreadsheetSampleExplorer.Samples
             // Summary Totals Style
             if (workBook.GetNamedStyle("SummaryStyle") == null)
             {
-                var summaryStyle = new WPFStyle
+                var summaryStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    BackColor = Color.FromArgb(255, 240, 253, 244),
-                    ForeColor = Color.FromArgb(255, 15, 118, 110)
+                    FontWeight = CellFontWeight.Bold,
+                    BackColor = CellColor.FromArgb(255, 240, 253, 244),
+                    ForeColor = CellColor.FromArgb(255, 15, 118, 110)
                 };
                 workBook.AddNamedStyle("SummaryStyle", summaryStyle);
             }
@@ -103,11 +101,11 @@ namespace SpreadsheetSampleExplorer.Samples
             // Real-time Gain Style (Emerald Green)
             if (workBook.GetNamedStyle("GainStyle") == null)
             {
-                var gainStyle = new WPFStyle
+                var gainStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    ForeColor = Color.FromArgb(255, 16, 185, 129),
-                    BackColor = Color.White
+                    FontWeight = CellFontWeight.Bold,
+                    ForeColor = CellColor.FromArgb(255, 16, 185, 129),
+                    BackColor = CellColor.White
                 };
                 workBook.AddNamedStyle("GainStyle", gainStyle);
             }
@@ -115,11 +113,11 @@ namespace SpreadsheetSampleExplorer.Samples
             // Real-time Loss Style (Rose Red)
             if (workBook.GetNamedStyle("LossStyle") == null)
             {
-                var lossStyle = new WPFStyle
+                var lossStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    ForeColor = Color.FromArgb(255, 239, 68, 68),
-                    BackColor = Color.White
+                    FontWeight = CellFontWeight.Bold,
+                    ForeColor = CellColor.FromArgb(255, 239, 68, 68),
+                    BackColor = CellColor.White
                 };
                 workBook.AddNamedStyle("LossStyle", lossStyle);
             }
@@ -285,3 +283,5 @@ namespace SpreadsheetSampleExplorer.Samples
         }
     }
 }
+
+

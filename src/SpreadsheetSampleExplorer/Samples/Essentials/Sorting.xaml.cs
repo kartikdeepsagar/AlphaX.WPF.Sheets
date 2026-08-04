@@ -67,12 +67,12 @@ namespace SpreadsheetSampleExplorer.Samples
             string headerStyleName = "SortHeaderStyle";
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var style = new DevBrewLabs.WPF.Spreadsheet.WPFStyle
+                var style = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    BackColor = Color.FromArgb(255, 16, 124, 65), // #107C41 Excel Green
-                    ForeColor = Color.White,
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold,
-                    HorizontalAlignment = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center
+                    BackColor = CellColor.FromArgb(255, 16, 124, 65), // #107C41 Excel Green
+                    ForeColor = CellColor.White,
+                    FontWeight = CellFontWeight.Bold,
+                    HorizontalAlignment = CellHorizontalAlignment.Center
                 };
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, style);
             }
@@ -176,3 +176,6 @@ namespace SpreadsheetSampleExplorer.Samples
         }
     }
 }
+
+
+

@@ -1,6 +1,6 @@
 namespace DevBrewLabs.Spreadsheet
 {
-    public enum TextTrimming
+    public enum CellTextTrimming
     {
         None,
         Character,

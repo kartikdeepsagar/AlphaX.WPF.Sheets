@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DevBrewLabs.Spreadsheet
+﻿namespace DevBrewLabs.Spreadsheet
 {
     public interface IRows
     {

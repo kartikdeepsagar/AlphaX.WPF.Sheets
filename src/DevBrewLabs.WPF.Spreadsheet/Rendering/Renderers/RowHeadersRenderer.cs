@@ -1,9 +1,8 @@
-using System;
 using DevBrewLabs.Spreadsheet;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -11,7 +10,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
     {
         protected override void OnRender(DrawingContext context, int topRow, int leftColumn, int bottomRow, int rightColumn)
         {
-            var workSheet = SheetView.WorkSheet;
+            var workSheet = (WorkSheet)SheetView.WorkSheet;
             var rows = (Rows)workSheet.Rows;
             var columns = (RowHeaderColumns)workSheet.RowHeaders.Columns;
             var cells = (RowHeaderCells)workSheet.RowHeaders.Cells;
@@ -50,7 +49,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 
                     var cellRect = new Rect(x, y, scaledColumnWidth, scaledRowHeight);
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
-                    var style = baseStyle.GetWpfStyle();
+                    var style = baseStyle;
 
                     DrawRowHeaderCell(context, row, cell, style, cellRect, renderContext);
                 }
@@ -61,17 +60,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         {
             for (int col = leftColumn; col <= rightColumn; col++)
             {
-                int headerWidth = (int)workSheet.RowHeaders.Columns[col].Width;
-                int defaultColumnWidth = (int)workSheet.RowHeaders.DefaultColumnWidth;
+                int headerWidth = workSheet.RowHeaders.Columns[col].Width;
+                int defaultColumnWidth = workSheet.RowHeaders.DefaultColumnWidth;
 
                 for (int row = topRow; row <= bottomRow; row++)
                 {
                     var cell = cells.GetCell(row, col, false);
                     var sheetColumn = columns.GetItem(col);
                     var sheetRow = rows.GetItem(row);
-                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader).GetWpfStyle();
+                    var style = ((WorkBook)workSheet.WorkBook).PickStyle(cell, sheetColumn, sheetRow, SheetRegion.RowHeader);
                     var textWidth = TextMeasurer
-                        .MeasureWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, style.GlyphMetrics);
+                        .MeasureWidth(cell != null && cell.Value != null ? cell.Value.ToString() : (row + 1).ToString(), style.FontSize, Styling.WpfResourceCache.GetFontResources(style).GlyphMetrics);
                     textWidth += 10;
 
                     if (textWidth > headerWidth || (textWidth < headerWidth && textWidth > defaultColumnWidth))
@@ -86,9 +85,9 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
-        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, WPFStyle style, Rect cellRect, RenderContext renderContext)
+        private void DrawRowHeaderCell(DrawingContext context, int row, IRange cell, IStyle style, Rect cellRect, RenderContext renderContext)
         {
-            context.DrawRectangle(style.Background, null, cellRect);
+            context.DrawRectangle(Styling.WpfResourceCache.GetBrush(style.BackColor), null, cellRect);
 
             if (cell != null && cell.Value != null)
             {
@@ -101,3 +100,6 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }
     }
 }
+
+
+
