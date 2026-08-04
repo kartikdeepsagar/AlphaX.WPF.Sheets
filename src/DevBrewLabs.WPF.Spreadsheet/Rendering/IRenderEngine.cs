@@ -1,4 +1,4 @@
-﻿namespace DevBrewLabs.WPF.Spreadsheet.Rendering
+namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
     public interface IRenderEngine
     {
@@ -23,11 +23,23 @@
         /// <param name="row2"></param>
         void DrawRowHeaderCells(int topRow, int bottomRow);
         /// <summary>
+        /// Draws row header grid lines on sheet.
+        /// </summary>
+        /// <param name="topRow"></param>
+        /// <param name="bottomRow"></param>
+        void DrawRowHeaderGridLines(int topRow, int bottomRow);
+        /// <summary>
         /// Draws column header cells on sheet.
         /// </summary>
         /// <param name="col"></param>
         /// <param name="col2"></param>
         void DrawColumnHeaderCells(int leftCol, int rightCol);
+        /// <summary>
+        /// Draws column header grid lines on sheet.
+        /// </summary>
+        /// <param name="leftCol"></param>
+        /// <param name="rightCol"></param>
+        void DrawColumnHeaderGridLines(int leftCol, int rightCol);
         /// <summary>
         /// Draws cells on sheet.
         /// </summary>

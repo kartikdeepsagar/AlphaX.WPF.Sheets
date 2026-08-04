@@ -117,10 +117,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             try
             {
                 if (columnHeaders)
+                {
                     _spread.RenderEngine.DrawColumnHeaderCells(viewRange.LeftColumn, viewRange.RightColumn);
+                    _spread.RenderEngine.DrawColumnHeaderGridLines(viewRange.LeftColumn, viewRange.RightColumn);
+                }
 
                 if (rowHeaders)
+                {
                     _spread.RenderEngine.DrawRowHeaderCells(viewRange.TopRow, viewRange.BottomRow);
+                    _spread.RenderEngine.DrawRowHeaderGridLines(viewRange.TopRow, viewRange.BottomRow);
+                }
 
                 if (topLeft)
                     _spread.RenderEngine.DrawTopLeft();
