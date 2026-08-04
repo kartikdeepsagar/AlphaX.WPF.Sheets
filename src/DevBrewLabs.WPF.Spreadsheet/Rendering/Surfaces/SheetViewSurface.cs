@@ -32,7 +32,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         {
             _interactionLayer = interactionLayer;
             Children.Add(_interactionLayer);
-            Panel.SetZIndex(_interactionLayer, 1);
+            SetZIndex(_interactionLayer, 1);
         }
 
         /// <summary>

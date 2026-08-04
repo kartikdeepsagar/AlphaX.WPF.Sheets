@@ -1,9 +1,7 @@
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
-using DevBrewLabs.WPF.Spreadsheet.Rendering;
 using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 
@@ -11,7 +9,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
     public class TextCellType : BaseCellType
     {
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
+        internal override void DrawCell(DrawingContext context, object value, IStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
             base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
@@ -20,13 +18,13 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
                 var align = style.HorizontalAlignment;
                 if (value is string)
                 {
-                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;           
+                    if (align == CellHorizontalAlignment.Auto)
+                        align = CellHorizontalAlignment.Left;           
                 }
                 else
                 {
-                    if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                        align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+                    if (align == CellHorizontalAlignment.Auto)
+                        align = CellHorizontalAlignment.Right;
 
                     value = formatter.Format(value);
                 }
@@ -35,16 +33,24 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             }
         }
 
-        public override EditorBase GetEditor(WPFStyle style)
+        public override EditorBase GetEditor(IStyle style)
         {
             var editor = new TextEditor();
-            editor.FontFamily = style.WpfFontFamily;
-            editor.Foreground = style.Foreground;
-            editor.Background = style.Background;
-            editor.FontWeight = style.WpfFontWeight;
-            editor.FontStyle = style.WpfFontStyle;
+            editor.FontFamily = Styling.WpfResourceCache.ToWpfFontFamily(style.FontFamily);
+            editor.Foreground = Styling.WpfResourceCache.GetBrush(style.ForeColor);
+            editor.Background = Styling.WpfResourceCache.GetBrush(style.BackColor);
+            editor.FontWeight = Styling.WpfResourceCache.ToWpfFontWeight(style.FontWeight);
+            editor.FontStyle = Styling.WpfResourceCache.ToWpfFontStyle(style.FontStyle);
             editor.FontSize = style.FontSize;
             return editor;
         }
     }
 }
+
+
+
+
+
+
+
+

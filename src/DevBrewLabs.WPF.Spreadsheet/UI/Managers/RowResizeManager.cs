@@ -1,6 +1,5 @@
 using System;
 using System.Windows;
-using DevBrewLabs.Spreadsheet;
 
 namespace DevBrewLabs.WPF.Spreadsheet.UI.Managers
 {

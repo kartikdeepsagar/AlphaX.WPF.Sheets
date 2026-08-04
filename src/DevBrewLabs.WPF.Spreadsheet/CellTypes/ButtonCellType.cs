@@ -1,9 +1,10 @@
+using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Formatters;
+using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI.Editors;
 using System;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 
 namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
 {
@@ -12,7 +13,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
         public ICellTypeCommand Command { get; set; }
         public string Text { get; set; }
 
-        internal override void DrawCell(DrawingContext context, object value, WPFStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
+        internal override void DrawCell(DrawingContext context, object value, IStyle style, IFormatter formatter, Rect cellRect, RenderContext renderContext)
         {
             base.DrawCell(context, value, style, formatter, cellRect, renderContext);
 
@@ -22,16 +23,17 @@ namespace DevBrewLabs.WPF.Spreadsheet.CellTypes
             if(!string.IsNullOrEmpty(Text))
             {
                 var align = style.HorizontalAlignment;
-                if (align == DevBrewLabs.Spreadsheet.HorizontalAlignment.Auto)
-                    align = DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
+                if (align == CellHorizontalAlignment.Auto)
+                    align = CellHorizontalAlignment.Center;
 
                 TextRenderer.DrawText(context, Text, cellRect, style, renderContext, align);
             }
         }
 
-        public override EditorBase GetEditor(WPFStyle style)
+        public override EditorBase GetEditor(IStyle style)
         {
             throw new NotImplementedException();
         }
     }
 }
+

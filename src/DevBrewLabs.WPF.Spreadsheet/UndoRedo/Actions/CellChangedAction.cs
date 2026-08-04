@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DevBrewLabs.WPF.Spreadsheet
+﻿namespace DevBrewLabs.WPF.Spreadsheet
 {
     internal class CellChangedAction : SheetAction
     {

@@ -1,8 +1,8 @@
-using SpreadsheetSampleExplorer.Data;
 using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.Spreadsheet.Data;
 using DevBrewLabs.Spreadsheet.Drawing;
 using DevBrewLabs.WPF.Spreadsheet;
+using SpreadsheetSampleExplorer.Data;
 using System;
 using System.Linq;
 using System.Windows;
@@ -26,10 +26,10 @@ namespace SpreadsheetSampleExplorer.Samples
             Setup(spreadMain, (view) => UpdateSheetStyle(view, GetSelectedThemeKey(), GetAltRowsEnabled(), GetSelectedAlignment()));
 
             // Setup grid showcase spreads
-            Setup(spread1, (view) => UpdateSheetStyle(view, "Slate", true, DevBrewLabs.Spreadsheet.HorizontalAlignment.Center));
-            Setup(spread2, (view) => UpdateSheetStyle(view, "Excel", true, DevBrewLabs.Spreadsheet.HorizontalAlignment.Center));
-            Setup(spread3, (view) => UpdateSheetStyle(view, "Indigo", true, DevBrewLabs.Spreadsheet.HorizontalAlignment.Center));
-            Setup(spread4, (view) => UpdateSheetStyle(view, "Corporate", true, DevBrewLabs.Spreadsheet.HorizontalAlignment.Center));
+            Setup(spread1, (view) => UpdateSheetStyle(view, "Slate", true, CellHorizontalAlignment.Center));
+            Setup(spread2, (view) => UpdateSheetStyle(view, "Excel", true, CellHorizontalAlignment.Center));
+            Setup(spread3, (view) => UpdateSheetStyle(view, "Indigo", true, CellHorizontalAlignment.Center));
+            Setup(spread4, (view) => UpdateSheetStyle(view, "Corporate", true, CellHorizontalAlignment.Center));
         }
 
         private void Setup(Spread spread, Action<ISheetView> styleAction)
@@ -44,48 +44,48 @@ namespace SpreadsheetSampleExplorer.Samples
             };
         }
 
-        private void UpdateSheetStyle(ISheetView sheetView, string themeKey, bool useAltRows, DevBrewLabs.Spreadsheet.HorizontalAlignment alignment)
+        private void UpdateSheetStyle(ISheetView sheetView, string themeKey, bool useAltRows, CellHorizontalAlignment alignment)
         {
             var worksheet = sheetView.WorkSheet;
 
-            Color headerBg, headerFg, altRowBg, altRowFg;
+            CellColor headerBg, headerFg, altRowBg, altRowFg;
 
             switch (themeKey)
             {
                 case "Excel":
-                    headerBg = Color.FromArgb(255, 16, 124, 65); // #107C41 Excel Green
-                    headerFg = Color.FromArgb(255, 255, 255, 255);
-                    altRowBg = Color.FromArgb(255, 240, 253, 244);
-                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    headerBg = CellColor.FromArgb(255, 16, 124, 65); // #107C41 Excel Green
+                    headerFg = CellColor.FromArgb(255, 255, 255, 255);
+                    altRowBg = CellColor.FromArgb(255, 240, 253, 244);
+                    altRowFg = CellColor.FromArgb(255, 24, 24, 27);
                     break;
 
                 case "Emerald":
-                    headerBg = Color.FromArgb(255, 230, 244, 234);
-                    headerFg = Color.FromArgb(255, 13, 101, 45);
-                    altRowBg = Color.FromArgb(255, 246, 251, 247);
-                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    headerBg = CellColor.FromArgb(255, 230, 244, 234);
+                    headerFg = CellColor.FromArgb(255, 13, 101, 45);
+                    altRowBg = CellColor.FromArgb(255, 246, 251, 247);
+                    altRowFg = CellColor.FromArgb(255, 24, 24, 27);
                     break;
 
                 case "Indigo":
-                    headerBg = Color.FromArgb(255, 238, 242, 255);
-                    headerFg = Color.FromArgb(255, 55, 48, 163);
-                    altRowBg = Color.FromArgb(255, 248, 250, 252);
-                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    headerBg = CellColor.FromArgb(255, 238, 242, 255);
+                    headerFg = CellColor.FromArgb(255, 55, 48, 163);
+                    altRowBg = CellColor.FromArgb(255, 248, 250, 252);
+                    altRowFg = CellColor.FromArgb(255, 24, 24, 27);
                     break;
 
                 case "Corporate":
-                    headerBg = Color.FromArgb(255, 30, 58, 138);
-                    headerFg = Color.FromArgb(255, 255, 255, 255);
-                    altRowBg = Color.FromArgb(255, 240, 246, 255);
-                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    headerBg = CellColor.FromArgb(255, 30, 58, 138);
+                    headerFg = CellColor.FromArgb(255, 255, 255, 255);
+                    altRowBg = CellColor.FromArgb(255, 240, 246, 255);
+                    altRowFg = CellColor.FromArgb(255, 24, 24, 27);
                     break;
 
                 case "Slate":
                 default:
-                    headerBg = Color.FromArgb(255, 241, 245, 249);
-                    headerFg = Color.FromArgb(255, 15, 23, 42);
-                    altRowBg = Color.FromArgb(255, 248, 250, 252);
-                    altRowFg = Color.FromArgb(255, 24, 24, 27);
+                    headerBg = CellColor.FromArgb(255, 241, 245, 249);
+                    headerFg = CellColor.FromArgb(255, 15, 23, 42);
+                    altRowBg = CellColor.FromArgb(255, 248, 250, 252);
+                    altRowFg = CellColor.FromArgb(255, 24, 24, 27);
                     break;
             }
 
@@ -93,12 +93,12 @@ namespace SpreadsheetSampleExplorer.Samples
             string headerStyleName = "HeaderStyle_" + themeKey + "_" + alignment.ToString();
             if (worksheet.WorkBook.GetNamedStyle(headerStyleName) == null)
             {
-                var headerStyle = new WPFStyle
+                var headerStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
                     BackColor = headerBg,
                     ForeColor = headerFg,
                     HorizontalAlignment = alignment,
-                    FontWeight = DevBrewLabs.Spreadsheet.Drawing.FontWeight.Bold
+                    FontWeight = CellFontWeight.Bold
                 };
                 worksheet.WorkBook.AddNamedStyle(headerStyleName, headerStyle);
             }
@@ -113,7 +113,7 @@ namespace SpreadsheetSampleExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(altRowStyleName) == null)
             {
-                var rowStyle = new WPFStyle
+                var rowStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
                     BackColor = altRowBg,
                     ForeColor = altRowFg
@@ -123,9 +123,9 @@ namespace SpreadsheetSampleExplorer.Samples
 
             if (worksheet.WorkBook.GetNamedStyle(normalRowStyleName) == null)
             {
-                var normalStyle = new WPFStyle
+                var normalStyle = new DevBrewLabs.Spreadsheet.Styling.CellStyle
                 {
-                    BackColor = Color.White,
+                    BackColor = CellColor.White,
                     ForeColor = altRowFg
                 };
                 worksheet.WorkBook.AddNamedStyle(normalRowStyleName, normalStyle);
@@ -171,17 +171,17 @@ namespace SpreadsheetSampleExplorer.Samples
             return _chkAltRows?.IsChecked == true;
         }
 
-        private DevBrewLabs.Spreadsheet.HorizontalAlignment GetSelectedAlignment()
+        private CellHorizontalAlignment GetSelectedAlignment()
         {
             if (_cmbAlign?.SelectedItem is ComboBoxItem item && item.Tag != null)
             {
                 switch (item.Tag.ToString())
                 {
-                    case "Left": return DevBrewLabs.Spreadsheet.HorizontalAlignment.Left;
-                    case "Right": return DevBrewLabs.Spreadsheet.HorizontalAlignment.Right;
+                    case "Left": return CellHorizontalAlignment.Left;
+                    case "Right": return CellHorizontalAlignment.Right;
                 }
             }
-            return DevBrewLabs.Spreadsheet.HorizontalAlignment.Center;
+            return CellHorizontalAlignment.Center;
         }
 
         private void ApplyMainTheme()
@@ -226,3 +226,5 @@ namespace SpreadsheetSampleExplorer.Samples
         }
     }
 }
+
+

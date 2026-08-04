@@ -31,7 +31,7 @@ namespace SpreadsheetSampleExplorer.Samples
             sheet.ColumnCount = 100;
             sheet.RowCount = 200;
 
-            var dataStore = ((WorkSheet)sheet).DataStore;
+            var dataStore = sheet.DataStore;
             dataStore.SetValue(0, 0, "Quarter");
             dataStore.SetValue(0, 1, "Region");
             dataStore.SetValue(0, 2, "Sales Rep");

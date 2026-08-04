@@ -1,7 +1,6 @@
-using DevBrewLabs.Spreadsheet.CalcEngine;
 using DevBrewLabs.Evalis;
+using DevBrewLabs.Spreadsheet.CalcEngine;
 using System;
-using System.Collections.Generic;
 using System.Data;
 
 namespace DevBrewLabs.Spreadsheet.Data

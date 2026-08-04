@@ -1,10 +1,7 @@
 using DevBrewLabs.Spreadsheet;
-using DevBrewLabs.WPF.Spreadsheet.Rendering;
 using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace DevBrewLabs.WPF.Spreadsheet
@@ -66,7 +63,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
         public int ActiveRow { get; internal set; }
         public int ActiveColumn { get; internal set; }
         public CellRange Selection { get; }
-        public WorkSheet WorkSheet => _workSheet;
+        public IWorkSheet WorkSheet => _workSheet;
         #endregion
 
         public SheetView(Spread spread, WorkSheet worksheet)
@@ -162,8 +159,8 @@ namespace DevBrewLabs.WPF.Spreadsheet
                 if(cellValue.Value != null)
                 {
                     var style = _workBook.PickStyle(_cells.GetCell(cellValue.Key, column, false), sheetColumn, _rows.GetItem(cellValue.Key), SheetRegion.RowHeader);
-                    var wpfStyle = style.GetWpfStyle();
-                    var textWidth = TextMeasurer.MeasureWidth(cellValue.Value.ToString(), style.FontSize, wpfStyle?.GlyphMetrics);
+                    var wpfStyle = style;
+                    var textWidth = TextMeasurer.MeasureWidth(cellValue.Value.ToString(), style.FontSize, wpfStyle != null ? Styling.WpfResourceCache.GetFontResources(wpfStyle).GlyphMetrics : null);
                     width = Math.Max(width, (int)Math.Ceiling(textWidth) + 11);
                 }
             }
@@ -193,3 +190,5 @@ namespace DevBrewLabs.WPF.Spreadsheet
         }
     }
 }
+
+

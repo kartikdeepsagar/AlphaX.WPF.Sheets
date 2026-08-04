@@ -103,7 +103,7 @@ namespace DevBrewLabs.WPF.Spreadsheet
             while (true)
             {
                 mod = (index % 26) + 65;
-                index = (int)(index / 26);
+                index = index / 26;
                 achar = (char)mod;
                 str = achar + str;
                 if (index > 0) index--;

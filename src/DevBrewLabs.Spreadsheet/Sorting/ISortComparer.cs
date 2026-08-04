@@ -1,5 +1,3 @@
-using System;
-
 namespace DevBrewLabs.Spreadsheet.Sorting
 {
     /// <summary>

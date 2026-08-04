@@ -2,7 +2,6 @@ using DevBrewLabs.Spreadsheet;
 using DevBrewLabs.WPF.Spreadsheet.CellTypes;
 using DevBrewLabs.WPF.Spreadsheet.Rendering.Text;
 using DevBrewLabs.WPF.Spreadsheet.UI;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -71,7 +70,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                     var cellRect = new Rect(x, y, scaledColumnWidth - penThickness, scaledRowHeight - penThickness);
 
                     var baseStyle = workBook.PickStyle(cell, sheetColumn, sheetRow, SheetRegion.Cells);
-                    var style = baseStyle.GetWpfStyle();
+                    var style = baseStyle;
 
                     var formatter = workSheet.PickFormatter(cell, sheetColumn, sheetRow);
                     cellType.DrawCell(context, value, style, formatter, cellRect, renderContext);
@@ -80,3 +79,4 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }
     }
 }
+

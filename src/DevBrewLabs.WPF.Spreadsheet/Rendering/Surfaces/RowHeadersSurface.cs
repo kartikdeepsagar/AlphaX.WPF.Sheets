@@ -22,7 +22,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public override void AttachSheet(SheetView sheetView)
         {
             base.AttachSheet(sheetView);
-            _workSheet = sheetView.WorkSheet;
+            _workSheet = (WorkSheet)sheetView.WorkSheet;
             _viewPort = sheetView.ViewPort.As<ViewPort>();
 
             _drawing.Children.Clear();

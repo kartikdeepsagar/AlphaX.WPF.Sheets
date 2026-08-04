@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using DevBrewLabs.Spreadsheet;
 
 namespace SpreadsheetSampleExplorer
 {

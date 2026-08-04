@@ -1,3 +1,4 @@
+using DevBrewLabs.Spreadsheet;
 using System;
 using System.Collections.Concurrent;
 
@@ -6,13 +7,13 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
     internal readonly struct TextLayoutCacheKey : IEquatable<TextLayoutCacheKey>
     {
         public string Text { get; }
-        public WPFStyle Style { get; }
+        public IStyle Style { get; }
         public double Zoom { get; }
         public double AvailableWidth { get; }
         public bool CharacterEllipses { get; }
         public double PixelsPerDip { get; }
 
-        public TextLayoutCacheKey(string text, WPFStyle style, double zoom, double availableWidth, bool characterEllipses, double pixelsPerDip)
+        public TextLayoutCacheKey(string text, IStyle style, double zoom, double availableWidth, bool characterEllipses, double pixelsPerDip)
         {
             Text = text;
             Style = style;
@@ -61,7 +62,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             string text,
             double availableWidth,
             double scaledFontSize,
-            WPFStyle style,
+            IStyle style,
             RenderContext context,
             bool characterEllipses)
         {
@@ -72,7 +73,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
                 return cachedLayout;
             }
 
-            var layout = TextLayoutBuilder.Build(text, availableWidth, scaledFontSize, style.GlyphMetrics, context, characterEllipses);
+            var layout = TextLayoutBuilder.Build(text, availableWidth, scaledFontSize, Styling.WpfResourceCache.GetFontResources(style).GlyphMetrics, context, characterEllipses);
             _cache.TryAdd(key, layout);
             return layout;
         }
@@ -83,3 +84,5 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
         }
     }
 }
+
+

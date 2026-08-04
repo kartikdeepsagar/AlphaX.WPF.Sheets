@@ -1,4 +1,6 @@
-﻿namespace DevBrewLabs.Spreadsheet
+﻿using DevBrewLabs.Spreadsheet.Styling;
+
+namespace DevBrewLabs.Spreadsheet
 {
     public interface IStyleProvider
     {
@@ -7,12 +9,12 @@
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        void AddNamedStyle(string name, Style style);
+        void AddNamedStyle(string name, CellStyle style);
         /// <summary>
         /// Gets the named style.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        Style GetNamedStyle(string name);
+        CellStyle GetNamedStyle(string name);
     }
 }

@@ -1,7 +1,5 @@
 using DevBrewLabs.Spreadsheet;
 using System;
-using System.Windows;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
@@ -36,7 +34,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public void SetRenderSheet(SheetView sheetView)
         {
             _sheetView = sheetView;
-            _workSheet = sheetView.WorkSheet;
+            _workSheet = (WorkSheet)sheetView.WorkSheet;
             CellsRenderer.SetRenderSheet(sheetView);
             GridLinesRenderer.SetRenderSheet(sheetView);
             RowHeadersRenderer.SetRenderSheet(sheetView);

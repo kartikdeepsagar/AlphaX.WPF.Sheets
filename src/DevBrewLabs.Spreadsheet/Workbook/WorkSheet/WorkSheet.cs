@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace DevBrewLabs.Spreadsheet
 {
-    public class WorkSheet : IWorkSheet
+    internal class WorkSheet : IWorkSheet
     {
         public event EventHandler<CellChangedEventArgs> CellChanged;
         public event EventHandler<RangeChangedEventArgs> RangeChanged;
@@ -88,12 +88,12 @@ namespace DevBrewLabs.Spreadsheet
             _columnStore = new Dictionary<int, ColumnData>();
         }
 
-        public void SortRange(CellRange range, DevBrewLabs.Spreadsheet.Sorting.SortOptions options)
+        public void SortRange(CellRange range, SortOptions options)
         {
             SortImpl(range, options);
         }
 
-        public void Sort(DevBrewLabs.Spreadsheet.Sorting.SortOptions options)
+        public void Sort(SortOptions options)
         {
             SortImpl(new CellRange(
                 _cells.Row, 
@@ -422,11 +422,11 @@ namespace DevBrewLabs.Spreadsheet
 
         internal class MultiLevelSnapshotComparer : IComparer<RowSnapshot>
         {
-            private readonly DevBrewLabs.Spreadsheet.Sorting.SortOptions _options;
+            private readonly SortOptions _options;
             private readonly NaturalSortComparer _defaultComparer;
             private readonly WorkSheet _sheet;
 
-            public MultiLevelSnapshotComparer(DevBrewLabs.Spreadsheet.Sorting.SortOptions options, WorkSheet sheet)
+            public MultiLevelSnapshotComparer(SortOptions options, WorkSheet sheet)
             {
                 _options = options;
                 _sheet = sheet;

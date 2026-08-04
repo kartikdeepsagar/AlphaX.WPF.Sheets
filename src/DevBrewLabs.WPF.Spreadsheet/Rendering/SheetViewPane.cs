@@ -34,7 +34,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         public void AttachSheet(SheetView sheetView)
         {
             _sheetView = sheetView;
-            _workSheet = sheetView.WorkSheet;
+            _workSheet = (WorkSheet)sheetView.WorkSheet;
 
             CellsRegion.AttachSheet(sheetView);
             RowHeadersRegion.AttachSheet(sheetView);
@@ -52,7 +52,7 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             _topLeftInteractionLayer.AttachToRegion(TopLeftRegion);
 
             var style = _spread.WorkBook.GetNamedStyle(StyleKeys.DefaultSheetStyleKey);
-            CellsRegion.Background = style.GetWpfStyle()?.Background;
+            CellsRegion.Background = style != null ? Styling.WpfResourceCache.GetBrush(style.BackColor) : null;
             UpdateZoomTransform();
         }
 
@@ -158,23 +158,23 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         {
             CellsRegion = new CellsSurface();
             Children.Add(CellsRegion);
-            Grid.SetRow(CellsRegion, 1);
-            Grid.SetColumn(CellsRegion, 1);
+            SetRow(CellsRegion, 1);
+            SetColumn(CellsRegion, 1);
 
             RowHeadersRegion = new RowHeadersSurface();
             Children.Add(RowHeadersRegion);
-            Grid.SetRow(RowHeadersRegion, 1);
-            Grid.SetColumn(RowHeadersRegion, 0);
+            SetRow(RowHeadersRegion, 1);
+            SetColumn(RowHeadersRegion, 0);
 
             ColumnHeadersRegion = new ColumnHeadersSurface();
             Children.Add(ColumnHeadersRegion);
-            Grid.SetRow(ColumnHeadersRegion, 0);
-            Grid.SetColumn(ColumnHeadersRegion, 1);
+            SetRow(ColumnHeadersRegion, 0);
+            SetColumn(ColumnHeadersRegion, 1);
 
             TopLeftRegion = new TopLeftSurface();
             Children.Add(TopLeftRegion);
-            Grid.SetRow(TopLeftRegion, 0);
-            Grid.SetColumn(TopLeftRegion, 0);
+            SetRow(TopLeftRegion, 0);
+            SetColumn(TopLeftRegion, 0);
         }
 
         /// <summary>
@@ -271,3 +271,5 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
         }
     }
 }
+
+

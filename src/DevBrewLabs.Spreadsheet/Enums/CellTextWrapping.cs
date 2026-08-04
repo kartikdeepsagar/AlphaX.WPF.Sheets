@@ -1,6 +1,6 @@
 namespace DevBrewLabs.Spreadsheet
 {
-    public enum TextWrapping
+    public enum CellTextWrapping
     {
         WrapWithOverflow,
         NoWrap,

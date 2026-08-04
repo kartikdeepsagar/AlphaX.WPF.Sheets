@@ -1,7 +1,6 @@
-﻿using SpreadsheetSampleExplorer.Data;
-using DevBrewLabs.Spreadsheet.Data;
+﻿using DevBrewLabs.Spreadsheet.Data;
 using DevBrewLabs.WPF.Spreadsheet;
-using System;
+using SpreadsheetSampleExplorer.Data;
 using System.Linq;
 using System.Windows.Controls;
 

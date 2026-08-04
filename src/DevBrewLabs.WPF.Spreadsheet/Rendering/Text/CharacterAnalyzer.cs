@@ -13,8 +13,8 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering.Text
             {
                 char c = text[i];
 
-                // Allow newline and tab
-                if (c == '\n' || c == '\t')
+                // Allow newline, carriage return, and tab
+                if (c == '\n' || c == '\r' || c == '\t')
                     continue;
 
                 // Reject other control characters

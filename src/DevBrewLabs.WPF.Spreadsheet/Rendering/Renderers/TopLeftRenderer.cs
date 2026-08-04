@@ -1,6 +1,6 @@
+using DevBrewLabs.Spreadsheet;
 using System.Windows;
 using System.Windows.Media;
-using DevBrewLabs.Spreadsheet;
 
 namespace DevBrewLabs.WPF.Spreadsheet.Rendering
 {
@@ -15,12 +15,12 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             var topLeft = workSheet.TopLeft;
             var style = workSheet.WorkBook.GetNamedStyle(string.IsNullOrEmpty(topLeft.StyleName) ? 
                 StyleKeys.DefaultTopLeftStyleKey : topLeft.StyleName);
-            var wpfStyle = style.GetWpfStyle();
+            var wpfStyle = style;
 
             double halfPenWidth = (SheetView.Spread.GridLinePen.Thickness * SheetView.Spread.PixelPerDip) / 2;
             var rect = new Rect(-SheetView.Spread.GridLinePen.Thickness, -SheetView.Spread.GridLinePen.Thickness, width, height);
 
-            context.DrawRectangle(wpfStyle.Background, SheetView.Spread.GridLinePen, rect);
+            context.DrawRectangle(Styling.WpfResourceCache.GetBrush(wpfStyle.BackColor), SheetView.Spread.GridLinePen, rect);
        
             var pathGeometry = new PathGeometry();
             pathGeometry.Figures.Add(new PathFigure(new Point(5 * zoom, height - 5 * zoom), new PathSegment[]
@@ -30,7 +30,10 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
                 new LineSegment(new Point(5 * zoom, height - 5 * zoom), false)
             }, true));
 
-            context.DrawGeometry(wpfStyle.Foreground, null, pathGeometry);
+            context.DrawGeometry(Styling.WpfResourceCache.GetBrush(wpfStyle.ForeColor), null, pathGeometry);
         }
     }
 }
+
+
+

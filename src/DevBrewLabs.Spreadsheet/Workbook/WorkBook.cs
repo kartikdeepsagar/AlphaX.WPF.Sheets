@@ -1,5 +1,6 @@
 using DevBrewLabs.Spreadsheet.CalcEngine;
 using DevBrewLabs.Spreadsheet.Core;
+using DevBrewLabs.Spreadsheet.Styling;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace DevBrewLabs.Spreadsheet
     {
         private WorkBookDataProvider _dataProvider;
         private IUpdateProvider _updateProvider;
-        private Dictionary<string, Style> _namedStyles;
+        private Dictionary<string, CellStyle> _namedStyles;
 
         public string Name { get; set; }
         public IWorkSheets WorkSheets { get; private set; }
@@ -25,7 +26,7 @@ namespace DevBrewLabs.Spreadsheet
 
             Name = name;
             WorkSheets = new WorkSheets(this);
-            _namedStyles = new Dictionary<string, Style>();
+            _namedStyles = new Dictionary<string, CellStyle>();
             _dataProvider = new WorkBookDataProvider(this);
             CalcEngine = new SheetCalcEngine(_dataProvider);
             StylePalette = new StylePalette();
@@ -39,7 +40,7 @@ namespace DevBrewLabs.Spreadsheet
             _updateProvider = updateProvider;
         }
 
-        public void AddNamedStyle(string styleName, Style style)
+        public void AddNamedStyle(string styleName, CellStyle style)
         {
             if (_namedStyles.ContainsKey(styleName))
                 throw new ArgumentException($"A style is already registered with the name '{styleName}'");
@@ -47,9 +48,9 @@ namespace DevBrewLabs.Spreadsheet
             _namedStyles.Add(styleName, style);
         }
 
-        public Style GetNamedStyle(string styleName)
+        public CellStyle GetNamedStyle(string styleName)
         {
-            if(_namedStyles.TryGetValue(styleName, out Style style))
+            if(_namedStyles.TryGetValue(styleName, out CellStyle style))
                 return style;
 
             return null;
