@@ -53,16 +53,16 @@ namespace DevBrewLabs.WPF.Spreadsheet.Rendering
             }
         }
 
-        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, WPFStyle style, Rect cellRect, DevBrewLabs.WPF.Spreadsheet.Rendering.Text.RenderContext renderContext)
+        private void DrawColumnHeaderCell(DrawingContext context, int row, int column, IRange cell, WPFStyle style, Rect cellRect, RenderContext renderContext)
         {
             context.DrawRectangle(style.Background, null, cellRect);
             if (cell != null && cell.Value != null)
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
+                TextRenderer.DrawText(context, cell.Value.ToString(), cellRect, style, renderContext);
             }
             else
             {
-                DevBrewLabs.WPF.Spreadsheet.Rendering.Text.TextRenderer.DrawText(context, RenderingExtensions.GetColumnHeader(column), cellRect, style, renderContext);
+                TextRenderer.DrawText(context, RenderingExtensions.GetColumnHeader(column), cellRect, style, renderContext);
             }
         }      
     }

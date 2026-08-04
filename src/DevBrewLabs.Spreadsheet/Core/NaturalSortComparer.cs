@@ -1,45 +1,26 @@
+using DevBrewLabs.Spreadsheet.Sorting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
-namespace DevBrewLabs.Spreadsheet
+namespace DevBrewLabs.Spreadsheet.Core
 {
     /// <summary>
     /// Natural sort comparer adhering to Excel sort rules:
-    /// 1. Blank/null cells always sort to the bottom in both Ascending &amp; Descending.
-    /// 2. Data type hierarchy: Numbers &lt; Text &lt; Booleans.
-    /// 3. Natural alphanumeric string comparison (StrCmpLogicalW).
+    /// 1. Blank/null cells always sort to the bottom.
+    /// 2. Data type hierarchy: Numbers < Text < Booleans.
+    /// 3. Natural alphanumeric string comparison in pure C#.
     /// </summary>
-    internal class NaturalSortComparer : IComparer<object>, IComparer<WorkSheet.RowSnapshot>, IComparer
+    internal class NaturalSortComparer : ISortComparer
     {
-        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int StrCmpLogicalW(string psz1, string psz2);
+        private readonly bool _matchCase;
 
-        private readonly bool _ascending;
-
-        public NaturalSortComparer() : this(true)
+        public NaturalSortComparer(bool matchCase = false)
         {
-        }
-
-        public NaturalSortComparer(bool ascending)
-        {
-            _ascending = ascending;
-        }
-
-        public int Compare(WorkSheet.RowSnapshot snapX, WorkSheet.RowSnapshot snapY)
-        {
-            return Compare(snapX.KeyValue, snapY.KeyValue);
+            _matchCase = matchCase;
         }
 
         public int Compare(object x, object y)
         {
-            if (x is WorkSheet.RowSnapshot snapX && y is WorkSheet.RowSnapshot snapY)
-            {
-                x = snapX.KeyValue;
-                y = snapY.KeyValue;
-            }
-
             bool isNullX = IsBlank(x);
             bool isNullY = IsBlank(y);
 
@@ -55,20 +36,15 @@ namespace DevBrewLabs.Spreadsheet
             int typeOrderX = GetDataTypeOrder(x);
             int typeOrderY = GetDataTypeOrder(y);
 
-            int result;
             if (typeOrderX != typeOrderY)
             {
-                result = typeOrderX.CompareTo(typeOrderY);
-            }
-            else
-            {
-                result = CompareSameType(x, y);
+                return typeOrderX.CompareTo(typeOrderY);
             }
 
-            return _ascending ? result : -result;
+            return CompareSameType(x, y);
         }
 
-        private static bool IsBlank(object val)
+        public static bool IsBlank(object val)
         {
             if (val == null || val == DBNull.Value)
                 return true;
@@ -96,7 +72,7 @@ namespace DevBrewLabs.Spreadsheet
                    val is float || val is double || val is decimal;
         }
 
-        private static int CompareSameType(object x, object y)
+        private int CompareSameType(object x, object y)
         {
             if (IsNumeric(x) && IsNumeric(y))
             {
@@ -113,14 +89,72 @@ namespace DevBrewLabs.Spreadsheet
             string s1 = x.ToString();
             string s2 = y.ToString();
 
-            try
+            return NaturalCompare(s1, s2, _matchCase);
+        }
+
+        private static int NaturalCompare(string s1, string s2, bool matchCase)
+        {
+            if (s1 == null && s2 == null) return 0;
+            if (s1 == null) return -1;
+            if (s2 == null) return 1;
+
+            int i1 = 0, i2 = 0;
+            while (i1 < s1.Length && i2 < s2.Length)
             {
-                return StrCmpLogicalW(s1, s2);
+                char c1 = s1[i1];
+                char c2 = s2[i2];
+
+                bool isDigit1 = char.IsDigit(c1);
+                bool isDigit2 = char.IsDigit(c2);
+
+                if (isDigit1 && isDigit2)
+                {
+                    int start1 = i1;
+                    while (i1 < s1.Length && char.IsDigit(s1[i1])) i1++;
+                    int len1 = i1 - start1;
+
+                    int start2 = i2;
+                    while (i2 < s2.Length && char.IsDigit(s2[i2])) i2++;
+                    int len2 = i2 - start2;
+
+                    // Skip leading zeros for value comparison
+                    int zero1 = 0;
+                    while (zero1 < len1 - 1 && s1[start1 + zero1] == '0') zero1++;
+                    
+                    int zero2 = 0;
+                    while (zero2 < len2 - 1 && s2[start2 + zero2] == '0') zero2++;
+
+                    int actualLen1 = len1 - zero1;
+                    int actualLen2 = len2 - zero2;
+
+                    if (actualLen1 != actualLen2)
+                        return actualLen1.CompareTo(actualLen2);
+
+                    for (int j = 0; j < actualLen1; j++)
+                    {
+                        char d1 = s1[start1 + zero1 + j];
+                        char d2 = s2[start2 + zero2 + j];
+                        if (d1 != d2)
+                            return d1.CompareTo(d2);
+                    }
+                    
+                    // If values are equal, compare lengths including zeros to stabilize sort
+                    if (len1 != len2)
+                        return len1.CompareTo(len2);
+                }
+                else
+                {
+                    int cmp = matchCase ? c1.CompareTo(c2) : char.ToLowerInvariant(c1).CompareTo(char.ToLowerInvariant(c2));
+
+                    if (cmp != 0)
+                        return cmp;
+
+                    i1++;
+                    i2++;
+                }
             }
-            catch
-            {
-                return string.Compare(s1, s2, StringComparison.OrdinalIgnoreCase);
-            }
+
+            return s1.Length.CompareTo(s2.Length);
         }
     }
 }
